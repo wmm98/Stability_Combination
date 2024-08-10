@@ -1,34 +1,21 @@
-import subprocess
 from Common.config import Config
 from Common.log import MyLog
+from Common.process_shell import Shell
 
 log = MyLog()
-
-
-class Shell:
-    @staticmethod
-    def invoke(cmd, runtime=120):
-        try:
-            output, errors = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE,
-                                              stderr=subprocess.PIPE,
-                                              creationflags=subprocess.CREATE_NO_WINDOW).communicate(timeout=runtime)
-            o = output.decode("utf-8")
-            return o
-        except subprocess.TimeoutExpired as e:
-            log.error(str(e))
+shell = Shell()
 
 
 class Device:
     def __init__(self, device):
-        self.shell = Shell()
         self.device_name = device
 
     def restart_adb(self):
-        self.shell.invoke("adb kill-server")
-        self.shell.invoke("adb start-server")
+        shell.invoke("adb kill-server")
+        shell.invoke("adb start-server")
 
     def device_is_online(self):
-        devices = self.shell.invoke("adb devices")
+        devices = shell.invoke("adb devices")
         # log.info(device_check.device_is_online())
         if self.device_name + "device" in devices.replace('\r', '').replace('\t', '').replace(' ', ''):
             return True
@@ -36,18 +23,18 @@ class Device:
             return False
 
     def device_boot(self):
-        boot_res = self.shell.invoke("adb -s %s shell getprop sys.boot_completed" % self.device_name)
+        boot_res = shell.invoke("adb -s %s shell getprop sys.boot_completed" % self.device_name)
         return boot_res
 
     def adb_btn_open(self):
-        self.shell.invoke("adb -s %s shell setprop persist.telpo.debug.mode 1" % self.device_name)
+        shell.invoke("adb -s %s shell setprop persist.telpo.debug.mode 1" % self.device_name)
 
     # Send adb standalone command Send adb shell command
     def send_adb_shell_command(self, cmd):
-        return self.shell.invoke("adb -s %s shell %s" % (self.device_name, cmd))
+        return shell.invoke("adb -s %s shell %s" % (self.device_name, cmd))
 
     def send_adb_standalone_command(self, cmd):
-        return self.shell.invoke("adb -s %s %s" % (self.device_name, cmd))
+        return shell.invoke("adb -s %s %s" % (self.device_name, cmd))
 
     def adb_push_file(self, source, destination):
         self.send_adb_standalone_command("push %s %s" % (source, destination))
@@ -67,5 +54,3 @@ class Device:
             return True
         else:
             return False
-
-
