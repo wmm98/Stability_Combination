@@ -8,7 +8,7 @@ if __name__ == '__main__':
     shell = process_shell.Shell()
     debug_log = log.MyLog()
     conf = config.Config()
-    # 获取报告地址
+
     xml_report_path = conf.xml_report_path
     html_report_path = conf.html_report_path
     pro_path = conf.environment_properties_path
@@ -16,7 +16,7 @@ if __name__ == '__main__':
     env_path = pro_path
     shutil.copy(env_path, xml_report_path)
 
-    allure_list = '--allure-features= '
+    allure_list = '--allure-features=stability_case0'
     args = ['-s', '-q', '--alluredir', xml_report_path, allure_list]
 
     debug_log.info('当前测试集：%s' % allure_list)
@@ -24,8 +24,6 @@ if __name__ == '__main__':
     debug_log.info('用例运行开始时间: %s' % curr_time)
     pytest.main(args)
     cmd = 'allure generate %s -o %s --clean' % (xml_report_path, html_report_path)
-    # 复制后的项目可手动清除或生成
-    # allure generate xml -o html --clean
     try:
         shell.invoke(cmd)
     except Exception:
