@@ -1,8 +1,8 @@
 import subprocess
 import sys
-from PyQt5 import QtWidgets
+from PyQt5 import QtWidgets, QtCore
 from PyQt5.QtWidgets import *
-from PyQt5.QtCore import QTimer, QProcess, Qt
+from PyQt5.QtCore import QTimer, QProcess, Qt, pyqtSlot
 from tree_widget import Ui_MainWindow
 import os
 import shutil
@@ -15,6 +15,9 @@ from PyQt5.QtGui import QTextDocument, QTextCursor, QTextImageFormat
 import configparser
 import time
 import configfile
+import config_path
+
+conf_path = config_path.UIConfigPath()
 
 
 class AllCertCaseValue:
@@ -40,7 +43,8 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
         super(UIDisplay, self).__init__()
         self.last_position = 0
         self.last_modify_time = 0
-        self.config = configfile.ConfigP()
+        self.bg_config = configfile.ConfigP(self.background_config_file_path)
+        self.ui_config = configfile.ConfigP(self.ui_config_file_path)
         # 初始化读取内容读取指针在开始位置
         self.setupUi(self)
         self.AllTestCase = None
@@ -49,10 +53,7 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
 
     def intiui(self):
         # 初始化
-        self.section_ui_to_background = "UI-Background"
-        self.section_background_to_ui = "Background-UI"
-        self.config.add_config_section(self.section_ui_to_background)
-        self.config.add_config_section(self.section_background_to_ui)
+        self.ui_config.add_config_section(self.ui_config.section_ui_to_background)
 
         # 初始化进程
         self.qt_process = QProcess()
@@ -107,9 +108,12 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
                 cmd_list = s_p.split(" ")
                 cmd_list.insert(1, add_d)
                 self.new_cmds.append(" ".join(cmd_list))
-            self.config.add_config_option(self.section_ui_to_background, "root_steps", ",".join(self.new_cmds))
+            self.ui_config.add_config_option(self.ui_config.section_ui_to_background,
+                                             self.ui_config.ui_option_root_steps,
+                                             ",".join(self.new_cmds))
         else:
-            self.config.add_config_option(self.section_ui_to_background, "root_steps", "")
+            self.ui_config.add_config_option(self.ui_config.section_ui_to_background,
+                                             self.ui_config.ui_option_root_steps, "")
 
             # 计时器
             self.index_flag = 0
@@ -190,13 +194,6 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
     def get_COM_config(self):
         return ["1路", "2路", "3路", "4路"]
 
-    def save_config(self, file_name):
-        section = "Background-UI"
-        self.config.add_section(section)
-
-        with open(file_name, 'w') as configfile:
-            self.config.write(configfile)
-
     def get_file_modification_time(self, file_path):
         """获取文件的最后修改时间"""
         file_info = QFileInfo(file_path)
@@ -235,7 +232,11 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
     def closeEvent(self, event):
         # 在窗口关闭时停止定时器,关闭任务运行
         # 停止 QProcess 进程
-        self.invoke("taskkill /PID %s /F /T" % str(self.qt_process.processId()))
+        self.qt_process.startDetached("taskkill /PID %s /F /T" % str(self.qt_process.processId()))
+        if os.path.exists(self.ui_config_file_path):
+            os.remove(self.ui_config_file_path)
+        if os.path.exists(self.background_config_file_path):
+            os.remove(self.background_config_file_path)
         self.timer.stop()
         self.file_timer.stop()
         event.accept()
@@ -260,7 +261,8 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
         return s_tr.replace("", " ")
 
     def list_COM(self):
-        ports = self.get_current_COM()
+        ports = self.bg_config.get_option_value(self.bg_config.section_background_to_ui,
+                                                self.bg_config.bg_option_COM_ports).split(",")
         for port in ports:
             self.test_COM.addItem(port)
 
@@ -283,20 +285,10 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
         self.adb_log_duration.setCurrentText("30")
 
     def select_devices_name(self):
-        devices_info = self.invoke("adb devices").split("\r\n")[1:-2]
-        devices = [device_str.split("\t")[0] for device_str in devices_info if device_str.split("\t")[1] == "device"]
+        devices = self.bg_config.get_option_value(self.bg_config.section_background_to_ui,
+                                                  self.bg_config.bg_option_devices_name).split(",")
         for device in devices:
             self.edit_device_name.addItem(str(device))
-
-    def invoke(self, cmd, runtime=120):
-        try:
-            output, errors = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE,
-                                              stderr=subprocess.PIPE).communicate(
-                timeout=runtime)
-            o = output.decode("utf-8")
-            return o
-        except subprocess.TimeoutExpired as e:
-            print(str(e))
 
     def update_debug_log(self):
         try:
@@ -335,6 +327,11 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
 
 
 if __name__ == '__main__':
+    # import subprocess
+    # QProcess().start(conf_path.bat_pre_info_path)
+    subprocess.Popen("python pre_info.py", shell=True, stdout=subprocess.PIPE,
+                     stderr=subprocess.PIPE).communicate(timeout=120)
+    # time.sleep(3)
     app = QtWidgets.QApplication(sys.argv)
     myshow = UIDisplay()
     myshow.show()
