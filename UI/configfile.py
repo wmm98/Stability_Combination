@@ -9,6 +9,8 @@ class ConfigP(UIConfigPath):
     bg_option_devices_name = "devices_name"
     bg_option_COM_ports = "COM_ports"
 
+    ui_option_cases = "cases"
+
     def __init__(self, ini_path):
         self.ini_path = ini_path
         self.config = configparser.ConfigParser()

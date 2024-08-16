@@ -1,24 +1,13 @@
 import serial.tools.list_ports
 from configfile import ConfigP
-import subprocess
+import os
+import process_shell
 
-conf_file = ConfigP(ConfigP.background_config_file_path)
+root_path = str(os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir)))
+root_bg_config_ui = os.path.join(root_path, "UI", "background_config.ini")
+conf_file = ConfigP(root_bg_config_ui)
 
-
-class Shell:
-    @staticmethod
-    def invoke(cmd, runtime=120):
-        try:
-            output, errors = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE,
-                                              stderr=subprocess.PIPE,
-                                              creationflags=subprocess.CREATE_NO_WINDOW).communicate(timeout=runtime)
-            o = output.decode("utf-8")
-            return o
-        except subprocess.TimeoutExpired as e:
-            print(e)
-
-
-shell = Shell()
+shell = process_shell.Shell()
 
 
 class PreInfo:

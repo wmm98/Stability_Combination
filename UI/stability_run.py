@@ -20,6 +20,9 @@ import config_path
 conf_path = config_path.UIConfigPath()
 
 
+# subprocess.Popen(conf_path.bat_pre_info_path, shell=True, stdout=subprocess.PIPE,
+#                     stderr=subprocess.PIPE).communicate(timeout=120)
+
 class AllCertCaseValue:
     ROOT_PROTOCON = 0
     ROOT_PROTOCON_STA_CHILD = 1
@@ -31,9 +34,9 @@ class AllCertCaseValue:
 DictCommandInfo = {
 
     "A": AllCertCaseValue.ROOT_PROTOCON,
-    "适配器开关机": AllCertCaseValue.ROOT_PROTOCON_STA_TMISCAN_B0,
-    "适配器/电池+电源按键--正常关机（按键开关机-指令代替按键关机）": AllCertCaseValue.ROOT_PROTOCON_STA_TMISCAN_B1,
-    "适配器/电池+电源按键--异常关机（适配器/电池开路关机-按键开机）": AllCertCaseValue.ROOT_PROTOCON_STA_TMISCAN_B2,
+    "DDR-memtester压力测试": AllCertCaseValue.ROOT_PROTOCON_STA_TMISCAN_B0,
+    "DDR-stressapptest": AllCertCaseValue.ROOT_PROTOCON_STA_TMISCAN_B1,
+    "DDR-stressapptest-高低内存切换测试": AllCertCaseValue.ROOT_PROTOCON_STA_TMISCAN_B2,
 }
 
 
@@ -161,16 +164,19 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
         self.cases = []
         for slave in self.tree_status[0]["children"]:
             if slave["status"] == 2:
-                if "适配器开关机" in slave["text"]:
-                    self.cases.append("1")
-                elif "正常关机" in slave["text"]:
-                    self.cases.append("2")
-                else:
-                    self.cases.append("3")
+                if "DDR-memtester" in slave["text"]:
+                    self.cases.append("DDR-memtester")
+                elif "DDR-stressapptest" in slave["text"]:
+                    self.cases.append("DDR-stressapptest")
+                elif "DDR-stressapptest-高低内存切换测试" in slave["text"]:
+                    self.cases.append("DDR-stressapptest-switch")
 
         if len(self.cases) == 0:
             self.get_message_box("请勾选用例！！！")
             return
+
+        self.ui_config.add_config_option(self.ui_config.section_ui_to_background,
+                                         self.ui_config.ui_option_cases, ",".join(self.cases))
 
         # 检查完保存配置
         # self.save_config(self.config_file_path)
@@ -329,8 +335,16 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
 if __name__ == '__main__':
     # import subprocess
     # QProcess().start(conf_path.bat_pre_info_path)
-    subprocess.Popen("python pre_info.py", shell=True, stdout=subprocess.PIPE,
+    # print(conf_path.project_path)
+    # print(conf_path.py_pre_info_path)
+    subprocess.Popen("python %s" % conf_path.py_pre_info_path, shell=True, stdout=subprocess.PIPE,
                      stderr=subprocess.PIPE).communicate(timeout=120)
+    print("******************************************************")
+    print(conf_path.project_path)
+    print(conf_path.py_pre_info_path)
+    # print(conf_path.bat_pre_info_path)
+    # subprocess.Popen(conf_path.bat_pre_info_path, shell=True, stdout=subprocess.PIPE,
+    #                 stderr=subprocess.PIPE).communicate(timeout=120)
     # time.sleep(3)
     app = QtWidgets.QApplication(sys.argv)
     myshow = UIDisplay()
