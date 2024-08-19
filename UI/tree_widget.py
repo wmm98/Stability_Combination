@@ -35,11 +35,20 @@ class Ui_MainWindow(config_path.UIConfigPath):
         layout_device_info = QHBoxLayout()
         self.label_device_name = QtWidgets.QLabel("设备名称:")
         self.edit_device_name = QComboBox()
+
+        self.system_label = QtWidgets.QLabel("系统类型")
+        self.system_type = QComboBox()
+        self.system_type.addItem("Android")
+        self.system_type.addItem("Linux")
+
         # 测试COM
         self.COM_tips = QtWidgets.QLabel("测试COM口:")
         self.test_COM = QComboBox()
+
         layout_device_info.addWidget(self.label_device_name)
         layout_device_info.addWidget(self.edit_device_name)
+        layout_device_info.addWidget(self.system_label)
+        layout_device_info.addWidget(self.system_type)
         layout_device_info.addWidget(self.COM_tips)
         layout_device_info.addWidget(self.test_COM)
         layout_device_info.addStretch(1)
@@ -63,13 +72,23 @@ class Ui_MainWindow(config_path.UIConfigPath):
         self.verticalLayout_left.addLayout(root_layout_tips)
         self.verticalLayout_left.addWidget(self.root_steps_edit)
 
-        check_root_layout = QHBoxLayout()
-        self.check_root_lable = QtWidgets.QLabel("点击验证root:")
-        self.root_button = QtWidgets.QPushButton("一键验证")
-        check_root_layout.addWidget(self.check_root_lable)
-        check_root_layout.addWidget(self.root_button)
-        check_root_layout.addStretch(1)
-        self.verticalLayout_left.addLayout(check_root_layout)
+        self.verticalLayout_left.addWidget(QtWidgets.QLabel())
+        self.mem_label = QtWidgets.QLabel("请输入可用的运行内存（M）：")
+        self.verticalLayout_left.addWidget(self.mem_label)
+        layout_mem_info = QHBoxLayout()
+        self.check_mem_button = QtWidgets.QPushButton("查询")
+        self.mem_free = QtWidgets.QLineEdit()
+        layout_mem_info.addWidget(self.check_mem_button)
+        layout_mem_info.addWidget(self.mem_free)
+        self.verticalLayout_left.addLayout(layout_mem_info)
+
+        # check_root_layout = QHBoxLayout()
+        # self.check_root_lable = QtWidgets.QLabel("点击验证root:")
+        # self.root_button = QtWidgets.QPushButton("一键验证")
+        # check_root_layout.addWidget(self.check_root_lable)
+        # check_root_layout.addWidget(self.root_button)
+        # check_root_layout.addStretch(1)
+        # self.verticalLayout_left.addLayout(check_root_layout)
 
         # 间隔
         self.verticalLayout_left.addWidget(QtWidgets.QLabel())
@@ -118,7 +137,7 @@ class Ui_MainWindow(config_path.UIConfigPath):
 
         # 设置伸展因子确保两侧距离一致
         splitter.setStretchFactor(0, 1)  # 左侧部件的伸展因子
-        splitter.setStretchFactor(1, 1)  # 右侧部件的伸展因子
+        splitter.setStretchFactor(1, 2)  # 右侧部件的伸展因子
 
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)

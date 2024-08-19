@@ -1,7 +1,7 @@
 import allure
 import pytest
 import configparser
-from Stability.Common.log import MyLog
+from Common.log import MyLog
 
 log = MyLog()
 
@@ -14,10 +14,23 @@ class TestStabilityCombination:
     def teardown_class(self):
         log.info("压测运行完毕")
 
-    @allure.feature("stability_case0")
-    @allure.title("")
-    # @pytest.mark.flaky(reruns=1, reruns_delay=3)
+    @allure.feature("DDR-memtester")
+    @allure.title("DDR-memtester压力测试")
     def test_stability_combination_01(self):
+        log.info("********测试开始*********")
+
+        log.info("********测试结束*********")
+
+    @allure.feature("DDR-stressapptest")
+    @allure.title("DDR-stressapptest")
+    def test_stability_combination_02(self):
+        log.info("********测试开始*********")
+
+        log.info("********测试结束*********")
+
+    @allure.feature("DDR-stressapptest-switch")
+    @allure.title("DDR-stressapptest-高低内存切换测试")
+    def test_stability_combination_03(self):
         log.info("********测试开始*********")
 
         log.info("********测试结束*********")

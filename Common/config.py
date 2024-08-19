@@ -14,6 +14,9 @@ class Config:
     DDR_stressapptest_switch_path = os.path.join(pretesting_path, "DDR", "stressapptest_switch")
     EMMC_path = os.path.join(pretesting_path, "EMMC")
 
+    bg_config_ini_path = os.path.join(project_path, "UI", "background_config.ini")
+    ui_config_ini_path = os.path.join(project_path, "UI", "ui_config.ini")
+
 
 
 

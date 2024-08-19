@@ -20,9 +20,6 @@ import config_path
 conf_path = config_path.UIConfigPath()
 
 
-# subprocess.Popen(conf_path.bat_pre_info_path, shell=True, stdout=subprocess.PIPE,
-#                     stderr=subprocess.PIPE).communicate(timeout=120)
-
 class AllCertCaseValue:
     ROOT_PROTOCON = 0
     ROOT_PROTOCON_STA_CHILD = 1
@@ -61,6 +58,7 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
         # 初始化进程
         self.qt_process = QProcess()
         self.root_process = QProcess()
+        self.mem_free_process = QProcess()
         # 用例数结构
         # 设置列数
         self.treeWidget.setColumnCount(1)
@@ -85,11 +83,35 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
         self.select_devices_name()
         self.list_COM()
 
-        self.root_button.clicked.connect(self.double_check_root)
+        # self.root_button.clicked.connect(self.double_check_root)
         self.submit_button.clicked.connect(self.handle_submit)
         self.stop_process_button.clicked.connect(self.stop_process)
         # 进程完成
         self.qt_process.finished.connect(self.handle_finished)
+        self.check_mem_button.clicked.connect(self.query_mem_free)
+        self.mem_free_process.finished.connect(self.mem_free_finished_handle)
+
+    def mem_free_finished_handle(self):
+        print("运行到这里来")
+        with open(conf_path.mem_log_path, "r") as f:
+            text = f.read()
+        print(text)
+        print(type(text))
+        if len(text) != 0:
+            self.text_edit.insertPlainText(text)
+        else:
+            self.text_edit.insertPlainText("读取可用运行内存数据失败， 请检查！！！")
+        self.text_edit.insertPlainText("查询结束.")
+
+    def query_mem_free(self):
+        # 保存root steps
+        self.double_check_root()
+        print("1111111111111111111111111111")
+        self.ui_config.add_config_option(self.ui_config.section_ui_to_background,
+                                         self.ui_config.ui_option_system_type, self.system_type.currentText())
+        print("2222222222222222222222222222222")
+        print(conf_path.bat_mem_info_path)
+        self.mem_free_process.start(conf_path.bat_mem_info_path)
 
     def double_check_root(self):
         # adb shell setprop persist.debuggable 1,adb reboot
@@ -117,14 +139,6 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
         else:
             self.ui_config.add_config_option(self.ui_config.section_ui_to_background,
                                              self.ui_config.ui_option_root_steps, "")
-
-            # 计时器
-            self.index_flag = 0
-            self.reboot_finished = False
-            self.reboot_timer = QTimer(self)
-            self.reboot_timeout_limit = 30 * 1000  # 超时限制，单位毫秒, 10秒超时
-            self.elapsed_time = 0  # 已经过的时间
-            self.check_interval = 1000
 
     def handle_finished(self):
         self.stop_process()
@@ -175,8 +189,15 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
             self.get_message_box("请勾选用例！！！")
             return
 
+        self.ui_config.add_config_option(self.ui_config.section_ui_to_background, self.ui_config.ui_option_system_type,
+                                         self.system_type.currentText())
+
         self.ui_config.add_config_option(self.ui_config.section_ui_to_background,
                                          self.ui_config.ui_option_cases, ",".join(self.cases))
+
+        self.double_check_root()
+
+        self.qt_process.start(conf_path.run_bat_path)
 
         # 检查完保存配置
         # self.save_config(self.config_file_path)
@@ -186,16 +207,14 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
         # self.file_timer = QTimer(self)
         # self.file_timer.timeout.connect(self.check_image_modification)
         #
-        # self.timer = QTimer(self)
-        # self.timer.timeout.connect(self.update_debug_log)
+        self.timer = QTimer(self)
+        self.timer.timeout.connect(self.update_debug_log)
         #
-        # self.check_interval = 1000  # 定时器间隔，单位毫秒
-        # self.timer.start(self.check_interval)  # 启动定时器
-        # self.file_timer.start(self.check_interval)
-        #
-        # self.stop_process_button.setEnabled(True)
-        # self.submit_button.setDisabled(True)
-        # self.submit_button.setText("测试中...")
+        self.check_interval = 1000  # 定时器间隔，单位毫秒
+        self.timer.start(self.check_interval)  # 启动定时器
+        self.stop_process_button.setEnabled(True)
+        self.submit_button.setDisabled(True)
+        self.submit_button.setText("测试中...")
 
     def get_COM_config(self):
         return ["1路", "2路", "3路", "4路"]
@@ -222,7 +241,6 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
         self.submit_button.setEnabled(True)
         self.submit_button.setText("开始测试")
         self.timer.stop()
-        self.file_timer.stop()
 
     def start_qt_process(self, file):
         # 启动 外部 脚本
@@ -244,7 +262,6 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
         if os.path.exists(self.background_config_file_path):
             os.remove(self.background_config_file_path)
         self.timer.stop()
-        self.file_timer.stop()
         event.accept()
 
     def copy_file(self, origin, des):
@@ -337,15 +354,11 @@ if __name__ == '__main__':
     # QProcess().start(conf_path.bat_pre_info_path)
     # print(conf_path.project_path)
     # print(conf_path.py_pre_info_path)
-    subprocess.Popen("python %s" % conf_path.py_pre_info_path, shell=True, stdout=subprocess.PIPE,
+    subprocess.Popen(conf_path.bat_pre_info_path, shell=True, stdout=subprocess.PIPE,
                      stderr=subprocess.PIPE).communicate(timeout=120)
-    print("******************************************************")
-    print(conf_path.project_path)
-    print(conf_path.py_pre_info_path)
-    # print(conf_path.bat_pre_info_path)
-    # subprocess.Popen(conf_path.bat_pre_info_path, shell=True, stdout=subprocess.PIPE,
-    #                 stderr=subprocess.PIPE).communicate(timeout=120)
-    # time.sleep(3)
+    # print("******************************************************")
+    # print(conf_path.project_path)
+    # print(conf_path.py_pre_info_path)
     app = QtWidgets.QApplication(sys.argv)
     myshow = UIDisplay()
     myshow.show()
