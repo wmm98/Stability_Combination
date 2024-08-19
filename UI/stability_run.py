@@ -93,7 +93,7 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
 
     def mem_free_finished_handle(self):
         print("运行到这里来")
-        with open(conf_path.mem_log_path, "r") as f:
+        with open(conf_path.mem_log_path, "r", encoding="utf-8") as f:
             text = f.read()
         print(text)
         print(type(text))
