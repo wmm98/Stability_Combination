@@ -8,6 +8,7 @@ class ConfigP(UIConfigPath):
     ui_option_root_steps = "root_steps"
     ui_option_system_type = "system"
     ui_option_mem_free_value = "mem_free_value"
+    ui_option_test_duration = "test_duration"
     bg_option_devices_name = "devices_name"
     bg_option_COM_ports = "COM_ports"
 

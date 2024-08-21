@@ -2,11 +2,8 @@ from configfile import ConfigP
 import process_shell
 import os
 import time
-print("*****************************")
 
 root_path = str(os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir)))
-print("*****************************")
-print(root_path)
 bg_config_ui_path = os.path.join(root_path, "UI", "background_config.ini")
 bg_conf_file = ConfigP(bg_config_ui_path)
 

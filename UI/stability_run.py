@@ -2,6 +2,7 @@ import subprocess
 import sys
 from PyQt5 import QtWidgets, QtCore
 from PyQt5.QtWidgets import *
+from PyQt5.QtWidgets import QStyledItemDelegate
 from PyQt5.QtCore import QTimer, QProcess, Qt, pyqtSlot
 from tree_widget import Ui_MainWindow
 import os
@@ -18,6 +19,24 @@ import configfile
 import config_path
 
 conf_path = config_path.UIConfigPath()
+
+
+class ComboBoxDelegate(QStyledItemDelegate):
+    def __init__(self, items, parent=None):
+        super().__init__(parent)
+        self.items = items
+
+    def createEditor(self, parent, option, index):
+        editor = QComboBox(parent)
+        editor.addItems(self.items)
+        return editor
+
+    def setEditorData(self, editor, index):
+        current_text = index.data()
+        editor.setCurrentText(current_text)
+
+    def setModelData(self, editor, model, index):
+        model.setData(index, editor.currentText())
 
 
 class AllCertCaseValue:
@@ -61,21 +80,28 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
         self.mem_free_process = QProcess()
         # 用例数结构
         # 设置列数
-        self.treeWidget.setColumnCount(1)
+        self.treeWidget.setColumnCount(2)
         # 设置树形控件头部的标题
-        self.treeWidget.setHeaderLabels(['测试场景'])
-        self.treeWidget.setColumnWidth(0, 120)
+        self.treeWidget.setHeaderLabels(['测试场景', "测试时长/小时"])
+        self.treeWidget.setColumnWidth(0, 300)
 
         # 设置根节点
         self.AllTestCase = QTreeWidgetItem(self.treeWidget)
+        # self.case_tree = self.AllTestCase.child()
         self.AllTestCase.setText(0, '测试项')
+
+        duration_options = [str(i) for i in range(1, 25)]
 
         for value in DictCommandInfo.keys():
             if DictCommandInfo[value] > AllCertCaseValue.ROOT_PROTOCON_STA_CHILD:
                 item_sta_father = QTreeWidgetItem(self.AllTestCase)
                 item_sta_father.setText(0, value)
                 item_sta_father.setCheckState(0, Qt.Unchecked)
-                item_sta_father.setFlags(item_sta_father.flags() | Qt.ItemIsSelectable)
+                item_sta_father.setText(1, duration_options[11])
+                item_sta_father.setFlags(
+                    self.AllTestCase.flags() | Qt.ItemIsUserCheckable | Qt.ItemIsSelectable | Qt.ItemIsEditable)  # 第一列的其他标志
+
+        self.treeWidget.setItemDelegateForColumn(1, ComboBoxDelegate(duration_options, self))
 
         # 节点全部展开
         self.treeWidget.expandAll()
@@ -92,11 +118,8 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
         self.mem_free_process.finished.connect(self.mem_free_finished_handle)
 
     def mem_free_finished_handle(self):
-        print("运行到这里来")
         with open(conf_path.mem_log_path, "r", encoding="utf-8") as f:
             text = f.read()
-        print(text)
-        print(type(text))
         if len(text) != 0:
             self.text_edit.insertPlainText(text)
         else:
@@ -106,11 +129,8 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
     def query_mem_free(self):
         # 保存root steps
         self.double_check_root()
-        print("1111111111111111111111111111")
         self.ui_config.add_config_option(self.ui_config.section_ui_to_background,
                                          self.ui_config.ui_option_system_type, self.system_type.currentText())
-        print("2222222222222222222222222222222")
-        print(conf_path.bat_mem_info_path)
         self.mem_free_process.start(conf_path.bat_mem_info_path)
 
     def double_check_root(self):
@@ -151,12 +171,14 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
         result = {
             "text": tree_item.text(0),
             "status": status,
-            "children": []
+            "children": [],
+            "duration": tree_item.text(1)
         }
         # 我添加的
         for i in range(tree_item.childCount()):
             child_item = tree_item.child(i)
             result["children"].append(self.get_tree_item_status(child_item))
+        print(result)
         return result
 
     def get_message_box(self, text):
@@ -169,6 +191,8 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
 
         # 检查用例是否为空
         self.tree_status = []
+        # 用例跑的时间集
+        self.tree_values = []
         for i in range(self.treeWidget.topLevelItemCount()):
             item = self.treeWidget.topLevelItem(i)
             # 2 表示已勾选，0 表示未勾选，1 表示半选中
@@ -176,14 +200,19 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
 
         # 保存要跑的用例
         self.cases = []
-        for slave in self.tree_status[0]["children"]:
+        cases_duration = []
+        tree_status = self.tree_status[0]["children"]
+        for slave in tree_status:
             if slave["status"] == 2:
                 if "DDR-memtester" in slave["text"]:
                     self.cases.append("DDR-memtester")
+                    cases_duration.append(slave["duration"])
                 elif "DDR-stressapptest" in slave["text"]:
                     self.cases.append("DDR-stressapptest")
+                    cases_duration.append(slave["duration"])
                 elif "DDR-stressapptest-高低内存切换测试" in slave["text"]:
                     self.cases.append("DDR-stressapptest-switch")
+                    cases_duration.append(slave["duration"])
 
         if len(self.cases) == 0:
             self.get_message_box("请勾选用例！！！")
@@ -191,9 +220,12 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
 
         self.ui_config.add_config_option(self.ui_config.section_ui_to_background, self.ui_config.ui_option_system_type,
                                          self.system_type.currentText())
-
+        # 保存用例
         self.ui_config.add_config_option(self.ui_config.section_ui_to_background,
                                          self.ui_config.ui_option_cases, ",".join(self.cases))
+        # 保存用例测试时长
+        self.ui_config.add_config_option(self.ui_config.section_ui_to_background,
+                                         self.ui_config.ui_option_test_duration, ",".join(cases_duration))
 
         self.double_check_root()
 
