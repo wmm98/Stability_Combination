@@ -121,7 +121,7 @@ if [ "$is_stress_app_switch" = "yes" ]; then
 fi
 
 
- nohup /data/memtester ${mem_size}M $memtester_duration > /sdcard/mem.log
+# nohup /data/memtester ${mem_size}M $memtester_duration > /sdcard/mem.log
  if [ "$is_memtester" == "yes" ]; then
 	 echo "memster测试开始"
      nohup /data/memtester ${half_free_value}M "$memtester_duration" > /sdcard/mem.log

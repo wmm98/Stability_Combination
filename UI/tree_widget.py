@@ -93,6 +93,9 @@ class Ui_MainWindow(config_path.UIConfigPath):
         # 间隔
         self.verticalLayout_left.addWidget(QtWidgets.QLabel())
 
+        self.cases_tips = QtWidgets.QLabel("memtester填测试轮数，其他的填测试时间，双击用例右侧即可填写")
+        self.cases_tips.setStyleSheet("color: blue;")
+        self.verticalLayout_left.addWidget(self.cases_tips)
         # 用例树
         self.treeWidget = QtWidgets.QTreeWidget()
         self.treeWidget.setSelectionMode(QtWidgets.QTreeWidget.ExtendedSelection)  # 设置多选模式
@@ -137,7 +140,7 @@ class Ui_MainWindow(config_path.UIConfigPath):
 
         # 设置伸展因子确保两侧距离一致
         splitter.setStretchFactor(0, 1)  # 左侧部件的伸展因子
-        splitter.setStretchFactor(1, 2)  # 右侧部件的伸展因子
+        splitter.setStretchFactor(1, 1)  # 右侧部件的伸展因子
 
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)

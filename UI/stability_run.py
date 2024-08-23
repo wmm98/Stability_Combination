@@ -82,7 +82,7 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
         # 设置列数
         self.treeWidget.setColumnCount(2)
         # 设置树形控件头部的标题
-        self.treeWidget.setHeaderLabels(['测试场景', "测试时长/小时"])
+        self.treeWidget.setHeaderLabels(['测试场景', "测试时长/小时, 测试轮数/次"])
         self.treeWidget.setColumnWidth(0, 300)
 
         # 设置根节点
@@ -97,11 +97,11 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
                 item_sta_father = QTreeWidgetItem(self.AllTestCase)
                 item_sta_father.setText(0, value)
                 item_sta_father.setCheckState(0, Qt.Unchecked)
-                item_sta_father.setText(1, duration_options[11])
+                item_sta_father.setText(1, "")
                 item_sta_father.setFlags(
                     self.AllTestCase.flags() | Qt.ItemIsUserCheckable | Qt.ItemIsSelectable | Qt.ItemIsEditable)  # 第一列的其他标志
 
-        self.treeWidget.setItemDelegateForColumn(1, ComboBoxDelegate(duration_options, self))
+        # self.treeWidget.setItemDelegateForColumn(1, ComboBoxDelegate(duration_options, self))
 
         # 节点全部展开
         self.treeWidget.expandAll()
