@@ -52,7 +52,7 @@ DictCommandInfo = {
     "A": AllCertCaseValue.ROOT_PROTOCON,
     "DDR-memtester压力测试": AllCertCaseValue.ROOT_PROTOCON_STA_TMISCAN_B0,
     "DDR-stressapptest": AllCertCaseValue.ROOT_PROTOCON_STA_TMISCAN_B1,
-    "DDR-stressapptest-高低内存切换测试": AllCertCaseValue.ROOT_PROTOCON_STA_TMISCAN_B2,
+    "DDR-switch_stressapptest-高低内存切换": AllCertCaseValue.ROOT_PROTOCON_STA_TMISCAN_B2,
 }
 
 
@@ -178,7 +178,6 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
         for i in range(tree_item.childCount()):
             child_item = tree_item.child(i)
             result["children"].append(self.get_tree_item_status(child_item))
-        print(result)
         return result
 
     def get_message_box(self, text):
@@ -188,6 +187,11 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
         # 初始化log文件
         with open(self.debug_log_path, "w") as f:
             f.close()
+
+        # 检查可输入的内存
+        if len(self.mem_free.text()) == 0:
+            self.get_message_box("请输入可用的运行内存！！！")
+            return
 
         # 检查用例是否为空
         self.tree_status = []
@@ -206,13 +210,31 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
             if slave["status"] == 2:
                 if "DDR-memtester" in slave["text"]:
                     self.cases.append("DDR-memtester")
-                    cases_duration.append(slave["duration"])
+                    self.ui_config.add_config_option(self.ui_config.section_ui_to_background,
+                                                     self.ui_config.ui_option_memtester_duration,
+                                                     slave["duration"])
+                    self.ui_config.add_config_option(self.ui_config.section_ui_to_background,
+                                                     self.ui_config.ui_option_is_memtester,
+                                                     "yes")
+                    # cases_duration.append(slave["duration"])
                 elif "DDR-stressapptest" in slave["text"]:
                     self.cases.append("DDR-stressapptest")
-                    cases_duration.append(slave["duration"])
-                elif "DDR-stressapptest-高低内存切换测试" in slave["text"]:
+                    self.ui_config.add_config_option(self.ui_config.section_ui_to_background,
+                                                     self.ui_config.ui_option_stressapptest_duration,
+                                                     slave["duration"])
+                    self.ui_config.add_config_option(self.ui_config.section_ui_to_background,
+                                                     self.ui_config.ui_option_is_stress_app_test,
+                                                     "yes")
+                    # cases_duration.append(slave["duration"])
+                elif "DDR-switch_stressapptest-高低内存切换" in slave["text"]:
                     self.cases.append("DDR-stressapptest-switch")
-                    cases_duration.append(slave["duration"])
+                    self.ui_config.add_config_option(self.ui_config.section_ui_to_background,
+                                                     self.ui_config.ui_option_switch_stressapptest_duration,
+                                                     slave["duration"])
+                    self.ui_config.add_config_option(self.ui_config.section_ui_to_background,
+                                                     self.ui_config.ui_option_is_stress_app_switch,
+                                                     "yes")
+                    # cases_duration.append(slave["duration"])
 
         if len(self.cases) == 0:
             self.get_message_box("请勾选用例！！！")
@@ -226,6 +248,8 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
         # 保存用例测试时长
         self.ui_config.add_config_option(self.ui_config.section_ui_to_background,
                                          self.ui_config.ui_option_test_duration, ",".join(cases_duration))
+
+        self.ui_config.add_config_option(self.ui_config.section_ui_to_background, self.ui_config.ui_option_mem_free_value, self.mem_free.text())
 
         self.double_check_root()
 

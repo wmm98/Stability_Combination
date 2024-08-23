@@ -69,10 +69,11 @@ class GetMemFree:
     def get_mem_free_info(self):
         self.root_devices()
         system_type = ui_conf_file.get_option_value(ui_conf_file.section_ui_to_background, ui_conf_file.ui_option_system_type)
-        if system_type == "Android":
-            self.log.write("\n %s" % shell.invoke("adb -s %s shell cat /proc/meminfo \"|grep MemFree\"" % self.device_name))
-        else:
-            self.log.write("\n %s" % shell.invoke("adb -s %s shell free -m" % self.device_name))
+        # if system_type == "Android":
+        #     self.log.write("\n %s" % shell.invoke("adb -s %s shell cat /proc/meminfo \"|grep MemFree\"" % self.device_name))
+        # else:
+        #     self.log.write("\n %s" % shell.invoke("adb -s %s shell free -m" % self.device_name))
+        self.log.write("\n %s" % shell.invoke("adb -s %s shell free -m" % self.device_name))
 
 
 if __name__ == '__main__':
