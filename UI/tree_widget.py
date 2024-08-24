@@ -19,7 +19,7 @@ class Ui_MainWindow(config_path.UIConfigPath):
 
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(1000, 600)
+        MainWindow.resize(1050, 600)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         # 创建水平布局
         self.main_layout = QHBoxLayout(self.centralwidget)
@@ -40,6 +40,8 @@ class Ui_MainWindow(config_path.UIConfigPath):
         self.system_type = QComboBox()
         self.system_type.addItem("Android")
         self.system_type.addItem("Linux")
+        self.system_type.addItem("Debian")
+        self.system_type.addItem("T31")
 
         # 测试COM
         self.COM_tips = QtWidgets.QLabel("测试COM口:")
@@ -93,7 +95,7 @@ class Ui_MainWindow(config_path.UIConfigPath):
         # 间隔
         self.verticalLayout_left.addWidget(QtWidgets.QLabel())
 
-        self.cases_tips = QtWidgets.QLabel("memtester填测试轮数，其他的填测试时间，双击用例右侧即可填写")
+        self.cases_tips = QtWidgets.QLabel("memtester、EMMC填测试轮数，其他的填测试时间，双击用例右侧即可填写")
         self.cases_tips.setStyleSheet("color: blue;")
         self.verticalLayout_left.addWidget(self.cases_tips)
         # 用例树

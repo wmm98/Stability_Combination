@@ -45,6 +45,7 @@ class AllCertCaseValue:
     ROOT_PROTOCON_STA_TMISCAN_B0 = 2
     ROOT_PROTOCON_STA_TMISCAN_B1 = 3
     ROOT_PROTOCON_STA_TMISCAN_B2 = 4
+    ROOT_PROTOCON_STA_TMISCAN_B3 = 5
 
 
 DictCommandInfo = {
@@ -53,6 +54,7 @@ DictCommandInfo = {
     "DDR-memtester压力测试": AllCertCaseValue.ROOT_PROTOCON_STA_TMISCAN_B0,
     "DDR-stressapptest": AllCertCaseValue.ROOT_PROTOCON_STA_TMISCAN_B1,
     "DDR-switch_stressapptest-高低内存切换": AllCertCaseValue.ROOT_PROTOCON_STA_TMISCAN_B2,
+    "EMMC测试": AllCertCaseValue.ROOT_PROTOCON_STA_TMISCAN_B3,
 }
 
 
@@ -216,7 +218,7 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
                     self.ui_config.add_config_option(self.ui_config.section_ui_to_background,
                                                      self.ui_config.ui_option_is_memtester,
                                                      "yes")
-                    # cases_duration.append(slave["duration"])
+
                 elif "DDR-stressapptest" in slave["text"]:
                     self.cases.append("DDR-stressapptest")
                     self.ui_config.add_config_option(self.ui_config.section_ui_to_background,
@@ -225,7 +227,7 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
                     self.ui_config.add_config_option(self.ui_config.section_ui_to_background,
                                                      self.ui_config.ui_option_is_stress_app_test,
                                                      "yes")
-                    # cases_duration.append(slave["duration"])
+
                 elif "DDR-switch_stressapptest-高低内存切换" in slave["text"]:
                     self.cases.append("DDR-stressapptest-switch")
                     self.ui_config.add_config_option(self.ui_config.section_ui_to_background,
@@ -234,7 +236,14 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
                     self.ui_config.add_config_option(self.ui_config.section_ui_to_background,
                                                      self.ui_config.ui_option_is_stress_app_switch,
                                                      "yes")
-                    # cases_duration.append(slave["duration"])
+                elif "EMMC测试" in slave["text"]:
+                    self.cases.append("EMMC")
+                    self.ui_config.add_config_option(self.ui_config.section_ui_to_background,
+                                                     self.ui_config.ui_option_emmmc_duration,
+                                                     slave["duration"])
+                    self.ui_config.add_config_option(self.ui_config.section_ui_to_background,
+                                                     self.ui_config.ui_option_is_emmc_test,
+                                                     "yes")
 
         if len(self.cases) == 0:
             self.get_message_box("请勾选用例！！！")

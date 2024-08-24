@@ -12,9 +12,11 @@ class ConfigP(UIConfigPath):
     ui_option_memtester_duration = "memtester_duration"
     ui_option_stressapptest_duration = "stress_app_test_duration"
     ui_option_switch_stressapptest_duration = "stress_app_switch_duration"
+    ui_option_emmmc_duration = "emmc_duration"
     ui_option_is_memtester = "is_memtester"
     ui_option_is_stress_app_test = "is_stress_app_test"
     ui_option_is_stress_app_switch = "is_stress_app_switch"
+    ui_option_is_emmc_test = "is_emmc_test"
     bg_option_devices_name = "devices_name"
     bg_option_COM_ports = "COM_ports"
 
@@ -24,7 +26,6 @@ class ConfigP(UIConfigPath):
         self.ini_path = ini_path
         self.config = configparser.ConfigParser()
         self.config.read(self.ini_path)
-        print(self.config.sections())
 
     def add_config_section(self, section):
         if section not in self.config:
