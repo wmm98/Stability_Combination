@@ -36,9 +36,11 @@ mem_free_value=`get_cfg_value mem_free_value`
 is_memtester=`get_cfg_value is_memtester`
 is_stress_app_test=`get_cfg_value is_stress_app_test`
 is_stress_app_switch=`get_cfg_value is_stress_app_switch`
+is_emmc_test=`get_cfg_value is_emmc_test`
 memtester_duration=`get_cfg_value memtester_duration`
 stressapptest_duration=`get_cfg_value stress_app_test_duration`
 switch_stressapptest_duration=`get_cfg_value stress_app_switch_duration`
+emmc_duration=`get_cfg_value emmc_duration`
 
 
 # 获取出来运行内存值
