@@ -205,9 +205,36 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
             self.tree_status.append(self.get_tree_item_status(item))
 
         # 保存要跑的用例
+        self.durations = []
         self.cases = []
         cases_duration = []
         tree_status = self.tree_status[0]["children"]
+        # 初始化
+        self.ui_config.add_config_option(self.ui_config.section_ui_to_background,
+                                         self.ui_config.ui_option_memtester_duration,
+                                         "0")
+        self.ui_config.add_config_option(self.ui_config.section_ui_to_background,
+                                         self.ui_config.ui_option_is_memtester,
+                                         "no")
+        self.ui_config.add_config_option(self.ui_config.section_ui_to_background,
+                                         self.ui_config.ui_option_stressapptest_duration,
+                                         "0")
+        self.ui_config.add_config_option(self.ui_config.section_ui_to_background,
+                                         self.ui_config.ui_option_is_stress_app_test,
+                                         "no")
+        self.ui_config.add_config_option(self.ui_config.section_ui_to_background,
+                                         self.ui_config.ui_option_switch_stressapptest_duration,
+                                         "0")
+        self.ui_config.add_config_option(self.ui_config.section_ui_to_background,
+                                         self.ui_config.ui_option_is_stress_app_switch,
+                                         "no")
+        self.ui_config.add_config_option(self.ui_config.section_ui_to_background,
+                                         self.ui_config.ui_option_emmmc_duration,
+                                         "0")
+        self.ui_config.add_config_option(self.ui_config.section_ui_to_background,
+                                         self.ui_config.ui_option_is_emmc_test,
+                                         "no")
+
         for slave in tree_status:
             if slave["status"] == 2:
                 if "DDR-memtester" in slave["text"]:
@@ -218,8 +245,9 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
                     self.ui_config.add_config_option(self.ui_config.section_ui_to_background,
                                                      self.ui_config.ui_option_is_memtester,
                                                      "yes")
+                    self.durations.append(slave["duration"])
 
-                elif "DDR-stressapptest" in slave["text"]:
+                if "DDR-stressapptest" in slave["text"]:
                     self.cases.append("DDR-stressapptest")
                     self.ui_config.add_config_option(self.ui_config.section_ui_to_background,
                                                      self.ui_config.ui_option_stressapptest_duration,
@@ -227,8 +255,9 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
                     self.ui_config.add_config_option(self.ui_config.section_ui_to_background,
                                                      self.ui_config.ui_option_is_stress_app_test,
                                                      "yes")
+                    self.durations.append(slave["duration"])
 
-                elif "DDR-switch_stressapptest-高低内存切换" in slave["text"]:
+                if "DDR-switch_stressapptest-高低内存切换" in slave["text"]:
                     self.cases.append("DDR-stressapptest-switch")
                     self.ui_config.add_config_option(self.ui_config.section_ui_to_background,
                                                      self.ui_config.ui_option_switch_stressapptest_duration,
@@ -236,7 +265,9 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
                     self.ui_config.add_config_option(self.ui_config.section_ui_to_background,
                                                      self.ui_config.ui_option_is_stress_app_switch,
                                                      "yes")
-                elif "EMMC测试" in slave["text"]:
+                    self.durations.append(slave["duration"])
+
+                if "EMMC测试" in slave["text"]:
                     self.cases.append("EMMC")
                     self.ui_config.add_config_option(self.ui_config.section_ui_to_background,
                                                      self.ui_config.ui_option_emmmc_duration,
@@ -244,10 +275,20 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
                     self.ui_config.add_config_option(self.ui_config.section_ui_to_background,
                                                      self.ui_config.ui_option_is_emmc_test,
                                                      "yes")
+                    self.durations.append(slave["duration"])
 
         if len(self.cases) == 0:
             self.get_message_box("请勾选用例！！！")
             return
+
+        if len(self.durations) == 0:
+            self.get_message_box("请填写用例的测试时间或者测试次数， 请检查！！！")
+            return
+
+        for dur in self.durations:
+            if len(dur) == 0:
+                self.get_message_box("有用例没有填写上测试时间或者测试次数，请检查！！！")
+                return
 
         self.ui_config.add_config_option(self.ui_config.section_ui_to_background, self.ui_config.ui_option_system_type,
                                          self.system_type.currentText())
@@ -260,7 +301,7 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
 
         self.ui_config.add_config_option(self.ui_config.section_ui_to_background, self.ui_config.ui_option_mem_free_value, self.mem_free.text())
 
-        self.double_check_root()
+        # self.double_check_root()
 
         self.qt_process.start(conf_path.run_bat_path)
 

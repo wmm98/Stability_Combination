@@ -17,6 +17,25 @@ class Config:
     bg_config_ini_path = os.path.join(project_path, "UI", "background_config.ini")
     ui_config_ini_path = os.path.join(project_path, "UI", "ui_config.ini")
 
+    section_ui_to_background = "UI-Background"
+    section_background_to_ui = "Background-UI"
+    ui_option_root_steps = "root_steps"
+    ui_option_system_type = "system"
+    ui_option_mem_free_value = "mem_free_value"
+    ui_option_test_duration = "test_duration"
+    ui_option_memtester_duration = "memtester_duration"
+    ui_option_stressapptest_duration = "stress_app_test_duration"
+    ui_option_switch_stressapptest_duration = "stress_app_switch_duration"
+    ui_option_emmmc_duration = "emmc_duration"
+    ui_option_is_memtester = "is_memtester"
+    ui_option_is_stress_app_test = "is_stress_app_test"
+    ui_option_is_stress_app_switch = "is_stress_app_switch"
+    ui_option_is_emmc_test = "is_emmc_test"
+    bg_option_devices_name = "devices_name"
+    bg_option_COM_ports = "COM_ports"
+
+    ui_option_cases = "cases"
+
 
 
 

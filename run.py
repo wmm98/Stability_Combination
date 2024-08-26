@@ -22,7 +22,7 @@ if __name__ == '__main__':
     env_path = pro_path
     shutil.copy(env_path, xml_report_path)
 
-    allure_list = '--allure-features=%s' % ui_config.get("UI-Background", "cases")
+    allure_list = '--allure-features=DDR-Integration-testing'
     args = ['-s', '-q', '--alluredir', xml_report_path, allure_list]
 
     debug_log.info('当前测试集：%s' % allure_list)
