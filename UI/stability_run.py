@@ -133,6 +133,7 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
         self.double_check_root()
         self.ui_config.add_config_option(self.ui_config.section_ui_to_background,
                                          self.ui_config.ui_option_system_type, self.system_type.currentText())
+        self.ui_config.add_config_option(self.ui_config.section_ui_to_background, self.ui_config.ui_option_device_name, self.edit_device_name.currentText())
         self.mem_free_process.start(conf_path.bat_mem_info_path)
 
     def double_check_root(self):
@@ -460,6 +461,7 @@ if __name__ == '__main__':
     # QProcess().start(conf_path.bat_pre_info_path)
     # print(conf_path.project_path)
     # print(conf_path.py_pre_info_path)
+
     subprocess.Popen(conf_path.bat_pre_info_path, shell=True, stdout=subprocess.PIPE,
                      stderr=subprocess.PIPE).communicate(timeout=120)
     # print("******************************************************")

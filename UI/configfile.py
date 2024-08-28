@@ -5,6 +5,7 @@ from config_path import UIConfigPath
 class ConfigP(UIConfigPath):
     section_ui_to_background = "UI-Background"
     section_background_to_ui = "Background-UI"
+    ui_option_device_name = "device_name"
     ui_option_root_steps = "root_steps"
     ui_option_system_type = "system"
     ui_option_mem_free_value = "mem_free_value"
