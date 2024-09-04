@@ -31,7 +31,7 @@ class Ui_MainWindow(config_path.UIConfigPath):
         # self.child_window.exec_()  # 显示子界面（对话框）
 
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(1050, 700)
+        MainWindow.resize(1200, 700)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         # 创建水平布局
         self.main_layout = QHBoxLayout(self.centralwidget)
@@ -115,12 +115,14 @@ class Ui_MainWindow(config_path.UIConfigPath):
         self.treeWidget.setSelectionMode(QtWidgets.QTreeWidget.ExtendedSelection)  # 设置多选模式
         self.treeWidget.setObjectName("treeWidget")
         self.treeWidget.headerItem().setText(0, "1")
+        # self.treeWidget.setFixedSize(500, 300)
+        self.treeWidget.setFixedHeight(400)
         self.verticalLayout_left.addWidget(self.treeWidget)
 
         # 提交按钮
         self.submit_button = QtWidgets.QPushButton("开始压测")
         self.verticalLayout_left.addWidget(self.submit_button)
-
+        #
         self.stop_process_button.setDisabled(True)
         self.verticalLayout_left.addWidget(self.stop_process_button)
 
@@ -153,8 +155,8 @@ class Ui_MainWindow(config_path.UIConfigPath):
                                 """)
 
         # 设置伸展因子确保两侧距离一致
-        splitter.setStretchFactor(0, 1)  # 左侧部件的伸展因子
-        splitter.setStretchFactor(1, 1)  # 右侧部件的伸展因子
+        splitter.setStretchFactor(0, 4)  # 左侧部件的伸展因子
+        splitter.setStretchFactor(1, 5)  # 右侧部件的伸展因子
 
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)

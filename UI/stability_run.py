@@ -65,6 +65,13 @@ class AllCertCaseValue:
     ROOT_PROTOCON_L_G_STA_C3 = 1.33
     ROOT_PROTOCON_L_G_STA_MAX = ROOT_PROTOCON_L_G_STA_C3 + 0.01
 
+    # 其他维护压测
+    ROOT_PROTOCON_W_H_STA_CHILD = 1.4
+    ROOT_PROTOCON_W_H_STA_d1 = 1.41
+    ROOT_PROTOCON_W_H_STA_d2 = 1.42
+    ROOT_PROTOCON_W_H_STA_d3 = 1.43
+    ROOT_PROTOCON_W_H_STA_MAX = ROOT_PROTOCON_W_H_STA_d3 + 0.01
+
 
 DictCommandInfo = {
     "压测": AllCertCaseValue.ROOT_PROTOCON_STA,
@@ -84,6 +91,11 @@ DictCommandInfo = {
     "适配器开关机": AllCertCaseValue.ROOT_PROTOCON_L_G_STA_C1,
     "适配器/电池+电源--正常关机": AllCertCaseValue.ROOT_PROTOCON_L_G_STA_C2,
     "适配器/电池+电源--异常关机": AllCertCaseValue.ROOT_PROTOCON_L_G_STA_C3,
+
+    "其他维护压测": AllCertCaseValue.ROOT_PROTOCON_W_H_STA_CHILD,
+    "压测1": AllCertCaseValue.ROOT_PROTOCON_W_H_STA_d1,
+    "压测2": AllCertCaseValue.ROOT_PROTOCON_W_H_STA_d2,
+    "压测3": AllCertCaseValue.ROOT_PROTOCON_W_H_STA_d3,
 
 }
 
@@ -114,8 +126,8 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
         # 设置列数
         self.treeWidget.setColumnCount(2)
         # 设置树形控件头部的标题
-        self.treeWidget.setHeaderLabels(['测试场景', "测试时长/小时, 测试轮数/次"])
-        self.treeWidget.setColumnWidth(0, 400)
+        self.treeWidget.setHeaderLabels(['测试场景', "时长(小时)/轮数(次数)"])
+        self.treeWidget.setColumnWidth(0, 450)
 
         # 设置根节点
         self.AllTestCase = QTreeWidgetItem(self.treeWidget)
@@ -126,62 +138,79 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
 
         for value in DictCommandInfo.keys():
             if DictCommandInfo[value] == AllCertCaseValue.ROOT_PROTOCON_STA:
-                item_sta_root = QTreeWidgetItem(self.AllTestCase)
-                item_sta_root.setText(0, value)
-                item_sta_root.setFlags(item_sta_root.flags() | Qt.ItemIsSelectable)
+                self.item_sta_root = QTreeWidgetItem(self.AllTestCase)
+                self.item_sta_root.setText(0, value)
+                self.item_sta_root.setFlags(self.item_sta_root.flags() | Qt.ItemIsSelectable)
 
             elif DictCommandInfo[value] == AllCertCaseValue.ROOT_PROTOCON_L_X_STA_CHILD:
-                item_L_X_STA = QTreeWidgetItem(item_sta_root)
-                item_L_X_STA.setText(0, value)
-                item_L_X_STA.setCheckState(0, Qt.Unchecked)
-                item_L_X_STA.setFlags(item_L_X_STA.flags() | Qt.ItemIsSelectable)
+                self.item_L_X_STA = QTreeWidgetItem(self.item_sta_root)
+                self.item_L_X_STA.setText(0, value)
+                self.item_L_X_STA.setCheckState(0, Qt.Unchecked)
+                self.item_L_X_STA.setFlags(self.item_L_X_STA.flags() | Qt.ItemIsSelectable)
 
             elif AllCertCaseValue.ROOT_PROTOCON_L_X_STA_CHILD < DictCommandInfo[
                 value] < AllCertCaseValue.ROOT_PROTOCON_L_X_STA_MAX:
-                item_L_X_STA_child = QTreeWidgetItem(item_L_X_STA)
-                item_L_X_STA_child.setText(0, value)
-                item_L_X_STA_child.setCheckState(0, Qt.Unchecked)
-                item_L_X_STA_child.setText(1, "")
-                item_L_X_STA_child.setFlags(
-                    item_L_X_STA_child.flags() | Qt.ItemIsSelectable | Qt.ItemIsUserCheckable | Qt.ItemIsEditable)
+                self.item_L_X_STA_child = QTreeWidgetItem(self.item_L_X_STA)
+                self.item_L_X_STA_child.setText(0, value)
+                self.item_L_X_STA_child.setCheckState(0, Qt.Unchecked)
+                self.item_L_X_STA_child.setText(1, "")
+                self.item_L_X_STA_child.setFlags(
+                    self.item_L_X_STA_child.flags() | Qt.ItemIsSelectable | Qt.ItemIsUserCheckable | Qt.ItemIsEditable)
 
             elif DictCommandInfo[value] == AllCertCaseValue.ROOT_PROTOCON_D_E_STA_CHILD:
-                item_D_E_STA = QTreeWidgetItem(item_sta_root)
-                item_D_E_STA.setText(0, value)
-                item_D_E_STA.setCheckState(0, Qt.Unchecked)
-                item_D_E_STA.setFlags(item_D_E_STA.flags() | Qt.ItemIsSelectable)
+                self.item_D_E_STA = QTreeWidgetItem(self.item_sta_root)
+                self.item_D_E_STA.setText(0, value)
+                self.item_D_E_STA.setCheckState(0, Qt.Unchecked)
+                self.item_D_E_STA.setFlags(self.item_D_E_STA.flags() | Qt.ItemIsSelectable)
                 # item_sta_father.setText(1, "")
                 # item_sta_father.setFlags(
                 #     self.AllTestCase.flags() | Qt.ItemIsUserCheckable | Qt.ItemIsSelectable | Qt.ItemIsEditable)  # 第一列的其他标志
             elif AllCertCaseValue.ROOT_PROTOCON_D_E_STA_CHILD < DictCommandInfo[
                 value] < AllCertCaseValue.ROOT_PROTOCON_D_E_STA_MAX:
-                item_D_E_STA_child = QTreeWidgetItem(item_D_E_STA)
-                item_D_E_STA_child.setText(0, value)
-                item_D_E_STA_child.setCheckState(0, Qt.Unchecked)
-                item_D_E_STA_child.setText(1, "")
-                item_D_E_STA_child.setFlags(
-                    item_D_E_STA_child.flags() | Qt.ItemIsSelectable | Qt.ItemIsUserCheckable | Qt.ItemIsEditable)
+                self.item_D_E_STA_child = QTreeWidgetItem(self.item_D_E_STA)
+                self.item_D_E_STA_child.setText(0, value)
+                self.item_D_E_STA_child.setCheckState(0, Qt.Unchecked)
+                self.item_D_E_STA_child.setText(1, "")
+                self.item_D_E_STA_child.setFlags(
+                    self.item_D_E_STA_child.flags() | Qt.ItemIsSelectable | Qt.ItemIsUserCheckable | Qt.ItemIsEditable)
 
             elif DictCommandInfo[value] == AllCertCaseValue.ROOT_PROTOCON_L_G_STA_CHILD:
-                item_L_G_STA = QTreeWidgetItem(item_sta_root)
-                item_L_G_STA.setText(0, value)
-                item_L_G_STA.setCheckState(0, Qt.Unchecked)
-                item_L_G_STA.setFlags(item_L_G_STA.flags() | Qt.ItemIsSelectable)
+                self.item_L_G_STA = QTreeWidgetItem(self.item_sta_root)
+                self.item_L_G_STA.setText(0, value)
+                self.item_L_G_STA.setCheckState(0, Qt.Unchecked)
+                self.item_L_G_STA.setFlags(self.item_L_G_STA.flags() | Qt.ItemIsSelectable)
 
             elif AllCertCaseValue.ROOT_PROTOCON_L_G_STA_CHILD < DictCommandInfo[
                 value] < AllCertCaseValue.ROOT_PROTOCON_L_G_STA_MAX:
-                item_L_G_STA_child = QTreeWidgetItem(item_L_G_STA)
-                item_L_G_STA_child.setText(0, value)
-                item_L_G_STA_child.setCheckState(0, Qt.Unchecked)
-                item_L_G_STA_child.setText(1, "")
-                item_L_G_STA_child.setFlags(
-                    item_L_G_STA_child.flags() | Qt.ItemIsSelectable | Qt.ItemIsUserCheckable | Qt.ItemIsEditable)
+                self.item_L_G_STA_child = QTreeWidgetItem(self.item_L_G_STA)
+                self.item_L_G_STA_child.setText(0, value)
+                self.item_L_G_STA_child.setCheckState(0, Qt.Unchecked)
+                self.item_L_G_STA_child.setText(1, "")
+                self.item_L_G_STA_child.setFlags(
+                    self.item_L_G_STA_child.flags() | Qt.ItemIsSelectable | Qt.ItemIsUserCheckable | Qt.ItemIsEditable)
 
+            elif DictCommandInfo[value] == AllCertCaseValue.ROOT_PROTOCON_W_H_STA_CHILD:
+                self.item_W_H_STA = QTreeWidgetItem(self.item_sta_root)
+                self.item_W_H_STA.setText(0, value)
+                self.item_W_H_STA.setCheckState(0, Qt.Unchecked)
+                self.item_W_H_STA.setFlags(self.item_L_G_STA.flags() | Qt.ItemIsSelectable)
+            elif AllCertCaseValue.ROOT_PROTOCON_W_H_STA_CHILD < DictCommandInfo[
+                value] < AllCertCaseValue.ROOT_PROTOCON_W_H_STA_MAX:
+                self.item_W_H_STA_child = QTreeWidgetItem(self.item_W_H_STA)
+                self.item_W_H_STA_child.setText(0, value)
+                self.item_W_H_STA_child.setCheckState(0, Qt.Unchecked)
+                self.item_W_H_STA_child.setText(1, "")
+                self.item_W_H_STA_child.setFlags(
+                    self.item_W_H_STA_child.flags() | Qt.ItemIsSelectable | Qt.ItemIsUserCheckable | Qt.ItemIsEditable)
 
         # self.treeWidget.setItemDelegateForColumn(1, ComboBoxDelegate(duration_options, self))
 
         # 节点全部展开
         self.treeWidget.expandAll()
+        # self.item_D_E_STA.setExpanded(False)
+        # self.item_L_X_STA.setExpanded(False)
+        # self.item_L_G_STA.setExpanded(False)
+        # self.item_sta_root.setExpanded(True)
         # 父节点选中全选子节点
         self.treeWidget.itemChanged.connect(self.handlechanged)
         # 链槽
