@@ -40,21 +40,51 @@ class ComboBoxDelegate(QStyledItemDelegate):
 
 
 class AllCertCaseValue:
-    ROOT_PROTOCON = 0
-    ROOT_PROTOCON_STA_CHILD = 1
-    ROOT_PROTOCON_STA_TMISCAN_B0 = 2
-    ROOT_PROTOCON_STA_TMISCAN_B1 = 3
-    ROOT_PROTOCON_STA_TMISCAN_B2 = 4
-    ROOT_PROTOCON_STA_TMISCAN_B3 = 5
+    # 压测
+    ROOT_PROTOCON_STA = 1
+    # 立项压测
+    ROOT_PROTOCON_L_X_STA_CHILD = 1.1
+    ROOT_PROTOCON_L_X_STA_A1 = 1.11
+    ROOT_PROTOCON_L_X_STA_A2 = 1.12
+    ROOT_PROTOCON_L_X_STA_A3 = 1.13
+    ROOT_PROTOCON_L_X_STA_A4 = 1.14
+    ROOT_PROTOCON_L_X_STA_MAX = ROOT_PROTOCON_L_X_STA_A4 + 0.01
+
+    # DDR,EMMC压测
+    ROOT_PROTOCON_D_E_STA_CHILD = 1.2
+    ROOT_PROTOCON_D_E_STA_TMISCAN_B0 = 1.21
+    ROOT_PROTOCON_D_E_STA_TMISCAN_B1 = 1.22
+    ROOT_PROTOCON_D_E_STA_TMISCAN_B2 = 1.23
+    ROOT_PROTOCON_D_E_STA_TMISCAN_B3 = 1.24
+    ROOT_PROTOCON_D_E_STA_MAX = ROOT_PROTOCON_D_E_STA_TMISCAN_B3 + 0.01
+
+    # 卡logo压测
+    ROOT_PROTOCON_L_G_STA_CHILD = 1.3
+    ROOT_PROTOCON_L_G_STA_C1 = 1.31
+    ROOT_PROTOCON_L_G_STA_C2 = 1.32
+    ROOT_PROTOCON_L_G_STA_C3 = 1.33
+    ROOT_PROTOCON_L_G_STA_MAX = ROOT_PROTOCON_L_G_STA_C3 + 0.01
 
 
 DictCommandInfo = {
+    "压测": AllCertCaseValue.ROOT_PROTOCON_STA,
+    "立项压测": AllCertCaseValue.ROOT_PROTOCON_L_X_STA_CHILD,
+    "立项压测1": AllCertCaseValue.ROOT_PROTOCON_L_X_STA_A1,
+    "立项压测2": AllCertCaseValue.ROOT_PROTOCON_L_X_STA_A2,
+    "立项压测3": AllCertCaseValue.ROOT_PROTOCON_L_X_STA_A3,
+    "立项压测4": AllCertCaseValue.ROOT_PROTOCON_L_X_STA_A4,
 
-    "A": AllCertCaseValue.ROOT_PROTOCON,
-    "DDR-memtester压力测试": AllCertCaseValue.ROOT_PROTOCON_STA_TMISCAN_B0,
-    "DDR-stressapptest": AllCertCaseValue.ROOT_PROTOCON_STA_TMISCAN_B1,
-    "DDR-switch_stressapptest-高低内存切换": AllCertCaseValue.ROOT_PROTOCON_STA_TMISCAN_B2,
-    "EMMC测试": AllCertCaseValue.ROOT_PROTOCON_STA_TMISCAN_B3,
+    "DDR/EMMC压测": AllCertCaseValue.ROOT_PROTOCON_D_E_STA_CHILD,
+    "DDR-memtester压力测试": AllCertCaseValue.ROOT_PROTOCON_D_E_STA_TMISCAN_B0,
+    "DDR-stressapptest": AllCertCaseValue.ROOT_PROTOCON_D_E_STA_TMISCAN_B1,
+    "DDR-switch_stressapptest-高低内存切换": AllCertCaseValue.ROOT_PROTOCON_D_E_STA_TMISCAN_B2,
+    "EMMC测试": AllCertCaseValue.ROOT_PROTOCON_D_E_STA_TMISCAN_B3,
+
+    "开机卡logo压测": AllCertCaseValue.ROOT_PROTOCON_L_G_STA_CHILD,
+    "适配器开关机": AllCertCaseValue.ROOT_PROTOCON_L_G_STA_C1,
+    "适配器/电池+电源--正常关机": AllCertCaseValue.ROOT_PROTOCON_L_G_STA_C2,
+    "适配器/电池+电源--异常关机": AllCertCaseValue.ROOT_PROTOCON_L_G_STA_C3,
+
 }
 
 
@@ -85,7 +115,7 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
         self.treeWidget.setColumnCount(2)
         # 设置树形控件头部的标题
         self.treeWidget.setHeaderLabels(['测试场景', "测试时长/小时, 测试轮数/次"])
-        self.treeWidget.setColumnWidth(0, 300)
+        self.treeWidget.setColumnWidth(0, 400)
 
         # 设置根节点
         self.AllTestCase = QTreeWidgetItem(self.treeWidget)
@@ -95,18 +125,65 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
         duration_options = [str(i) for i in range(1, 25)]
 
         for value in DictCommandInfo.keys():
-            if DictCommandInfo[value] > AllCertCaseValue.ROOT_PROTOCON_STA_CHILD:
-                item_sta_father = QTreeWidgetItem(self.AllTestCase)
-                item_sta_father.setText(0, value)
-                item_sta_father.setCheckState(0, Qt.Unchecked)
-                item_sta_father.setText(1, "")
-                item_sta_father.setFlags(
-                    self.AllTestCase.flags() | Qt.ItemIsUserCheckable | Qt.ItemIsSelectable | Qt.ItemIsEditable)  # 第一列的其他标志
+            if DictCommandInfo[value] == AllCertCaseValue.ROOT_PROTOCON_STA:
+                item_sta_root = QTreeWidgetItem(self.AllTestCase)
+                item_sta_root.setText(0, value)
+                item_sta_root.setFlags(item_sta_root.flags() | Qt.ItemIsSelectable)
+
+            elif DictCommandInfo[value] == AllCertCaseValue.ROOT_PROTOCON_L_X_STA_CHILD:
+                item_L_X_STA = QTreeWidgetItem(item_sta_root)
+                item_L_X_STA.setText(0, value)
+                item_L_X_STA.setCheckState(0, Qt.Unchecked)
+                item_L_X_STA.setFlags(item_L_X_STA.flags() | Qt.ItemIsSelectable)
+
+            elif AllCertCaseValue.ROOT_PROTOCON_L_X_STA_CHILD < DictCommandInfo[
+                value] < AllCertCaseValue.ROOT_PROTOCON_L_X_STA_MAX:
+                item_L_X_STA_child = QTreeWidgetItem(item_L_X_STA)
+                item_L_X_STA_child.setText(0, value)
+                item_L_X_STA_child.setCheckState(0, Qt.Unchecked)
+                item_L_X_STA_child.setText(1, "")
+                item_L_X_STA_child.setFlags(
+                    item_L_X_STA_child.flags() | Qt.ItemIsSelectable | Qt.ItemIsUserCheckable | Qt.ItemIsEditable)
+
+            elif DictCommandInfo[value] == AllCertCaseValue.ROOT_PROTOCON_D_E_STA_CHILD:
+                item_D_E_STA = QTreeWidgetItem(item_sta_root)
+                item_D_E_STA.setText(0, value)
+                item_D_E_STA.setCheckState(0, Qt.Unchecked)
+                item_D_E_STA.setFlags(item_D_E_STA.flags() | Qt.ItemIsSelectable)
+                # item_sta_father.setText(1, "")
+                # item_sta_father.setFlags(
+                #     self.AllTestCase.flags() | Qt.ItemIsUserCheckable | Qt.ItemIsSelectable | Qt.ItemIsEditable)  # 第一列的其他标志
+            elif AllCertCaseValue.ROOT_PROTOCON_D_E_STA_CHILD < DictCommandInfo[
+                value] < AllCertCaseValue.ROOT_PROTOCON_D_E_STA_MAX:
+                item_D_E_STA_child = QTreeWidgetItem(item_D_E_STA)
+                item_D_E_STA_child.setText(0, value)
+                item_D_E_STA_child.setCheckState(0, Qt.Unchecked)
+                item_D_E_STA_child.setText(1, "")
+                item_D_E_STA_child.setFlags(
+                    item_D_E_STA_child.flags() | Qt.ItemIsSelectable | Qt.ItemIsUserCheckable | Qt.ItemIsEditable)
+
+            elif DictCommandInfo[value] == AllCertCaseValue.ROOT_PROTOCON_L_G_STA_CHILD:
+                item_L_G_STA = QTreeWidgetItem(item_sta_root)
+                item_L_G_STA.setText(0, value)
+                item_L_G_STA.setCheckState(0, Qt.Unchecked)
+                item_L_G_STA.setFlags(item_L_G_STA.flags() | Qt.ItemIsSelectable)
+
+            elif AllCertCaseValue.ROOT_PROTOCON_L_G_STA_CHILD < DictCommandInfo[
+                value] < AllCertCaseValue.ROOT_PROTOCON_L_G_STA_MAX:
+                item_L_G_STA_child = QTreeWidgetItem(item_L_G_STA)
+                item_L_G_STA_child.setText(0, value)
+                item_L_G_STA_child.setCheckState(0, Qt.Unchecked)
+                item_L_G_STA_child.setText(1, "")
+                item_L_G_STA_child.setFlags(
+                    item_L_G_STA_child.flags() | Qt.ItemIsSelectable | Qt.ItemIsUserCheckable | Qt.ItemIsEditable)
+
 
         # self.treeWidget.setItemDelegateForColumn(1, ComboBoxDelegate(duration_options, self))
 
         # 节点全部展开
         self.treeWidget.expandAll()
+        # 父节点选中全选子节点
+        self.treeWidget.itemChanged.connect(self.handlechanged)
         # 链槽
         self.select_devices_name()
         self.list_COM()
@@ -118,6 +195,22 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
         self.qt_process.finished.connect(self.handle_finished)
         self.check_mem_button.clicked.connect(self.query_mem_free)
         self.mem_free_process.finished.connect(self.mem_free_finished_handle)
+
+    def handlechanged(self, item, column):
+        # 获取选中节点的子节点个数
+        count = item.childCount()
+        # 如果被选中
+        if item.checkState(column) == Qt.Checked:
+            # 连同下面子子节点全部设置为选中状态
+            for f in range(count):
+                if item.child(f).checkState(0) != Qt.Checked:
+                    item.child(f).setCheckState(0, Qt.Checked)
+        # 如果取消选中
+        if item.checkState(column) == Qt.Unchecked:
+            # 连同下面子子节点全部设置为取消选中状态
+            for f in range(count):
+                if item.child(f).checkState != Qt.Unchecked:
+                    item.child(f).setCheckState(0, Qt.Unchecked)
 
     def mem_free_finished_handle(self):
         with open(conf_path.mem_log_path, "r", encoding="utf-8") as f:
@@ -133,7 +226,8 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
         self.double_check_root()
         self.ui_config.add_config_option(self.ui_config.section_ui_to_background,
                                          self.ui_config.ui_option_system_type, self.system_type.currentText())
-        self.ui_config.add_config_option(self.ui_config.section_ui_to_background, self.ui_config.ui_option_device_name, self.edit_device_name.currentText())
+        self.ui_config.add_config_option(self.ui_config.section_ui_to_background, self.ui_config.ui_option_device_name,
+                                         self.edit_device_name.currentText())
         self.mem_free_process.start(conf_path.bat_mem_info_path)
 
     def double_check_root(self):
@@ -300,7 +394,8 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
         self.ui_config.add_config_option(self.ui_config.section_ui_to_background,
                                          self.ui_config.ui_option_test_duration, ",".join(cases_duration))
 
-        self.ui_config.add_config_option(self.ui_config.section_ui_to_background, self.ui_config.ui_option_mem_free_value, self.mem_free.text())
+        self.ui_config.add_config_option(self.ui_config.section_ui_to_background,
+                                         self.ui_config.ui_option_mem_free_value, self.mem_free.text())
 
         # self.double_check_root()
 

@@ -5,21 +5,33 @@ from PyQt5.QtCore import pyqtSlot
 import config_path
 
 
+class ChildWindow(QtWidgets.QMainWindow):
+    def __init__(self):
+        super().__init__()
+        self.setWindowTitle('子界面')
+        self.setGeometry(400, 400, 300, 200)
+
+        layout = QtWidgets.QVBoxLayout()
+        label = QtWidgets.QLabel('这是一个子界面')
+        layout.addWidget(label)
+
+        self.setLayout(layout)
+
+
 class Ui_MainWindow(config_path.UIConfigPath):
     options = QtWidgets.QFileDialog.Options()
     options |= QtWidgets.QFileDialog.ReadOnly
-
-    # project_path = path_dir = str(os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir)))
-    # config_file_path = os.path.join(project_path, "UI", "config.ini")
-    # debug_log_path = os.path.join(project_path, "Log", "log.log")
-    # run_bat_path = os.path.join(project_path, "run.bat")
 
     def __init__(self):
         self.stop_process_button = QtWidgets.QPushButton("停止压测")
 
     def setupUi(self, MainWindow):
+        # self.child_window = ChildWindow()  # 创建子界面实例
+        # self.child_window.show()
+        # self.child_window.exec_()  # 显示子界面（对话框）
+
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(1050, 600)
+        MainWindow.resize(1050, 700)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         # 创建水平布局
         self.main_layout = QHBoxLayout(self.centralwidget)

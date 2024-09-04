@@ -23,7 +23,7 @@ class TestStabilityCombination:
 
     def teardown_class(self):
         log.info("压测运行完毕")
-        time.sleep(5)
+        time.sleep(3)
 
     @allure.feature("DDR-Integration-testing")
     @allure.title("DDR-EMMC压力测试")
