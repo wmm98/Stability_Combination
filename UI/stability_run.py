@@ -5,6 +5,7 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtWidgets import QStyledItemDelegate
 from PyQt5.QtCore import QTimer, QProcess, Qt, pyqtSlot
 from tree_widget import Ui_MainWindow
+from tree_widget import ChildWindow
 import os
 import shutil
 from PyQt5.QtGui import QPixmap
@@ -108,7 +109,8 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
         self.last_modify_time = 0
         self.bg_config = configfile.ConfigP(self.background_config_file_path)
         self.ui_config = configfile.ConfigP(self.ui_config_file_path)
-        # 初始化读取内容读取指针在开始位置
+        # 初始化子界面
+        self.child_window = None
         self.setupUi(self)
         self.AllTestCase = None
         self.intiui()
@@ -124,9 +126,9 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
         self.mem_free_process = QProcess()
         # 用例数结构
         # 设置列数
-        self.treeWidget.setColumnCount(2)
+        self.treeWidget.setColumnCount(3)
         # 设置树形控件头部的标题
-        self.treeWidget.setHeaderLabels(['测试场景', "时长(小时)/轮数(次数)"])
+        self.treeWidget.setHeaderLabels(['测试场景', "运行时长/轮数", "单位"])
         self.treeWidget.setColumnWidth(0, 450)
 
         # 设置根节点
@@ -154,6 +156,7 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
                 self.item_L_X_STA_child.setText(0, value)
                 self.item_L_X_STA_child.setCheckState(0, Qt.Unchecked)
                 self.item_L_X_STA_child.setText(1, "")
+                self.item_L_X_STA_child.setText(2, "次")
                 self.item_L_X_STA_child.setFlags(
                     self.item_L_X_STA_child.flags() | Qt.ItemIsSelectable | Qt.ItemIsUserCheckable | Qt.ItemIsEditable)
 
@@ -169,6 +172,10 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
                 self.item_D_E_STA_child.setText(0, value)
                 self.item_D_E_STA_child.setCheckState(0, Qt.Unchecked)
                 self.item_D_E_STA_child.setText(1, "")
+                if "DDR-memtester" in value:
+                    self.item_D_E_STA_child.setText(2, "次")
+                else:
+                    self.item_D_E_STA_child.setText(2, "小时")
                 self.item_D_E_STA_child.setFlags(
                     self.item_D_E_STA_child.flags() | Qt.ItemIsSelectable | Qt.ItemIsUserCheckable | Qt.ItemIsEditable)
 
@@ -184,6 +191,7 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
                 self.item_L_G_STA_child.setText(0, value)
                 self.item_L_G_STA_child.setCheckState(0, Qt.Unchecked)
                 self.item_L_G_STA_child.setText(1, "")
+                self.item_L_G_STA_child.setText(2, "次")
                 self.item_L_G_STA_child.setFlags(
                     self.item_L_G_STA_child.flags() | Qt.ItemIsSelectable | Qt.ItemIsUserCheckable | Qt.ItemIsEditable)
 
@@ -199,6 +207,7 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
                 self.item_W_H_STA_child.setText(0, value)
                 self.item_W_H_STA_child.setCheckState(0, Qt.Unchecked)
                 self.item_W_H_STA_child.setText(1, "")
+                self.item_W_H_STA_child.setText(2, "次")
                 self.item_W_H_STA_child.setFlags(
                     self.item_W_H_STA_child.flags() | Qt.ItemIsSelectable | Qt.ItemIsUserCheckable | Qt.ItemIsEditable)
 
@@ -212,6 +221,8 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
         # self.item_sta_root.setExpanded(True)
         # 父节点选中全选子节点
         self.treeWidget.itemChanged.connect(self.handlechanged)
+        # 显示相应需要配置的参数填入
+        self.treeWidget.itemClicked.connect(self.on_item_clicked)
         # 链槽
         self.select_devices_name()
         self.list_COM()
@@ -223,6 +234,21 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
         self.qt_process.finished.connect(self.handle_finished)
         self.check_mem_button.clicked.connect(self.query_mem_free)
         self.mem_free_process.finished.connect(self.mem_free_finished_handle)
+
+    def on_item_clicked(self, item):
+        # pass
+        self.child_window = ChildWindow()
+        if item == self.item_L_G_STA:
+            if item.checkState(0) == 2:
+                if not self.child_window.isVisible():
+                    self.child_window.show()
+        if item == self.item_L_X_STA:
+            if item.checkState(0) == 2:
+                if not self.child_window.isVisible():
+                    self.child_window.show()
+
+            # if self.item_L_X_STA.isSelected():
+            #     print("勾选到了")
 
     def handlechanged(self, item, column):
         # 获取选中节点的子节点个数

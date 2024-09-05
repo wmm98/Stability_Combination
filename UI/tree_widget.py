@@ -6,16 +6,20 @@ import config_path
 
 
 class ChildWindow(QtWidgets.QMainWindow):
-    def __init__(self):
-        super().__init__()
-        self.setWindowTitle('子界面')
-        self.setGeometry(400, 400, 300, 200)
 
-        layout = QtWidgets.QVBoxLayout()
-        label = QtWidgets.QLabel('这是一个子界面')
-        layout.addWidget(label)
+    def setupUi(self, MainWindow):
+        MainWindow.setObjectName("MainWindow")
+        MainWindow.resize(100, 100)
+        self.centralwidget = QtWidgets.QWidget(MainWindow)
+        self.centralwidget.setObjectName("centralwidget")
+        self.verticalLayout = QtWidgets.QVBoxLayout(self.centralwidget)
+        self.verticalLayout.setObjectName("verticalLayout")
+        self.treeWidget = QtWidgets.QTreeWidget(self.centralwidget)
 
-        self.setLayout(layout)
+        self.device_info = QtWidgets.QLabel("\n设备信息：")
+        # self.device_edit = QtWidgets.QLineEdit()
+        self.verticalLayout.addWidget(self.device_info)
+        # self.verticalLayout.addWidget(self.device_edit)
 
 
 class Ui_MainWindow(config_path.UIConfigPath):
@@ -26,9 +30,9 @@ class Ui_MainWindow(config_path.UIConfigPath):
         self.stop_process_button = QtWidgets.QPushButton("停止压测")
 
     def setupUi(self, MainWindow):
-        # self.child_window = ChildWindow()  # 创建子界面实例
-        # self.child_window.show()
-        # self.child_window.exec_()  # 显示子界面（对话框）
+        child_window = ChildWindow()  # 创建子界面实例
+        child_window.show()
+        # child_window.exec_()  # 显示子界面（对话框）
 
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(1200, 700)
