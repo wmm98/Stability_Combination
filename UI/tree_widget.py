@@ -5,23 +5,6 @@ from PyQt5.QtCore import pyqtSlot
 import config_path
 
 
-class ChildWindow(QtWidgets.QMainWindow):
-
-    def setupUi(self, MainWindow):
-        MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(100, 100)
-        self.centralwidget = QtWidgets.QWidget(MainWindow)
-        self.centralwidget.setObjectName("centralwidget")
-        self.verticalLayout = QtWidgets.QVBoxLayout(self.centralwidget)
-        self.verticalLayout.setObjectName("verticalLayout")
-        self.treeWidget = QtWidgets.QTreeWidget(self.centralwidget)
-
-        self.device_info = QtWidgets.QLabel("\n设备信息：")
-        # self.device_edit = QtWidgets.QLineEdit()
-        self.verticalLayout.addWidget(self.device_info)
-        # self.verticalLayout.addWidget(self.device_edit)
-
-
 class Ui_MainWindow(config_path.UIConfigPath):
     options = QtWidgets.QFileDialog.Options()
     options |= QtWidgets.QFileDialog.ReadOnly
@@ -30,10 +13,6 @@ class Ui_MainWindow(config_path.UIConfigPath):
         self.stop_process_button = QtWidgets.QPushButton("停止压测")
 
     def setupUi(self, MainWindow):
-        child_window = ChildWindow()  # 创建子界面实例
-        child_window.show()
-        # child_window.exec_()  # 显示子界面（对话框）
-
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(1200, 700)
         self.centralwidget = QtWidgets.QWidget(MainWindow)

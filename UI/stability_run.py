@@ -5,7 +5,6 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtWidgets import QStyledItemDelegate
 from PyQt5.QtCore import QTimer, QProcess, Qt, pyqtSlot
 from tree_widget import Ui_MainWindow
-from tree_widget import ChildWindow
 import os
 import shutil
 from PyQt5.QtGui import QPixmap
@@ -110,7 +109,7 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
         self.bg_config = configfile.ConfigP(self.background_config_file_path)
         self.ui_config = configfile.ConfigP(self.ui_config_file_path)
         # 初始化子界面
-        self.child_window = None
+        self.logo_window = Reboot_Logo_MainWindow()
         self.setupUi(self)
         self.AllTestCase = None
         self.intiui()
@@ -237,7 +236,6 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
 
     def on_item_clicked(self, item):
         # pass
-        self.child_window = ChildWindow()
         if item == self.item_L_G_STA:
             if item.checkState(0) == 2:
                 if not self.child_window.isVisible():
@@ -618,17 +616,12 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
 
 
 if __name__ == '__main__':
-    # import subprocess
-    # QProcess().start(conf_path.bat_pre_info_path)
-    # print(conf_path.project_path)
-    # print(conf_path.py_pre_info_path)
-
-    subprocess.Popen(conf_path.bat_pre_info_path, shell=True, stdout=subprocess.PIPE,
-                     stderr=subprocess.PIPE).communicate(timeout=120)
-    # print("******************************************************")
-    # print(conf_path.project_path)
-    # print(conf_path.py_pre_info_path)
+    # subprocess.Popen(conf_path.bat_pre_info_path, shell=True, stdout=subprocess.PIPE,
+    #                  stderr=subprocess.PIPE).communicate(timeout=120)
     app = QtWidgets.QApplication(sys.argv)
-    myshow = UIDisplay()
-    myshow.show()
+    # myshow = UIDisplay()
+    # myshow.show()
+    # app.exec_()
+    logo_show = LogoDisplay()
+    logo_show.show()
     app.exec_()
