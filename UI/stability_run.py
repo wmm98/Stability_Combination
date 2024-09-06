@@ -5,6 +5,7 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtWidgets import QStyledItemDelegate
 from PyQt5.QtCore import QTimer, QProcess, Qt, pyqtSlot
 from tree_widget import Ui_MainWindow
+from reboot_logo_ui import LogoDisplay
 import os
 import shutil
 from PyQt5.QtGui import QPixmap
@@ -109,7 +110,7 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
         self.bg_config = configfile.ConfigP(self.background_config_file_path)
         self.ui_config = configfile.ConfigP(self.ui_config_file_path)
         # 初始化子界面
-        self.logo_window = Reboot_Logo_MainWindow()
+        self.logo_window = LogoDisplay()
         self.setupUi(self)
         self.AllTestCase = None
         self.intiui()
@@ -238,12 +239,12 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
         # pass
         if item == self.item_L_G_STA:
             if item.checkState(0) == 2:
-                if not self.child_window.isVisible():
-                    self.child_window.show()
-        if item == self.item_L_X_STA:
-            if item.checkState(0) == 2:
-                if not self.child_window.isVisible():
-                    self.child_window.show()
+                if not self.logo_window.isVisible():
+                    self.logo_window.show()
+        # if item == self.item_L_X_STA:
+        #     if item.checkState(0) == 2:
+        #         if not self.child_window.isVisible():
+        #             self.child_window.show()
 
             # if self.item_L_X_STA.isSelected():
             #     print("勾选到了")
@@ -619,9 +620,9 @@ if __name__ == '__main__':
     # subprocess.Popen(conf_path.bat_pre_info_path, shell=True, stdout=subprocess.PIPE,
     #                  stderr=subprocess.PIPE).communicate(timeout=120)
     app = QtWidgets.QApplication(sys.argv)
-    # myshow = UIDisplay()
-    # myshow.show()
-    # app.exec_()
-    logo_show = LogoDisplay()
-    logo_show.show()
+    myshow = UIDisplay()
+    myshow.show()
     app.exec_()
+    # logo_show = LogoDisplay()
+    # logo_show.show()
+    # app.exec_()

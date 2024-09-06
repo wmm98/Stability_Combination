@@ -25,7 +25,6 @@ class Reboot_Logo_MainWindow:
     options |= QtWidgets.QFileDialog.ReadOnly
     project_path = path_dir = str(os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir)))
     config_file_path = os.path.join(project_path, "UI", "config.ini")
-    print(config_file_path)
     logo_take_path = os.path.join(project_path, "Photo", "Logo", "Logo", "Logo.png")
     logo_key_path = os.path.join(project_path, "Photo", "Logo", "Key", "Key.png")
     camera_key_path = os.path.join(project_path, "Photo", "CameraPhoto", "Key", "Key.png")
@@ -192,7 +191,7 @@ class Reboot_Logo_MainWindow:
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
+        MainWindow.setWindowTitle(_translate("MainWindow", "开关机卡logo相关用例参数配置"))
 
 
 """
