@@ -137,7 +137,6 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
         self.AllTestCase.setText(0, '测试项')
 
         duration_options = [str(i) for i in range(1, 25)]
-
         for value in DictCommandInfo.keys():
             if DictCommandInfo[value] == AllCertCaseValue.ROOT_PROTOCON_STA:
                 self.item_sta_root = QTreeWidgetItem(self.AllTestCase)
@@ -211,6 +210,29 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
                 self.item_W_H_STA_child.setFlags(
                     self.item_W_H_STA_child.flags() | Qt.ItemIsSelectable | Qt.ItemIsUserCheckable | Qt.ItemIsEditable)
 
+        # self.item_sta_root = QTreeWidgetItem(self.AllTestCase)
+        # self.item_sta_root.setText(0, "压测")
+        # self.item_sta_root.setFlags(self.item_sta_root.flags() | Qt.ItemIsSelectable)
+        #
+        # self.item_L_G_STA = QTreeWidgetItem(self.item_sta_root)
+        # self.item_L_G_STA.setText(0, "开关机压测")
+        # self.item_L_G_STA.setCheckState(0, Qt.Unchecked)
+        # self.item_L_G_STA.setFlags(self.item_L_G_STA.flags() | Qt.ItemIsSelectable)
+        #
+        # self.item_L_G_STA_child_1 = QTreeWidgetItem(self.item_L_G_STA)
+        # self.item_L_G_STA_child_1.setText(0, "这是调试")
+        # self.item_L_G_STA_child_1.setCheckState(0, Qt.Unchecked)
+        # self.item_L_G_STA_child_1.setText(1, "")
+        # self.item_L_G_STA_child_1.setText(2, "次")
+        # self.item_L_G_STA_child_1.setFlags(
+        #     self.item_L_G_STA_child_1.flags() | Qt.ItemIsSelectable | Qt.ItemIsUserCheckable | Qt.ItemIsEditable)
+        #
+        # parent_item = self.item_L_G_STA_child_1.parent()
+        # if parent_item:
+        #     print(f"Parent Item Text: {parent_item.text(0)}")
+        # else:
+        #     print("This item has no parent (it might be a top-level item).")
+
         # self.treeWidget.setItemDelegateForColumn(1, ComboBoxDelegate(duration_options, self))
 
         # 节点全部展开
@@ -236,31 +258,22 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
         self.mem_free_process.finished.connect(self.mem_free_finished_handle)
 
     def on_item_clicked(self, item):
-        # pass
-        if item == self.item_L_G_STA:
+        # 开关机卡logo窗口处理
+        if item == self.item_L_G_STA or item.parent() == self.item_L_G_STA:
             if item.checkState(0) == 2:
                 if not self.logo_window.isVisible():
                     self.logo_window.show()
-        # if item == self.item_L_X_STA:
-        #     if item.checkState(0) == 2:
-        #         if not self.child_window.isVisible():
-        #             self.child_window.show()
-
-            # if self.item_L_X_STA.isSelected():
-            #     print("勾选到了")
 
     def handlechanged(self, item, column):
         # 获取选中节点的子节点个数
         count = item.childCount()
-        # 如果被选中
+        # 如果被选中,子节点全选中勾选
         if item.checkState(column) == Qt.Checked:
-            # 连同下面子子节点全部设置为选中状态
             for f in range(count):
                 if item.child(f).checkState(0) != Qt.Checked:
                     item.child(f).setCheckState(0, Qt.Checked)
-        # 如果取消选中
+        # 如果取消选中,子节点全取消勾选
         if item.checkState(column) == Qt.Unchecked:
-            # 连同下面子子节点全部设置为取消选中状态
             for f in range(count):
                 if item.child(f).checkState != Qt.Unchecked:
                     item.child(f).setCheckState(0, Qt.Unchecked)
@@ -617,8 +630,8 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
 
 
 if __name__ == '__main__':
-    # subprocess.Popen(conf_path.bat_pre_info_path, shell=True, stdout=subprocess.PIPE,
-    #                  stderr=subprocess.PIPE).communicate(timeout=120)
+    subprocess.Popen(conf_path.bat_pre_info_path, shell=True, stdout=subprocess.PIPE,
+                     stderr=subprocess.PIPE).communicate(timeout=120)
     app = QtWidgets.QApplication(sys.argv)
     myshow = UIDisplay()
     myshow.show()

@@ -16,31 +16,32 @@ import rembg
 from PyQt5.QtCore import QUrl, QFileInfo
 import configparser
 import time
-import configfile
+from configfile import ConfigP
 import config_path
 
 
-class Reboot_Logo_MainWindow:
+class Reboot_Logo_MainWindow(config_path.UIConfigPath):
     options = QtWidgets.QFileDialog.Options()
     options |= QtWidgets.QFileDialog.ReadOnly
-    project_path = path_dir = str(os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir)))
-    config_file_path = os.path.join(project_path, "UI", "config.ini")
-    logo_take_path = os.path.join(project_path, "Photo", "Logo", "Logo", "Logo.png")
-    logo_key_path = os.path.join(project_path, "Photo", "Logo", "Key", "Key.png")
-    camera_key_path = os.path.join(project_path, "Photo", "CameraPhoto", "Key", "Key.png")
-    camera2_key_path = os.path.join(project_path, "Photo", "CameraPhoto", "Key", "Key2.png")
-    debug_log_path = os.path.join(project_path, "Log", "Debug", "debug_log.txt")
-    # failed_logcat.txt
-    adb_log_path = os.path.join(project_path, "Log", "Logcat", "failed_logcat.txt")
-    run_bat_path = os.path.join(project_path, "Run", "bat_run.bat")
-    failed_image_key_path = os.path.join(project_path, "Photo", "CameraPhoto", "Key", "Failed.png")
+
+    # project_path = path_dir = str(os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir)))
+    # config_file_path = os.path.join(project_path, "UI", "config.ini")
+    # logo_take_path = os.path.join(project_path, "Photo", "Logo", "Logo", "Logo.png")
+    # logo_key_path = os.path.join(project_path, "Photo", "Logo", "Key", "Key.png")
+    # camera_key_path = os.path.join(project_path, "Photo", "CameraPhoto", "Key", "Key.png")
+    # camera2_key_path = os.path.join(project_path, "Photo", "CameraPhoto", "Key", "Key2.png")
+    # debug_log_path = os.path.join(project_path, "Log", "Debug", "debug_log.txt")
+    # # failed_logcat.txt
+    # adb_log_path = os.path.join(project_path, "Log", "Logcat", "failed_logcat.txt")
+    # run_bat_path = os.path.join(project_path, "Run", "bat_run.bat")
+    # failed_image_key_path = os.path.join(project_path, "Photo", "CameraPhoto", "Key", "Failed.png")
     # 测试前先清除
-    if os.path.exists(debug_log_path):
-        os.remove(debug_log_path)
-    if os.path.exists(adb_log_path):
-        os.remove(adb_log_path)
-    if os.path.exists(logo_key_path):
-        os.remove(logo_key_path)
+    # if os.path.exists(debug_log_path):
+    #     os.remove(debug_log_path)
+    # if os.path.exists(adb_log_path):
+    #     os.remove(adb_log_path)
+    # if os.path.exists(logo_key_path):
+    #     os.remove(logo_key_path)
 
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
@@ -322,91 +323,96 @@ class LogoDisplay(QtWidgets.QMainWindow, Reboot_Logo_MainWindow):
         return ["1路", "2路", "3路", "4路"]
 
     def save_config(self, file_name):
-        # config = configparser.ConfigParser()
-        # section = "Config"
-        # config.add_section(section)
-        #
-        # config[section]['cases'] = ",".join(self.cases)
+        config = ConfigP(self.ui_config_file_path)
+        section = config.section_ui_logo
+        config.add_config_section(section)
+
         # config[section]['device_name'] = self.edit_device_name.currentText()
-        # config[section]["COM"] = self.test_COM.currentText()
+        config.add_config_option(section, "COM", self.test_COM.currentText())
+        config.add_config_option(section, "logcat_duration", self.adb_log_duration.currentText())
         # config[section]["logcat_duration"] = self.adb_log_duration.currentText()
-        #
-        # # 接线方式
-        # if self.is_adapter.isChecked():
-        #     config[section]["is_adapter"] = "1"
-        # else:
-        #     config[section]["is_adapter"] = "0"
-        # if self.is_power_button.isChecked():
-        #     config[section]["is_power_button"] = "1"
-        # else:
-        #     config[section]["is_power_button"] = "0"
-        # if self.is_usb.isChecked():
-        #     config[section]["is_usb"] = "1"
-        # else:
-        #     config[section]["is_usb"] = "0"
-        #
-        # # 接线配置
-        # if self.adapter_config.isEnabled():
-        #     if self.adapter_config.currentText() == "1路":
-        #         config[section]["adapter_power_config"] = "relay_1"
-        #     elif self.adapter_config.currentText() == "2路":
-        #         config[section]["adapter_power_config"] = "relay_2"
-        #     elif self.adapter_config.currentText() == "3路":
-        #         config[section]["adapter_power_config"] = "relay_3"
-        #     else:
-        #         config[section]["adapter_power_config"] = "relay_4"
-        #
-        # if self.power_button_config.isEnabled():
-        #     if self.power_button_config.currentText() == "1路":
-        #         config[section]["power_button_config"] = "relay_1"
-        #     elif self.power_button_config.currentText() == "2路":
-        #         config[section]["power_button_config"] = "relay_2"
-        #     elif self.power_button_config.currentText() == "3路":
-        #         config[section]["power_button_config"] = "relay_3"
-        #     else:
-        #         config[section]["power_button_config"] = "relay_4"
-        #
-        # if self.usb_config.isEnabled():
-        #     if self.usb_config.currentText() == "1路":
-        #         config[section]["usb_config"] = "relay_1"
-        #     elif self.usb_config.currentText() == "2路":
-        #         config[section]["usb_config"] = "relay_2"
-        #     elif self.usb_config.currentText() == "3路":
-        #         config[section]["usb_config"] = "relay_3"
-        #     else:
-        #         config[section]["usb_config"] = "relay_4"
-        #
-        # # 其他配置信息
-        # if self.only_boot.isChecked():
-        #     config[section]["only_boot_config"] = "1"
-        # else:
-        #     config[section]["only_boot_config"] = "0"
-        #
-        # if self.double_screen.isChecked():
-        #     config[section]["double_screen_config"] = "1"
-        # else:
-        #     config[section]["double_screen_config"] = "0"
-        #
-        # if self.button_boot_time.isEnabled():
-        #     config[section]["button_boot_time"] = self.button_boot_time.currentText()
-        #
-        # with open(file_name, 'w') as configfile:
-        #     config.write(configfile)
-        pass
 
-    def get_file_modification_time(self, file_path):
-        """获取文件的最后修改时间"""
-        file_info = QFileInfo(file_path)
-        last_modify = file_info.lastModified()
-        return last_modify
+        # 接线方式
+        if self.is_adapter.isChecked():
+            # config[section]["is_adapter"] = "1"
+            config.add_config_option(section, "is_adapter", "1")
+        else:
+            # config[section]["is_adapter"] = "0"
+            config.add_config_option(section, "is_adapter", "0")
+        if self.is_power_button.isChecked():
+            # config[section]["is_power_button"] = "1"
+            config.add_config_option(section, "is_power_button", "1")
+        else:
+            # config[section]["is_power_button"] = "0"
+            config.add_config_option(section, "is_power_button", "0")
+        if self.is_usb.isChecked():
+            # config[section]["is_usb"] = "1"
+            config.add_config_option(section, "is_usb", "1")
+        else:
+            # config[section]["is_usb"] = "0"
+            config.add_config_option(section, "is_usb", "0")
 
-    def check_image_modification(self):
-        """检查图片文件是否有修改"""
-        if os.path.exists(self.camera_key_path):
-            current_mod_time = self.get_file_modification_time(self.camera_key_path)
-            if current_mod_time != self.last_modify_time:
-                self.last_modify_time = current_mod_time  # 更新为新的修改时间
-                self.add_logo_image()
+        # 接线配置
+        if self.adapter_config.isEnabled():
+            if self.adapter_config.currentText() == "1路":
+                # config[section]["adapter_power_config"] = "relay_1"
+                config.add_config_option(section, "adapter_power_config", "relay_1")
+            elif self.adapter_config.currentText() == "2路":
+                # config[section]["adapter_power_config"] = "relay_2"
+                config.add_config_option(section, "adapter_power_config", "relay_2")
+            elif self.adapter_config.currentText() == "3路":
+                # config[section]["adapter_power_config"] = "relay_3"
+                config.add_config_option(section, "adapter_power_config", "relay_3")
+            else:
+                # config[section]["adapter_power_config"] = "relay_4"
+                config.add_config_option(section, "adapter_power_config", "relay_4")
+
+        if self.power_button_config.isEnabled():
+            if self.power_button_config.currentText() == "1路":
+                # config[section]["power_button_config"] = "relay_1"
+                config.add_config_option(section, "power_button_config", "relay_1")
+            elif self.power_button_config.currentText() == "2路":
+                # config[section]["power_button_config"] = "relay_2"
+                config.add_config_option(section, "power_button_config", "relay_2")
+            elif self.power_button_config.currentText() == "3路":
+                # config[section]["power_button_config"] = "relay_3"
+                config.add_config_option(section, "power_button_config", "relay_3")
+            else:
+                # config[section]["power_button_config"] = "relay_4"
+                config.add_config_option(section, "power_button_config", "relay_4")
+
+        if self.usb_config.isEnabled():
+            if self.usb_config.currentText() == "1路":
+                # config[section]["usb_config"] = "relay_1"
+                config.add_config_option(section, "usb_config", "relay_1")
+            elif self.usb_config.currentText() == "2路":
+                # config[section]["usb_config"] = "relay_2"
+                config.add_config_option(section, "usb_config", "relay_2")
+            elif self.usb_config.currentText() == "3路":
+                # config[section]["usb_config"] = "relay_3"
+                config.add_config_option(section, "usb_config", "relay_3")
+            else:
+                # config[section]["usb_config"] = "relay_4"
+                config.add_config_option(section, "usb_config", "relay_4")
+
+        # 其他配置信息
+        if self.only_boot.isChecked():
+            # config[section]["only_boot_config"] = "1"
+            config.add_config_option(section, "only_boot_config", "1")
+        else:
+            # config[section]["only_boot_config"] = "0"
+            config.add_config_option(section, "only_boot_config", "0")
+
+        if self.double_screen.isChecked():
+            # config[section]["double_screen_config"] = "1"
+            config.add_config_option(section, "double_screen_config", "1")
+        else:
+            # config[section]["double_screen_config"] = "0"
+            config.add_config_option(section, "double_screen_config", "0")
+
+        if self.button_boot_time.isEnabled():
+            # config[section]["button_boot_time"] = self.button_boot_time.currentText()
+            config.add_config_option(section, "button_boot_time", self.button_boot_time.currentText())
 
     def stop_process(self):
         # 文件位置初始化
@@ -456,38 +462,15 @@ class LogoDisplay(QtWidgets.QMainWindow, Reboot_Logo_MainWindow):
             self.test_COM.addItem(port)
 
     def get_current_COM(self):
-        serial_list = []
-        ports = list(serial.tools.list_ports.comports())
-        if len(ports) != 0:
-            for port in ports:
-                if 'SERIAL' in port.description:
-                    COM_name = port.device.replace("\n", "").replace(" ", "").replace("\r", "")
-                    serial_list.append(COM_name)
-            return serial_list
-        else:
-            return []
+        base_config = ConfigP(self.background_config_file_path)
+        COM_list = base_config.get_option_value(base_config.section_background_to_ui, base_config.bg_option_COM_ports)
+        return COM_list.split(",")
 
     def list_logcat_duration(self):
         duration = [10, 20, 30, 40, 50, 60]
         for dur in duration:
             self.adb_log_duration.addItem(str(dur))
         self.adb_log_duration.setCurrentText("30")
-
-    def select_devices_name(self):
-        devices_info = self.invoke("adb devices").split("\r\n")[1:-2]
-        devices = [device_str.split("\t")[0] for device_str in devices_info if device_str.split("\t")[1] == "device"]
-        for device in devices:
-            self.edit_device_name.addItem(str(device))
-
-    def invoke(self, cmd, runtime=120):
-        try:
-            output, errors = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE,
-                                              stderr=subprocess.PIPE).communicate(
-                timeout=runtime)
-            o = output.decode("utf-8")
-            return o
-        except subprocess.TimeoutExpired as e:
-            print(str(e))
 
     def show_keying_image(self):
         if len(self.logo_path_edit.text()) == 0:

@@ -5,7 +5,13 @@ from config_path import UIConfigPath
 class ConfigP(UIConfigPath):
     section_ui_to_background = "UI-Background"
     section_background_to_ui = "Background-UI"
+
+    # 公共
     ui_option_device_name = "device_name"
+    bg_option_devices_name = "devices_name"
+    bg_option_COM_ports = "COM_ports"
+
+    # EMMC, DDR
     ui_option_root_steps = "root_steps"
     ui_option_system_type = "system"
     ui_option_mem_free_value = "mem_free_value"
@@ -18,8 +24,15 @@ class ConfigP(UIConfigPath):
     ui_option_is_stress_app_test = "is_stress_app_test"
     ui_option_is_stress_app_switch = "is_stress_app_switch"
     ui_option_is_emmc_test = "is_emmc_test"
-    bg_option_devices_name = "devices_name"
-    bg_option_COM_ports = "COM_ports"
+
+
+    # 开机卡Logo
+    section_ui_logo = "Boot-Logo"
+    option_logo_is_adapter = "is_adapter"
+    option_logo_is_power_button = "is_adapter"
+    option_logo_is_is_usb = "is_adapter"
+    option_logo_COM = "COM"
+    option_logcat_duration = "logcat_duration"
 
     ui_option_cases = "cases"
 
