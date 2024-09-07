@@ -48,6 +48,7 @@ class ConfigP(UIConfigPath):
             self.config.write(configfile)
 
     def add_config_option(self, section, option, value):
+        self.add_config_section(section)
         self.config.set(section, option, value)
         with open(self.ini_path, 'w') as configfile:
             self.config.write(configfile)

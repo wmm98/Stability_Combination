@@ -269,8 +269,8 @@ class LogoDisplay(QtWidgets.QMainWindow, Reboot_Logo_MainWindow):
                 return
 
         # 检查完保存配置
-        self.save_config(self.config_file_path)
-
+        self.save_config()
+        self.get_message_box("开机卡logo用例配置保存成功")
         # 每次提交先删除失败的照片，避免检错误
         if os.path.exists(self.failed_image_key_path):
             os.remove(self.failed_image_key_path)
@@ -322,7 +322,7 @@ class LogoDisplay(QtWidgets.QMainWindow, Reboot_Logo_MainWindow):
     def get_COM_config(self):
         return ["1路", "2路", "3路", "4路"]
 
-    def save_config(self, file_name):
+    def save_config(self):
         config = ConfigP(self.ui_config_file_path)
         section = config.section_ui_logo
         config.add_config_section(section)

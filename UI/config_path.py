@@ -7,7 +7,7 @@ class UIConfigPath:
     # project_path = os.path.join(str(os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))), "Stability")
     background_config_file_path = os.path.join(project_path, "UI", "background_config.ini")
     ui_config_file_path = os.path.join(project_path, "UI", "ui_config.ini")
-    debug_log_path = os.path.join(project_path, "Log", "log.log")
+    debug_log_path = os.path.join(project_path, "Log", "Debug", "log.log")
     run_bat_path = os.path.join(project_path, "run.bat")
 
     # DDR,EMMC压测

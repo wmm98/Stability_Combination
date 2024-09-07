@@ -6,7 +6,7 @@ class Config:
     xml_report_path = os.path.join(project_path, "Report", "xml")
     html_report_path = os.path.join(project_path, "Report", "html")
     environment_properties_path = os.path.join(project_path, "Report", "environment.properties")
-    debug_log_path = os.path.join(project_path, "Log", "log.log")
+    debug_log_path = os.path.join(project_path, "Log", "Debug", "log.log")
 
     pretesting_path = os.path.join(project_path, "PreTesting")
     DDR_memtester_path = os.path.join(pretesting_path, "DDR", "memtester")
