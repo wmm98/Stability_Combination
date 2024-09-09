@@ -1,7 +1,7 @@
 import cv2
 import time
 from Common.config import Config
-from Common.debug_log import MyLog
+from Common.log import MyLog
 
 log = MyLog()
 

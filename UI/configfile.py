@@ -28,10 +28,16 @@ class ConfigP(UIConfigPath):
     # 开机卡Logo
     section_ui_logo = "Boot-Logo"
     option_logo_is_adapter = "is_adapter"
-    option_logo_is_power_button = "is_adapter"
-    option_logo_is_is_usb = "is_adapter"
+    option_logo_is_power_button = "is_power_button"
+    option_logo_is_is_usb = "is_usb"
     option_logo_COM = "COM"
     option_logcat_duration = "logcat_duration"
+    option_logo_adapter_power_config = "adapter_power_config"
+    option_logo_boot_time = "button_boot_time"
+    option_logo_double_screen = "double_screen_config"
+    option_only_boot_config = "only_boot_config"
+    option_usb_config = "usb_config"
+    option_power_button_config = "power_button_config"
 
     ui_option_cases = "cases"
 

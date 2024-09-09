@@ -17,8 +17,8 @@ class TestStabilityCombination:
         self.bg_conf_file.read(Config.bg_config_ini_path)
         self.ui_conf_file = configparser.ConfigParser()
         self.ui_conf_file.read(Config.ui_config_ini_path)
-        self.device_name = self.bg_conf_file.get(Config.section_background_to_ui,
-                                                 Config.bg_option_devices_name)
+        self.device_name = self.ui_conf_file.get(Config.section_ui_to_background,
+                                                 Config.ui_option_device_name)
         self.device = Device(self.device_name)
 
     def teardown_class(self):

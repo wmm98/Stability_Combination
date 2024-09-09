@@ -1,7 +1,7 @@
 import binascii
 import serial
 import time
-from Common.debug_log import MyLog
+from Common.log import MyLog
 
 log = MyLog()
 

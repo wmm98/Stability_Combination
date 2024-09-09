@@ -303,7 +303,6 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
         if len(cmd) != 0:
             if "," in cmd:
                 cmd_split = cmd.split(",")
-
             elif "，" in cmd:
                 cmd_split = cmd.split("，")
             else:
@@ -453,9 +452,17 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
                     if "适配器/电池+电源--正常关机" in children["text"]:
                         if "boot_logo" not in self.cases:
                             self.cases.append("boot_logo")
+                            if "boot_logo" not in self.cases:
+                                self.cases.append("boot_logo")
+                                self.ui_config.add_config_option(self.ui_config.section_ui_logo,
+                                                                 self.ui_config.ui_option_cases, "2")
                     if "适配器/电池+电源--异常关机" in children["text"]:
                         if "boot_logo" not in self.cases:
                             self.cases.append("boot_logo")
+                            if "boot_logo" not in self.cases:
+                                self.cases.append("boot_logo")
+                                self.ui_config.add_config_option(self.ui_config.section_ui_logo,
+                                                                 self.ui_config.ui_option_cases, "3")
 
         print(self.cases)
         if len(self.cases) == 0:
@@ -470,6 +477,7 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
         #     if len(dur) == 0:
         #         self.get_message_box("有用例没有填写上测试时间或者测试次数，请检查！！！")
         #         return
+        self.ui_config.add_config_option(self.ui_config.section_ui_to_background, self.ui_config.ui_option_device_name, self.edit_device_name.currentText())
 
         self.ui_config.add_config_option(self.ui_config.section_ui_to_background, self.ui_config.ui_option_system_type,
                                          self.system_type.currentText())
