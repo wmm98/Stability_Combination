@@ -25,7 +25,6 @@ class ConfigP(UIConfigPath):
     ui_option_is_stress_app_switch = "is_stress_app_switch"
     ui_option_is_emmc_test = "is_emmc_test"
 
-
     # 开机卡Logo
     section_ui_logo = "Boot-Logo"
     option_logo_is_adapter = "is_adapter"

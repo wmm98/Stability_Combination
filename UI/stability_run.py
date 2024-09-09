@@ -371,8 +371,6 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
         cases_duration = []
         tree_status = self.tree_status[0]["children"][0]["children"]
 
-        print(tree_status)
-
         # 初始化
         # self.ui_config.add_config_option(self.ui_config.section_ui_to_background,
         #                                  self.ui_config.ui_option_memtester_duration,
@@ -450,7 +448,8 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
                     if "适配器开关机" in children["text"]:
                         if "boot_logo" not in self.cases:
                             self.cases.append("boot_logo")
-                            self.ui_config.add_config_option(self.ui_config.section_ui_logo, self.ui_config.ui_option_cases, "1")
+                            self.ui_config.add_config_option(self.ui_config.section_ui_logo,
+                                                             self.ui_config.ui_option_cases, "1")
                     if "适配器/电池+电源--正常关机" in children["text"]:
                         if "boot_logo" not in self.cases:
                             self.cases.append("boot_logo")
@@ -484,21 +483,16 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
         self.ui_config.add_config_option(self.ui_config.section_ui_to_background,
                                          self.ui_config.ui_option_mem_free_value, self.mem_free.text())
 
-        # self.qt_process.start(conf_path.run_bat_path)
-
         # 检查完保存配置
-        self.save_config(self.config_file_path)
+        # self.save_config(self.config_file_path)
         # 启动
         self.start_qt_process(self.run_bat_path)
 
-        # self.file_timer = QTimer(self)
-        # self.file_timer.timeout.connect(self.check_image_modification)
+        # self.timer = QTimer(self)
+        # self.timer.timeout.connect(self.update_debug_log)
         #
-        self.timer = QTimer(self)
-        self.timer.timeout.connect(self.update_debug_log)
-        #
-        self.check_interval = 1000  # 定时器间隔，单位毫秒
-        self.timer.start(self.check_interval)  # 启动定时器
+        # self.check_interval = 1000  # 定时器间隔，单位毫秒
+        # self.timer.start(self.check_interval)  # 启动定时器
         self.stop_process_button.setEnabled(True)
         self.submit_button.setDisabled(True)
         self.submit_button.setText("测试中...")
@@ -527,7 +521,7 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
         self.stop_process_button.setDisabled(True)
         self.submit_button.setEnabled(True)
         self.submit_button.setText("开始测试")
-        self.timer.stop()
+        # self.timer.stop()
 
     def start_qt_process(self, file):
         # 启动 外部 脚本
