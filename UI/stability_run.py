@@ -333,18 +333,20 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
         #             self.item_W_H_STA_child.flags() | Qt.ItemIsSelectable | Qt.ItemIsUserCheckable | Qt.ItemIsEditable)
 
     def display_boot_logo_cases_test_times(self):
-        print("运行到这里来================================")
-        times = self.ui_config.get_option_value(self.ui_config.section_ui_logo, self.ui_config.ui_option_logo_test_times)
-        print(times)
-        print(self.item_L_G_STA_adapter_boot.isSelected())
-        if self.item_L_G_STA_adapter_boot.isSelected():
-            print("*************************************")
-            self.item_L_G_STA_adapter_boot.setText(1, times)
-            print("==========================================")
-        elif self.item_L_G_STA_power_button_normal.isSelected():
-            self.item_L_G_STA_power_button_normal.setText(1, times)
-        elif self.item_L_G_STA_adapter_battery_button_unormal.isSelected():
-            self.item_L_G_STA_adapter_battery_button_unormal.setText(1, times)
+        try:
+            times = self.ui_config.get_option_value(self.ui_config.section_ui_logo, self.ui_config.ui_option_logo_test_times)
+            if self.item_L_G_STA_adapter_boot.checkState(0) == 2:
+                self.item_L_G_STA_adapter_boot.setText(1, times)
+                self.item_L_G_STA_adapter_boot.setTextAlignment(1, Qt.AlignRight)  # 设置第二列文本右边
+            elif self.item_L_G_STA_power_button_normal.checkState(0) == 2:
+                self.item_L_G_STA_power_button_normal.setText(1, times)
+                self.item_L_G_STA_power_button_normal.setTextAlignment(1, Qt.AlignRight)
+            elif self.item_L_G_STA_adapter_battery_button_unormal.checkState(0) == 2:
+                self.item_L_G_STA_adapter_battery_button_unormal.setText(1, times)
+                self.item_L_G_STA_adapter_battery_button_unormal.setTextAlignment(1, Qt.AlignRight)
+        except Exception as e:
+            print(e)
+            return
 
     def on_item_clicked(self, item):
         # 开关机卡logo窗口处理

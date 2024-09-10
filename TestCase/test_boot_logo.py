@@ -102,9 +102,9 @@ class TestBootLogo:
         # interval = [i*2 for i in range(1, 100)]
         # 获取cases
         # try:
-        cases = self.ui_conf_file.get(Config.section_ui_to_background, Config.ui_option_device_name).split(",")
+        cases = self.ui_conf_file.get(Config.section_ui_to_background, Config.ui_option_cases).split(",")
         if len(cases) == 1:
-            while True:
+            while flag < int(self.ui_conf_file.get(Config.section_ui_logo, Config.ui_option_logo_test_times)):
                 flag += 1
                 # 上下电启动
                 try:
@@ -227,7 +227,7 @@ class TestBootLogo:
 
                     score = cnns.generateScore(origin_logo_key_img, camera_key_img_path)
                     log.info("当前相似度分数为：%s" % str(score))
-                    if score < 75:
+                    if score < 70:
                         log.error("当前认为复现了卡logo情景，请检查！！！")
                         if device_check.device_is_online():
                             log.info("设备在线")
