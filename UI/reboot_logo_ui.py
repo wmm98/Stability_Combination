@@ -146,6 +146,19 @@ class Reboot_Logo_MainWindow(config_path.UIConfigPath):
         # 间隔
         self.verticalLayout_left.addWidget(QtWidgets.QLabel())
 
+        # 压测次数
+        layout_test_times_info = QHBoxLayout()
+        self.test_times_label = QtWidgets.QLabel("用例压测次数设置")
+        self.test_times = QComboBox()
+        self.test_times.setEditable(True)
+        layout_test_times_info.addWidget(self.test_times_label)
+        layout_test_times_info.addWidget(self.test_times)
+        layout_test_times_info.addStretch(1)
+        self.verticalLayout_left.addLayout(layout_test_times_info)
+
+        # 间隔
+        self.verticalLayout_left.addWidget(QtWidgets.QLabel())
+
         # 上传图片
         self.reboot_logo_info = QtWidgets.QLabel("上传开机logo照片：")
         self.verticalLayout_left.addWidget(self.reboot_logo_info)
@@ -210,6 +223,7 @@ class LogoDisplay(QtWidgets.QMainWindow, Reboot_Logo_MainWindow):
         # 初始化进程
         self.list_COM()
         self.list_logcat_duration()
+        self.list_test_times_settings()
         self.is_adapter.clicked.connect(self.adapter_checkbox_change)
         self.is_power_button.clicked.connect(self.power_button_checkbox_change)
         self.is_usb.clicked.connect(self.usb_checkbox_change)
@@ -218,9 +232,6 @@ class LogoDisplay(QtWidgets.QMainWindow, Reboot_Logo_MainWindow):
         self.submit_button.clicked.connect(self.handle_submit)
         # 进程完成
         self.only_boot.clicked.connect(self.only_boot_checkbox_change)
-
-    def handle_finished(self):
-        self.stop_process()
 
     def get_message_box(self, text):
         QMessageBox.warning(self, "错误提示", text)
@@ -256,11 +267,14 @@ class LogoDisplay(QtWidgets.QMainWindow, Reboot_Logo_MainWindow):
             if len(self.logo_path_edit.text()) == 0:
                 self.get_message_box("请上传开机logo！！！")
                 return
+            # # 检查文件是否存在
+            reboot_logo_path = self.logo_path_edit.text().strip()
+            if not os.path.exists(reboot_logo_path):
+                self.get_message_box("文件路径：%s不存在" % reboot_logo_path)
+                return
 
-        # # 检查文件是否存在
-        reboot_logo_path = self.logo_path_edit.text().strip()
-        if not os.path.exists(reboot_logo_path):
-            self.get_message_box("文件路径：%s不存在" % reboot_logo_path)
+        if len(self.test_times.currentText()) == 0:
+            self.get_message_box("请设置压测次数")
             return
 
         # 检查是否抠图了
@@ -274,6 +288,10 @@ class LogoDisplay(QtWidgets.QMainWindow, Reboot_Logo_MainWindow):
         # 每次提交先删除失败的照片，避免检错误
         if os.path.exists(self.failed_image_key_path):
             os.remove(self.failed_image_key_path)
+
+    def list_test_times_settings(self):
+        times = [str(j * 50) for j in range(1, 500)]
+        self.test_times.addItems(times)
 
     def only_boot_checkbox_change(self):
         if self.only_boot.isChecked():
@@ -414,26 +432,8 @@ class LogoDisplay(QtWidgets.QMainWindow, Reboot_Logo_MainWindow):
             # config[section]["button_boot_time"] = self.button_boot_time.currentText()
             config.add_config_option(section, "button_boot_time", self.button_boot_time.currentText())
 
-    def stop_process(self):
-        # 文件位置初始化
-        self.force_task_kill()
-        self.last_position = 0
-        self.stop_process_button.setDisabled(True)
-        self.submit_button.setEnabled(True)
-        self.submit_button.setText("开始测试")
-        self.timer.stop()
-        self.file_timer.stop()
-
-    def start_qt_process(self, file):
-        # 启动 外部 脚本
-        self.qt_process.start(file)
-
-    def force_task_kill(self):
-        res = self.qt_process.startDetached("taskkill /PID %s /F /T" % str(self.qt_process.processId()))
-        if res:
-            self.text_edit.insertPlainText("任务已经结束" + "\n")
-        else:
-            self.text_edit.insertPlainText("任务还没结束" + "\n")
+        # 保存用例压测次数设置
+        config.add_config_option(section, "logo_test_times", self.test_times.currentText())
 
     def copy_file(self, origin, des):
         shutil.copy(origin, des)

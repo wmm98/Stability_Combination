@@ -64,6 +64,7 @@ class Config:
 
     ui_option_cases = "cases"
     ui_option_logo_cases = "logo_cases"
+    ui_option_logo_test_times = "logo_test_times"
 
 
 

@@ -125,92 +125,9 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
         self.qt_process = QProcess()
         self.root_process = QProcess()
         self.mem_free_process = QProcess()
-        # 用例数结构
-        # 设置列数
-        self.treeWidget.setColumnCount(3)
-        # 设置树形控件头部的标题
-        self.treeWidget.setHeaderLabels(['测试场景', "运行时长/轮数", "单位"])
-        self.treeWidget.setColumnWidth(0, 450)
 
-        # 设置根节点
-        self.AllTestCase = QTreeWidgetItem(self.treeWidget)
-        # self.case_tree = self.AllTestCase.child()
-        self.AllTestCase.setText(0, '测试项')
-
-        duration_options = [str(i) for i in range(1, 25)]
-        for value in DictCommandInfo.keys():
-            if DictCommandInfo[value] == AllCertCaseValue.ROOT_PROTOCON_STA:
-                self.item_sta_root = QTreeWidgetItem(self.AllTestCase)
-                self.item_sta_root.setText(0, value)
-                self.item_sta_root.setFlags(self.item_sta_root.flags() | Qt.ItemIsSelectable)
-
-            elif DictCommandInfo[value] == AllCertCaseValue.ROOT_PROTOCON_L_X_STA_CHILD:
-                self.item_L_X_STA = QTreeWidgetItem(self.item_sta_root)
-                self.item_L_X_STA.setText(0, value)
-                self.item_L_X_STA.setCheckState(0, Qt.Unchecked)
-                self.item_L_X_STA.setFlags(self.item_L_X_STA.flags() | Qt.ItemIsSelectable)
-
-            elif AllCertCaseValue.ROOT_PROTOCON_L_X_STA_CHILD < DictCommandInfo[
-                value] < AllCertCaseValue.ROOT_PROTOCON_L_X_STA_MAX:
-                self.item_L_X_STA_child = QTreeWidgetItem(self.item_L_X_STA)
-                self.item_L_X_STA_child.setText(0, value)
-                self.item_L_X_STA_child.setCheckState(0, Qt.Unchecked)
-                self.item_L_X_STA_child.setText(1, "")
-                self.item_L_X_STA_child.setText(2, "次")
-                self.item_L_X_STA_child.setFlags(
-                    self.item_L_X_STA_child.flags() | Qt.ItemIsSelectable | Qt.ItemIsUserCheckable | Qt.ItemIsEditable)
-
-            elif DictCommandInfo[value] == AllCertCaseValue.ROOT_PROTOCON_D_E_STA_CHILD:
-                self.item_D_E_STA = QTreeWidgetItem(self.item_sta_root)
-                self.item_D_E_STA.setText(0, value)
-                self.item_D_E_STA.setCheckState(0, Qt.Unchecked)
-                self.item_D_E_STA.setFlags(self.item_D_E_STA.flags() | Qt.ItemIsSelectable)
-
-            elif AllCertCaseValue.ROOT_PROTOCON_D_E_STA_CHILD < DictCommandInfo[
-                value] < AllCertCaseValue.ROOT_PROTOCON_D_E_STA_MAX:
-                self.item_D_E_STA_child = QTreeWidgetItem(self.item_D_E_STA)
-                self.item_D_E_STA_child.setText(0, value)
-                self.item_D_E_STA_child.setCheckState(0, Qt.Unchecked)
-                self.item_D_E_STA_child.setText(1, "")
-                if "DDR-memtester" in value:
-                    self.item_D_E_STA_child.setText(2, "次")
-                else:
-                    self.item_D_E_STA_child.setText(2, "小时")
-                self.item_D_E_STA_child.setFlags(
-                    self.item_D_E_STA_child.flags() | Qt.ItemIsSelectable | Qt.ItemIsUserCheckable | Qt.ItemIsEditable)
-
-            elif DictCommandInfo[value] == AllCertCaseValue.ROOT_PROTOCON_L_G_STA_CHILD:
-                self.item_L_G_STA = QTreeWidgetItem(self.item_sta_root)
-                self.item_L_G_STA.setText(0, value)
-                self.item_L_G_STA.setCheckState(0, Qt.Unchecked)
-                self.item_L_G_STA.setFlags(self.item_L_G_STA.flags() | Qt.ItemIsSelectable)
-
-            elif AllCertCaseValue.ROOT_PROTOCON_L_G_STA_CHILD < DictCommandInfo[
-                value] < AllCertCaseValue.ROOT_PROTOCON_L_G_STA_MAX:
-                self.item_L_G_STA_child = QTreeWidgetItem(self.item_L_G_STA)
-                self.item_L_G_STA_child.setText(0, value)
-                self.item_L_G_STA_child.setCheckState(0, Qt.Unchecked)
-                self.item_L_G_STA_child.setText(1, "")
-                self.item_L_G_STA_child.setText(2, "次")
-                self.item_L_G_STA_child.setFlags(
-                    self.item_L_G_STA_child.flags() | Qt.ItemIsSelectable | Qt.ItemIsUserCheckable | Qt.ItemIsEditable)
-
-            elif DictCommandInfo[value] == AllCertCaseValue.ROOT_PROTOCON_W_H_STA_CHILD:
-                self.item_W_H_STA = QTreeWidgetItem(self.item_sta_root)
-                self.item_W_H_STA.setText(0, value)
-                self.item_W_H_STA.setCheckState(0, Qt.Unchecked)
-                self.item_W_H_STA.setFlags(self.item_L_G_STA.flags() | Qt.ItemIsSelectable)
-
-            elif AllCertCaseValue.ROOT_PROTOCON_W_H_STA_CHILD < DictCommandInfo[
-                value] < AllCertCaseValue.ROOT_PROTOCON_W_H_STA_MAX:
-                self.item_W_H_STA_child = QTreeWidgetItem(self.item_W_H_STA)
-                self.item_W_H_STA_child.setText(0, value)
-                self.item_W_H_STA_child.setCheckState(0, Qt.Unchecked)
-                self.item_W_H_STA_child.setText(1, "")
-                self.item_W_H_STA_child.setText(2, "次")
-                self.item_W_H_STA_child.setFlags(
-                    self.item_W_H_STA_child.flags() | Qt.ItemIsSelectable | Qt.ItemIsUserCheckable | Qt.ItemIsEditable)
-
+        # 展示用例树
+        self.list_tree_cases()
         # self.item_sta_root = QTreeWidgetItem(self.AllTestCase)
         # self.item_sta_root.setText(0, "压测")
         # self.item_sta_root.setFlags(self.item_sta_root.flags() | Qt.ItemIsSelectable)
@@ -257,6 +174,177 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
         self.qt_process.finished.connect(self.handle_finished)
         self.check_mem_button.clicked.connect(self.query_mem_free)
         self.mem_free_process.finished.connect(self.mem_free_finished_handle)
+        self.logo_window.submit_button.clicked.connect(self.display_boot_logo_cases_test_times)
+
+        # 初始化图片cursor
+        # self.cursor = QTextCursor(self.document)
+
+    def list_tree_cases(self):
+        # 用例数结构
+        # 设置列数
+        self.treeWidget.setColumnCount(3)
+        # 设置树形控件头部的标题
+        self.treeWidget.setHeaderLabels(['测试场景', "运行时长/轮数", "单位"])
+        self.treeWidget.setColumnWidth(0, 450)
+
+        # 设置根节点
+        self.AllTestCase = QTreeWidgetItem(self.treeWidget)
+        # self.case_tree = self.AllTestCase.child()
+        self.AllTestCase.setText(0, '测试项')
+
+        # 压测根节点
+        self.item_sta_root = QTreeWidgetItem(self.AllTestCase)
+        self.item_sta_root.setText(0, "压测")
+        self.item_sta_root.setFlags(self.item_sta_root.flags() | Qt.ItemIsSelectable)
+        # 立项测试
+        self.item_L_X_STA = QTreeWidgetItem(self.item_sta_root)
+        self.item_L_X_STA.setText(0, "立项压测")
+        self.item_L_X_STA.setCheckState(0, Qt.Unchecked)
+        self.item_L_X_STA.setFlags(self.item_L_X_STA.flags() | Qt.ItemIsSelectable)
+        # 立项测试子用例
+        self.item_L_X_STA_child = QTreeWidgetItem(self.item_L_X_STA)
+        self.item_L_X_STA_child.setText(0, "立项压测1")
+        self.item_L_X_STA_child.setCheckState(0, Qt.Unchecked)
+        self.item_L_X_STA_child.setText(1, "")
+        self.item_L_X_STA_child.setText(2, "次")
+        self.item_L_X_STA_child.setFlags(
+            self.item_L_X_STA_child.flags() | Qt.ItemIsSelectable | Qt.ItemIsUserCheckable | Qt.ItemIsEditable)
+
+        # DDR、EMMC压测
+        self.item_D_E_STA = QTreeWidgetItem(self.item_sta_root)
+        self.item_D_E_STA.setText(0, "DDR/EMMC压测")
+        self.item_D_E_STA.setCheckState(0, Qt.Unchecked)
+        self.item_D_E_STA.setFlags(self.item_D_E_STA.flags() | Qt.ItemIsSelectable)
+        # 子用例
+        self.item_D_E_STA_memtester = QTreeWidgetItem(self.item_D_E_STA)
+        self.item_D_E_STA_memtester.setText(0, "DDR-memtester")
+        self.item_D_E_STA_memtester.setCheckState(0, Qt.Unchecked)
+        self.item_D_E_STA_memtester.setText(1, "")
+        self.item_D_E_STA_memtester.setText(2, "次")
+        self.item_D_E_STA_memtester.setFlags(
+            self.item_D_E_STA_memtester.flags() | Qt.ItemIsSelectable | Qt.ItemIsUserCheckable | Qt.ItemIsEditable)
+
+        # 开关机卡logo
+        self.item_L_G_STA = QTreeWidgetItem(self.item_sta_root)
+        self.item_L_G_STA.setText(0, "开机卡logo压测")
+        self.item_L_G_STA.setCheckState(0, Qt.Unchecked)
+        self.item_L_G_STA.setFlags(self.item_L_G_STA.flags() | Qt.ItemIsSelectable)
+        # 子用例
+        self.item_L_G_STA_adapter_boot = QTreeWidgetItem(self.item_L_G_STA)
+        self.item_L_G_STA_adapter_boot.setText(0, "适配器开关机")
+        self.item_L_G_STA_adapter_boot.setCheckState(0, Qt.Unchecked)
+        self.item_L_G_STA_adapter_boot.setText(1, "")
+        self.item_L_G_STA_adapter_boot.setText(2, "次")
+        self.item_L_G_STA_adapter_boot.setFlags(
+            self.item_L_G_STA_adapter_boot.flags() | Qt.ItemIsSelectable | Qt.ItemIsUserCheckable | Qt.ItemIsEditable)
+
+        self.item_L_G_STA_power_button_normal = QTreeWidgetItem(self.item_L_G_STA)
+        self.item_L_G_STA_power_button_normal.setText(0, "适配器/电池+电源--正常关机")
+        self.item_L_G_STA_power_button_normal.setCheckState(0, Qt.Unchecked)
+        self.item_L_G_STA_power_button_normal.setText(1, "")
+        self.item_L_G_STA_power_button_normal.setText(2, "次")
+        self.item_L_G_STA_power_button_normal.setFlags(
+            self.item_L_G_STA_power_button_normal.flags() | Qt.ItemIsSelectable | Qt.ItemIsUserCheckable | Qt.ItemIsEditable)
+
+        self.item_L_G_STA_adapter_battery_button_unormal = QTreeWidgetItem(self.item_L_G_STA)
+        self.item_L_G_STA_adapter_battery_button_unormal.setText(0, "适配器/电池+电源--异常关机")
+        self.item_L_G_STA_adapter_battery_button_unormal.setCheckState(0, Qt.Unchecked)
+        self.item_L_G_STA_adapter_battery_button_unormal.setText(1, "")
+        self.item_L_G_STA_adapter_battery_button_unormal.setText(2, "次")
+        self.item_L_G_STA_adapter_battery_button_unormal.setFlags(
+            self.item_L_G_STA_adapter_battery_button_unormal.flags() | Qt.ItemIsSelectable | Qt.ItemIsUserCheckable | Qt.ItemIsEditable)
+
+        # "适配器开关机": AllCertCaseValue.ROOT_PROTOCON_L_G_STA_C1,
+        # "适配器/电池+电源--正常关机": AllCertCaseValue.ROOT_PROTOCON_L_G_STA_C2,
+        # "适配器/电池+电源--异常关机": AllCertCaseValue.ROOT_PROTOCON_L_G_STA_C3,
+
+        # duration_options = [str(i) for i in range(1, 25)]
+        # for value in DictCommandInfo.keys():
+        #     if DictCommandInfo[value] == AllCertCaseValue.ROOT_PROTOCON_STA:
+        #         self.item_sta_root = QTreeWidgetItem(self.AllTestCase)
+        #         self.item_sta_root.setText(0, value)
+        #         self.item_sta_root.setFlags(self.item_sta_root.flags() | Qt.ItemIsSelectable)
+        #
+        #     elif DictCommandInfo[value] == AllCertCaseValue.ROOT_PROTOCON_L_X_STA_CHILD:
+        #         self.item_L_X_STA = QTreeWidgetItem(self.item_sta_root)
+        #         self.item_L_X_STA.setText(0, value)
+        #         self.item_L_X_STA.setCheckState(0, Qt.Unchecked)
+        #         self.item_L_X_STA.setFlags(self.item_L_X_STA.flags() | Qt.ItemIsSelectable)
+        #
+        #     elif AllCertCaseValue.ROOT_PROTOCON_L_X_STA_CHILD < DictCommandInfo[
+        #         value] < AllCertCaseValue.ROOT_PROTOCON_L_X_STA_MAX:
+        #         self.item_L_X_STA_child = QTreeWidgetItem(self.item_L_X_STA)
+        #         self.item_L_X_STA_child.setText(0, value)
+        #         self.item_L_X_STA_child.setCheckState(0, Qt.Unchecked)
+        #         self.item_L_X_STA_child.setText(1, "")
+        #         self.item_L_X_STA_child.setText(2, "次")
+        #         self.item_L_X_STA_child.setFlags(
+        #             self.item_L_X_STA_child.flags() | Qt.ItemIsSelectable | Qt.ItemIsUserCheckable | Qt.ItemIsEditable)
+        #
+        #     elif DictCommandInfo[value] == AllCertCaseValue.ROOT_PROTOCON_D_E_STA_CHILD:
+        #         self.item_D_E_STA = QTreeWidgetItem(self.item_sta_root)
+        #         self.item_D_E_STA.setText(0, value)
+        #         self.item_D_E_STA.setCheckState(0, Qt.Unchecked)
+        #         self.item_D_E_STA.setFlags(self.item_D_E_STA.flags() | Qt.ItemIsSelectable)
+        #
+        #     elif AllCertCaseValue.ROOT_PROTOCON_D_E_STA_CHILD < DictCommandInfo[
+        #         value] < AllCertCaseValue.ROOT_PROTOCON_D_E_STA_MAX:
+        #         self.item_D_E_STA_child = QTreeWidgetItem(self.item_D_E_STA)
+        #         self.item_D_E_STA_child.setText(0, value)
+        #         self.item_D_E_STA_child.setCheckState(0, Qt.Unchecked)
+        #         self.item_D_E_STA_child.setText(1, "")
+        #         if "DDR-memtester" in value:
+        #             self.item_D_E_STA_child.setText(2, "次")
+        #         else:
+        #             self.item_D_E_STA_child.setText(2, "小时")
+        #         self.item_D_E_STA_child.setFlags(
+        #             self.item_D_E_STA_child.flags() | Qt.ItemIsSelectable | Qt.ItemIsUserCheckable | Qt.ItemIsEditable)
+        #
+        #     elif DictCommandInfo[value] == AllCertCaseValue.ROOT_PROTOCON_L_G_STA_CHILD:
+        #         self.item_L_G_STA = QTreeWidgetItem(self.item_sta_root)
+        #         self.item_L_G_STA.setText(0, value)
+        #         self.item_L_G_STA.setCheckState(0, Qt.Unchecked)
+        #         self.item_L_G_STA.setFlags(self.item_L_G_STA.flags() | Qt.ItemIsSelectable)
+        #
+        #     elif AllCertCaseValue.ROOT_PROTOCON_L_G_STA_CHILD < DictCommandInfo[
+        #         value] < AllCertCaseValue.ROOT_PROTOCON_L_G_STA_MAX:
+        #         self.item_L_G_STA_child = QTreeWidgetItem(self.item_L_G_STA)
+        #         self.item_L_G_STA_child.setText(0, value)
+        #         self.item_L_G_STA_child.setCheckState(0, Qt.Unchecked)
+        #         self.item_L_G_STA_child.setText(1, "")
+        #         self.item_L_G_STA_child.setText(2, "次")
+        #         self.item_L_G_STA_child.setFlags(
+        #             self.item_L_G_STA_child.flags() | Qt.ItemIsSelectable | Qt.ItemIsUserCheckable | Qt.ItemIsEditable)
+        #
+        #     elif DictCommandInfo[value] == AllCertCaseValue.ROOT_PROTOCON_W_H_STA_CHILD:
+        #         self.item_W_H_STA = QTreeWidgetItem(self.item_sta_root)
+        #         self.item_W_H_STA.setText(0, value)
+        #         self.item_W_H_STA.setCheckState(0, Qt.Unchecked)
+        #         self.item_W_H_STA.setFlags(self.item_L_G_STA.flags() | Qt.ItemIsSelectable)
+        #
+        #     elif AllCertCaseValue.ROOT_PROTOCON_W_H_STA_CHILD < DictCommandInfo[
+        #         value] < AllCertCaseValue.ROOT_PROTOCON_W_H_STA_MAX:
+        #         self.item_W_H_STA_child = QTreeWidgetItem(self.item_W_H_STA)
+        #         self.item_W_H_STA_child.setText(0, value)
+        #         self.item_W_H_STA_child.setCheckState(0, Qt.Unchecked)
+        #         self.item_W_H_STA_child.setText(1, "")
+        #         self.item_W_H_STA_child.setText(2, "次")
+        #         self.item_W_H_STA_child.setFlags(
+        #             self.item_W_H_STA_child.flags() | Qt.ItemIsSelectable | Qt.ItemIsUserCheckable | Qt.ItemIsEditable)
+
+    def display_boot_logo_cases_test_times(self):
+        print("运行到这里来================================")
+        times = self.ui_config.get_option_value(self.ui_config.section_ui_logo, self.ui_config.ui_option_logo_test_times)
+        print(times)
+        print(self.item_L_G_STA_adapter_boot.isSelected())
+        if self.item_L_G_STA_adapter_boot.isSelected():
+            print("*************************************")
+            self.item_L_G_STA_adapter_boot.setText(1, times)
+            print("==========================================")
+        elif self.item_L_G_STA_power_button_normal.isSelected():
+            self.item_L_G_STA_power_button_normal.setText(1, times)
+        elif self.item_L_G_STA_adapter_battery_button_unormal.isSelected():
+            self.item_L_G_STA_adapter_battery_button_unormal.setText(1, times)
 
     def on_item_clicked(self, item):
         # 开关机卡logo窗口处理
@@ -444,7 +532,6 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
                     #     self.durations.append(children["duration"])
 
                     # 开关机卡logo测试
-                    print("======================================")
                     if "适配器开关机" in children["text"]:
                         if "boot_logo" not in self.cases:
                             self.cases.append("boot_logo")
@@ -457,7 +544,6 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
                                 self.cases.append("boot_logo")
                         self.ui_config.add_config_option(self.ui_config.section_ui_logo,
                                                          self.ui_config.ui_option_logo_cases, "2")
-                        print("运行到这里来了*********************************")
                     if "适配器/电池+电源--异常关机" in children["text"]:
                         if "boot_logo" not in self.cases:
                             self.cases.append("boot_logo")
@@ -477,7 +563,8 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
         #     if len(dur) == 0:
         #         self.get_message_box("有用例没有填写上测试时间或者测试次数，请检查！！！")
         #         return
-        self.ui_config.add_config_option(self.ui_config.section_ui_to_background, self.ui_config.ui_option_device_name, self.edit_device_name.currentText())
+        self.ui_config.add_config_option(self.ui_config.section_ui_to_background, self.ui_config.ui_option_device_name,
+                                         self.edit_device_name.currentText())
 
         self.ui_config.add_config_option(self.ui_config.section_ui_to_background, self.ui_config.ui_option_system_type,
                                          self.system_type.currentText())
@@ -496,11 +583,15 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
         # 启动
         self.start_qt_process(self.run_bat_path)
 
-        # self.timer = QTimer(self)
-        # self.timer.timeout.connect(self.update_debug_log)
-        #
-        # self.check_interval = 1000  # 定时器间隔，单位毫秒
-        # self.timer.start(self.check_interval)  # 启动定时器
+        self.timer = QTimer(self)
+        self.timer.timeout.connect(self.update_debug_log)
+
+        # self.file_timer = QTimer(self)
+        # self.file_timer.timeout.connect(self.check_image_modification)
+
+        self.check_interval = 1000  # 定时器间隔，单位毫秒
+        self.timer.start(self.check_interval)  # 启动定时器
+        # self.file_timer.start(self.check_interval)
         self.stop_process_button.setEnabled(True)
         self.submit_button.setDisabled(True)
         self.submit_button.setText("测试中...")
@@ -529,7 +620,8 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
         self.stop_process_button.setDisabled(True)
         self.submit_button.setEnabled(True)
         self.submit_button.setText("开始测试")
-        # self.timer.stop()
+        self.timer.stop()
+        # self.file_timer.stop()
 
     def start_qt_process(self, file):
         # 启动 外部 脚本
@@ -614,6 +706,21 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
                         self.last_position = file.tell()
         except Exception as e:
             self.log_edit.insertPlainText(str(e) + "\n")
+
+    def add_logo_image(self):
+        # self.cursor = QTextCursor(self.document)
+        # 将图片路径转为 QUrl
+        # 创建 QTextImageFormat 对象
+        self.image_edit.clear()
+        image_format = QTextImageFormat()
+
+        if self.double_screen.isChecked():
+            image2_url = QUrl.fromLocalFile(self.camera2_key_path)
+            self.document.addResource(QTextDocument.ImageResource, image2_url, image2_url)
+            image_format.setName(image2_url.toString())
+            image_format.setWidth(self.image_width)
+            image_format.setHeight(self.image_height)
+            self.cursor.insertImage(image_format)
 
     def download_adb_file(self):
         if not self.stop_process_button.isEnabled():

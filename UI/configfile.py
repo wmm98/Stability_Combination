@@ -41,6 +41,7 @@ class ConfigP(UIConfigPath):
 
     ui_option_cases = "cases"
     ui_option_logo_cases = "logo_cases"
+    ui_option_logo_test_times = "logo_test_times"
 
     def __init__(self, ini_path):
         self.ini_path = ini_path
