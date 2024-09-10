@@ -444,28 +444,27 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
                     #     self.durations.append(children["duration"])
 
                     # 开关机卡logo测试
-
+                    print("======================================")
                     if "适配器开关机" in children["text"]:
                         if "boot_logo" not in self.cases:
                             self.cases.append("boot_logo")
-                            self.ui_config.add_config_option(self.ui_config.section_ui_logo,
-                                                             self.ui_config.ui_option_cases, "1")
+                        self.ui_config.add_config_option(self.ui_config.section_ui_logo,
+                                                         self.ui_config.ui_option_logo_cases, "1")
                     if "适配器/电池+电源--正常关机" in children["text"]:
                         if "boot_logo" not in self.cases:
                             self.cases.append("boot_logo")
                             if "boot_logo" not in self.cases:
                                 self.cases.append("boot_logo")
-                                self.ui_config.add_config_option(self.ui_config.section_ui_logo,
-                                                                 self.ui_config.ui_option_cases, "2")
+                        self.ui_config.add_config_option(self.ui_config.section_ui_logo,
+                                                         self.ui_config.ui_option_logo_cases, "2")
+                        print("运行到这里来了*********************************")
                     if "适配器/电池+电源--异常关机" in children["text"]:
                         if "boot_logo" not in self.cases:
                             self.cases.append("boot_logo")
                             if "boot_logo" not in self.cases:
                                 self.cases.append("boot_logo")
-                                self.ui_config.add_config_option(self.ui_config.section_ui_logo,
-                                                                 self.ui_config.ui_option_cases, "3")
-
-        print(self.cases)
+                        self.ui_config.add_config_option(self.ui_config.section_ui_logo,
+                                                         self.ui_config.ui_option_logo_cases, "3")
         if len(self.cases) == 0:
             self.get_message_box("请勾选用例！！！")
             return

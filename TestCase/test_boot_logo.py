@@ -115,7 +115,7 @@ class TestBootLogo:
                     break
                 log.info("关机")
 
-                if self.ui_conf_file.get(Config.section_ui_logo, Config.ui_option_cases) == "1":
+                if self.ui_conf_file.get(Config.section_ui_logo, Config.ui_option_logo_cases) == "1":
                     num = int(self.ui_conf_file.get(Config.section_ui_logo, Config.option_logo_adapter_power_config).split("_")[1])
                     t_ser.open_relay(num)
                     log.info("适配器开路")
@@ -124,7 +124,7 @@ class TestBootLogo:
                         raise Exception("设备关机失败，请接线是否正确！！！")
                     t_ser.close_relay(num)
                     log.info("适配器通路")
-                elif self.ui_conf_file.get(Config.section_ui_logo, Config.ui_option_cases) == "2":
+                elif self.ui_conf_file.get(Config.section_ui_logo, Config.ui_option_logo_cases) == "2":
                     # 关机
                     device_check.device_shutdown()
                     time.sleep(10)
@@ -133,14 +133,14 @@ class TestBootLogo:
                         raise Exception("指令设备关机失败，请检查！！！")
                     log.info("指令关机")
                     # 开机
-                    num = int(self.ui_conf_file.get(Config.section_ui_logo, Config.option_logo_adapter_power_config).split("_")[1])
+                    num = int(self.ui_conf_file.get(Config.section_ui_logo, Config.option_power_button_config).split("_")[1])
                     t_ser.open_relay(num)
                     log.info("按下电源按键")
                     time.sleep(int(self.ui_conf_file.get(Config.section_ui_logo, Config.option_logo_boot_time)))
                     t_ser.close_relay(num)
                     log.info("松开电源按键")
                 # 适配器异常下电
-                elif self.ui_conf_file.get(Config.section_ui_logo, Config.ui_option_cases) == "3":
+                elif self.ui_conf_file.get(Config.section_ui_logo, Config.ui_option_logo_cases) == "3":
                     num_adapter_power = int(self.ui_conf_file.get(Config.section_ui_logo, Config.option_logo_adapter_power_config).split("_")[1])
                     num_power_button = int(self.ui_conf_file[Config.section_ui_logo][Config.option_power_button_config].split("_")[1])
                     # 断开适配器/电池

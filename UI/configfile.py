@@ -40,6 +40,7 @@ class ConfigP(UIConfigPath):
     option_power_button_config = "power_button_config"
 
     ui_option_cases = "cases"
+    ui_option_logo_cases = "logo_cases"
 
     def __init__(self, ini_path):
         self.ini_path = ini_path
