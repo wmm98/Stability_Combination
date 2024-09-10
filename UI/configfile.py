@@ -30,7 +30,7 @@ class ConfigP(UIConfigPath):
     option_logo_is_adapter = "is_adapter"
     option_logo_is_power_button = "is_power_button"
     option_logo_is_is_usb = "is_usb"
-    option_logo_COM = "COM"
+    option_logo_COM = "com"
     option_logcat_duration = "logcat_duration"
     option_logo_adapter_power_config = "adapter_power_config"
     option_logo_boot_time = "button_boot_time"
@@ -44,19 +44,25 @@ class ConfigP(UIConfigPath):
     def __init__(self, ini_path):
         self.ini_path = ini_path
         self.config = configparser.ConfigParser()
-        self.config.read(self.ini_path)
+
+    def init_config_file(self):
+        with open(self.ini_path, 'w') as configfile:
+            self.config.write(configfile)
 
     def add_config_section(self, section):
+        self.config.read(self.ini_path)
         if section not in self.config:
             self.config.add_section(section)
         with open(self.ini_path, 'w') as configfile:
             self.config.write(configfile)
 
     def add_config_option(self, section, option, value):
+        self.config.read(self.ini_path)
         self.add_config_section(section)
         self.config.set(section, option, value)
         with open(self.ini_path, 'w') as configfile:
             self.config.write(configfile)
 
     def get_option_value(self, section, option):
+        self.config.read(self.ini_path)
         return self.config.get(section, option)

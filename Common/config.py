@@ -53,7 +53,7 @@ class Config:
     option_logo_is_adapter = "is_adapter"
     option_logo_is_power_button = "is_power_button"
     option_logo_is_is_usb = "is_usb"
-    option_logo_COM = "COM"
+    option_logo_COM = "com"
     option_logcat_duration = "logcat_duration"
     option_logo_adapter_power_config = "adapter_power_config"
     option_logo_boot_time = "button_boot_time"

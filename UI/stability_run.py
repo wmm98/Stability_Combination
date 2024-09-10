@@ -108,7 +108,9 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
         self.last_position = 0
         self.last_modify_time = 0
         self.bg_config = configfile.ConfigP(self.background_config_file_path)
+        # self.bg_config.create_config_file()
         self.ui_config = configfile.ConfigP(self.ui_config_file_path)
+        # self.ui_config.create_config_file()
         # 初始化子界面
         self.logo_window = LogoDisplay()
         self.setupUi(self)
@@ -118,8 +120,7 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
 
     def intiui(self):
         # 初始化
-        self.ui_config.add_config_section(self.ui_config.section_ui_to_background)
-
+        self.ui_config.init_config_file()
         # 初始化进程
         self.qt_process = QProcess()
         self.root_process = QProcess()
@@ -351,9 +352,9 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
             f.close()
 
         # 检查可输入的内存
-        if len(self.mem_free.text()) == 0:
-            self.get_message_box("请输入可用的运行内存！！！")
-            return
+        # if len(self.mem_free.text()) == 0:
+        #     self.get_message_box("请输入可用的运行内存！！！")
+        #     return
 
         # 检查用例是否为空
         self.tree_status = []

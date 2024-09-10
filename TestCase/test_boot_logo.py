@@ -114,7 +114,8 @@ class TestBootLogo:
                     log.error(str(e))
                     break
                 log.info("关机")
-                if self.ui_conf_file.get(Config.section_ui_to_background, Config.ui_option_cases) == "1":
+
+                if self.ui_conf_file.get(Config.section_ui_logo, Config.ui_option_cases) == "1":
                     num = int(self.ui_conf_file.get(Config.section_ui_logo, Config.option_logo_adapter_power_config).split("_")[1])
                     t_ser.open_relay(num)
                     log.info("适配器开路")
@@ -139,7 +140,7 @@ class TestBootLogo:
                     t_ser.close_relay(num)
                     log.info("松开电源按键")
                 # 适配器异常下电
-                elif self.ui_conf_file.get(Config.section_ui_to_background, Config.ui_option_cases) == "3":
+                elif self.ui_conf_file.get(Config.section_ui_logo, Config.ui_option_cases) == "3":
                     num_adapter_power = int(self.ui_conf_file.get(Config.section_ui_logo, Config.option_logo_adapter_power_config).split("_")[1])
                     num_power_button = int(self.ui_conf_file[Config.section_ui_logo][Config.option_power_button_config].split("_")[1])
                     # 断开适配器/电池

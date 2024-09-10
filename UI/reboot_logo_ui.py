@@ -257,16 +257,16 @@ class LogoDisplay(QtWidgets.QMainWindow, Reboot_Logo_MainWindow):
                 self.get_message_box("请上传开机logo！！！")
                 return
 
-            # # 检查文件是否存在
-            reboot_logo_path = self.logo_path_edit.text().strip()
-            if not os.path.exists(reboot_logo_path):
-                self.get_message_box("文件路径：%s不存在" % reboot_logo_path)
-                return
+        # # 检查文件是否存在
+        reboot_logo_path = self.logo_path_edit.text().strip()
+        if not os.path.exists(reboot_logo_path):
+            self.get_message_box("文件路径：%s不存在" % reboot_logo_path)
+            return
 
-            # 检查是否抠图了
-            if not os.path.exists(self.logo_key_path):
-                self.get_message_box("请抠图检查图片是否完整！！！")
-                return
+        # 检查是否抠图了
+        if not os.path.exists(self.logo_key_path):
+            self.get_message_box("请抠图检查图片是否完整！！！")
+            return
 
         # 检查完保存配置
         self.save_config()
