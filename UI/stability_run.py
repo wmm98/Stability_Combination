@@ -217,12 +217,42 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
         self.item_D_E_STA.setFlags(self.item_D_E_STA.flags() | Qt.ItemIsSelectable)
         # 子用例
         self.item_D_E_STA_memtester = QTreeWidgetItem(self.item_D_E_STA)
-        self.item_D_E_STA_memtester.setText(0, "DDR-memtester")
+        self.item_D_E_STA_memtester.setText(0, "DDR-memtester压力测试")
         self.item_D_E_STA_memtester.setCheckState(0, Qt.Unchecked)
         self.item_D_E_STA_memtester.setText(1, "")
         self.item_D_E_STA_memtester.setText(2, "次")
         self.item_D_E_STA_memtester.setFlags(
             self.item_D_E_STA_memtester.flags() | Qt.ItemIsSelectable | Qt.ItemIsUserCheckable | Qt.ItemIsEditable)
+
+        self.item_D_E_STA_stressapptest = QTreeWidgetItem(self.item_D_E_STA)
+        self.item_D_E_STA_stressapptest.setText(0, "DDR-stressapptest压力测试")
+        self.item_D_E_STA_stressapptest.setCheckState(0, Qt.Unchecked)
+        self.item_D_E_STA_stressapptest.setText(1, "")
+        self.item_D_E_STA_stressapptest.setText(2, "次")
+        self.item_D_E_STA_stressapptest.setFlags(
+            self.item_D_E_STA_stressapptest.flags() | Qt.ItemIsSelectable | Qt.ItemIsUserCheckable | Qt.ItemIsEditable)
+
+        self.item_D_E_STA_switch_stressapptest = QTreeWidgetItem(self.item_D_E_STA)
+        self.item_D_E_STA_switch_stressapptest.setText(0, "DDR-switch_stressapptest-高低内存切换")
+        self.item_D_E_STA_switch_stressapptest.setCheckState(0, Qt.Unchecked)
+        self.item_D_E_STA_switch_stressapptest.setText(1, "")
+        self.item_D_E_STA_switch_stressapptest.setText(2, "次")
+        self.item_D_E_STA_switch_stressapptest.setFlags(
+            self.item_D_E_STA_switch_stressapptest.flags() | Qt.ItemIsSelectable | Qt.ItemIsUserCheckable | Qt.ItemIsEditable)
+
+        self.item_D_E_EMMC = QTreeWidgetItem(self.item_D_E_STA)
+        self.item_D_E_EMMC.setText(0, "EMMC测试")
+        self.item_D_E_EMMC.setCheckState(0, Qt.Unchecked)
+        self.item_D_E_EMMC.setText(1, "")
+        self.item_D_E_EMMC.setText(2, "次")
+        self.item_D_E_EMMC.setFlags(
+            self.item_D_E_EMMC.flags() | Qt.ItemIsSelectable | Qt.ItemIsUserCheckable | Qt.ItemIsEditable)
+
+        # "DDR/EMMC压测": AllCertCaseValue.ROOT_PROTOCON_D_E_STA_CHILD,
+        # "DDR-memtester压力测试": AllCertCaseValue.ROOT_PROTOCON_D_E_STA_TMISCAN_B0,
+        # "DDR-stressapptest": AllCertCaseValue.ROOT_PROTOCON_D_E_STA_TMISCAN_B1,
+        # "DDR-switch_stressapptest-高低内存切换": AllCertCaseValue.ROOT_PROTOCON_D_E_STA_TMISCAN_B2,
+        # "EMMC测试": AllCertCaseValue.ROOT_PROTOCON_D_E_STA_TMISCAN_B3,
 
         # 开关机卡logo
         self.item_L_G_STA = QTreeWidgetItem(self.item_sta_root)

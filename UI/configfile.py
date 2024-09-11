@@ -12,6 +12,7 @@ class ConfigP(UIConfigPath):
     bg_option_COM_ports = "COM_ports"
 
     # EMMC, DDR
+    section_DDR_EMMC = "DDR_EMMC"
     ui_option_root_steps = "root_steps"
     ui_option_system_type = "system"
     ui_option_mem_free_value = "mem_free_value"
