@@ -6,6 +6,7 @@ from PyQt5.QtWidgets import QStyledItemDelegate
 from PyQt5.QtCore import QTimer, QProcess, Qt, pyqtSlot
 from tree_widget import Ui_MainWindow
 from reboot_logo_ui import LogoDisplay
+from ddr_emmc_ui import DDRDisplay
 import os
 import shutil
 from PyQt5.QtGui import QPixmap
@@ -113,6 +114,7 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
         # self.ui_config.create_config_file()
         # 初始化子界面
         self.logo_window = LogoDisplay()
+        self.DDR_EMMC_window = DDRDisplay()
         self.setupUi(self)
         self.AllTestCase = None
         self.intiui()
@@ -121,6 +123,7 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
     def intiui(self):
         # 初始化
         self.ui_config.init_config_file()
+        self.ui_config.add_config_section(self.ui_config.section_ui_to_background)
         # 初始化进程
         self.qt_process = QProcess()
         self.root_process = QProcess()
@@ -384,6 +387,24 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
             if item.checkState(0) == 2:
                 if not self.logo_window.isVisible():
                     self.logo_window.show()
+        if item == self.item_D_E_STA or item.parent() == self.item_D_E_STA:
+            if item.checkState(0) == 2:
+                if not self.DDR_EMMC_window.isVisible():
+                    self.DDR_EMMC_window.show()
+                # 在子界面勾上的需要测试的选项
+                if item == self.item_D_E_STA:
+                    self.DDR_EMMC_window.is_EEMC_test.setChecked(True)
+                    self.DDR_EMMC_window.is_DDR_memtester_test.setChecked(True)
+                    self.DDR_EMMC_window.is_DDR_streessapptest_test.setChecked(True)
+                    self.DDR_EMMC_window.is_DDR_streessapptest_switch_test.setChecked(True)
+                if item == self.item_D_E_STA_memtester:
+                    self.DDR_EMMC_window.is_DDR_memtester_test.setChecked(True)
+                if item == self.item_D_E_STA_stressapptest:
+                    self.DDR_EMMC_window.is_DDR_streessapptest_test.setChecked(True)
+                if item == self.item_D_E_STA_switch_stressapptest:
+                    self.DDR_EMMC_window.is_DDR_streessapptest_switch_test.setChecked(True)
+                if item == self.item_D_E_EMMC:
+                    self.DDR_EMMC_window.is_EEMC_test.setChecked(True)
 
     def handlechanged(self, item, column):
         # 获取选中节点的子节点个数

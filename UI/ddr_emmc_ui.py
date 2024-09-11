@@ -22,6 +22,9 @@ class DDR_MainWindow(config_path.UIConfigPath):
 
         layout_device_info = QHBoxLayout()
 
+        self.device_label = QtWidgets.QLabel("设备名称")
+        self.device_name = QtWidgets.QComboBox()
+
         self.system_label = QtWidgets.QLabel("系统类型")
         self.system_type = QComboBox()
         self.system_type.addItem("Android")
@@ -29,6 +32,8 @@ class DDR_MainWindow(config_path.UIConfigPath):
         self.system_type.addItem("Debian")
         self.system_type.addItem("T31")
 
+        layout_device_info.addWidget(self.device_label)
+        layout_device_info.addWidget(self.device_name)
         layout_device_info.addWidget(self.system_label)
         layout_device_info.addWidget(self.system_type)
         layout_device_info.addStretch(1)
@@ -70,17 +75,70 @@ class DDR_MainWindow(config_path.UIConfigPath):
         # check_root_layout.addStretch(1)
         # self.verticalLayout_left.addLayout(check_root_layout)
 
-        # 间隔
         self.verticalLayout_left.addWidget(QtWidgets.QLabel())
+
+        # 压测情况
+        # 压测次数
+        layout_test_times_info1 = QHBoxLayout()
+        self.is_DDR_memtester_test = QCheckBox("DDR_memtester测试")
+        self.is_DDR_streessapptest_test = QCheckBox("DDR_streessapptest测试")
+        self.is_DDR_streessapptest_switch_test = QCheckBox("DDR_streessapptest高低切换测试")
+        self.is_EEMC_test = QCheckBox("EMMC测试")
+        layout_test_times_info1.addWidget(self.is_DDR_streessapptest_test)
+        layout_test_times_info1.addWidget(self.is_DDR_streessapptest_switch_test)
+        layout_test_times_info1.addWidget(self.is_DDR_memtester_test)
+        layout_test_times_info1.addWidget(self.is_EEMC_test)
+        layout_test_times_info1.addStretch(1)
+        self.verticalLayout_left.addLayout(layout_test_times_info1)
+
+        self.verticalLayout_left.addWidget(QtWidgets.QLabel())
+
+        layout_test_times_info2 = QHBoxLayout()
+        self.DDR_memtester_label = QtWidgets.QLabel("memtester压测次数")
+        self.DDR_memtester_test_times = QComboBox()
+        self.DDR_memtester_test_times.setEditable(True)
+        self.DDR_stressapptest_label = QtWidgets.QLabel("stressapptest压测次数")
+        self.DDR_stressapptest_times = QComboBox()
+        self.DDR_stressapptest_times.setEditable(True)
+        self.DDR_stressapptest_switch_label = QtWidgets.QLabel("stressapptest高低切换压测次数")
+        self.DDR_stressapptest_switch_times = QComboBox()
+        self.DDR_stressapptest_switch_times.setEditable(True)
+        self.EMMC_label = QtWidgets.QLabel("EMMC压测次数")
+        self.EMMC_times = QComboBox()
+        self.EMMC_times.setEditable(True)
+
+        layout_test_times_info2.addWidget(self.DDR_memtester_label)
+        layout_test_times_info2.addWidget(self.DDR_memtester_test_times)
+        layout_test_times_info2.addWidget(self.DDR_stressapptest_label)
+        layout_test_times_info2.addWidget(self.DDR_stressapptest_times)
+        layout_test_times_info2.addStretch(1)
+        self.verticalLayout_left.addLayout(layout_test_times_info2)
+
+        layout_test_times_info3 = QHBoxLayout()
+
+        layout_test_times_info3.addWidget(self.DDR_stressapptest_switch_label)
+        layout_test_times_info3.addWidget(self.DDR_stressapptest_switch_times)
+        layout_test_times_info3.addWidget(self.EMMC_label)
+        layout_test_times_info3.addWidget(self.EMMC_times)
+        layout_test_times_info3.addStretch(1)
+        self.verticalLayout_left.addLayout(layout_test_times_info3)
+
+        self.verticalLayout_left.addWidget(QtWidgets.QLabel())
+
+        # self.test_times = QComboBox()
+        # self.test_times.setEditable(True)
+        # layout_test_times_info.addWidget(self.test_times_label)
+        # layout_test_times_info.addWidget(self.test_times)
+        # layout_test_times_info.addStretch(1)
+        # self.verticalLayout_left.addLayout(layout_test_times_info)
 
         # 提交按钮
         self.submit_button = QtWidgets.QPushButton("保存")
         self.verticalLayout_left.addWidget(self.submit_button)
 
         self.verticalLayout_left.addWidget(QtWidgets.QLabel())
-        # 添加左边部分
-        # 右侧部件
         self.verticalLayout_left.addWidget(QtWidgets.QLabel("日志信息:"))
+
         # 展示log
         self.text_edit = ScrollablePlainTextEdit()
         self.text_edit.setReadOnly(True)
@@ -126,6 +184,12 @@ class DDRDisplay(QtWidgets.QMainWindow, DDR_MainWindow):
         self.submit_button.clicked.connect(self.handle_submit)
         self.check_mem_button.clicked.connect(self.query_mem_free)
         self.mem_free_process.finished.connect(self.mem_free_finished_handle)
+        self.list_devices_name()
+
+    def list_devices_name(self):
+        devices = self.bg_config.get_option_value(self.bg_config.section_background_to_ui,
+                                                  self.bg_config.bg_option_devices_name).split(",")
+        self.device_name.addItems(devices)
 
     def mem_free_finished_handle(self):
         with open(conf_path.mem_log_path, "r", encoding="utf-8") as f:
@@ -139,10 +203,9 @@ class DDRDisplay(QtWidgets.QMainWindow, DDR_MainWindow):
     def query_mem_free(self):
         # 保存root steps
         self.double_check_root()
-        # self.ui_config.add_config_option(self.ui_config.section_DDR_EMMC, self.ui_config.ui_option_system_type, self.system_type.currentText())
         self.ui_config.add_config_option(self.ui_config.section_DDR_EMMC, self.ui_config.ui_option_system_type, self.system_type.currentText())
-        # self.ui_config.add_config_option(self.ui_config.section_ui_to_background, self.ui_config.ui_option_device_name,
-        #                                  self.edit_device_name.currentText())
+        self.ui_config.add_config_option(self.ui_config.section_ui_to_background, self.ui_config.ui_option_device_name,
+                                         self.device_name.currentText())
         self.mem_free_process.start(conf_path.bat_mem_info_path)
 
     def double_check_root(self):
@@ -160,7 +223,7 @@ class DDRDisplay(QtWidgets.QMainWindow, DDR_MainWindow):
             # 给指令加上设备区别 ['adb -s 5eea0becf3b0f513 root', 'adb -s 5eea0becf3b0f513 remount']
             self.new_cmds = []
             for s_p in cmd_split:
-                add_d = "-s %s" % self.edit_device_name.currentText()
+                add_d = "-s %s" % self.device_name.currentText()
                 cmd_list = s_p.split(" ")
                 cmd_list.insert(1, add_d)
                 self.new_cmds.append(" ".join(cmd_list))
@@ -178,7 +241,7 @@ class DDRDisplay(QtWidgets.QMainWindow, DDR_MainWindow):
         QMessageBox.warning(self, "错误提示", text)
 
     def handle_submit(self):
-        pass
+        self.get_message_box("配置保存成功")
 
     def remove_file(self, path):
         if os.path.isfile(path):

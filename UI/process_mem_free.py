@@ -25,15 +25,14 @@ class Log:
 
 class GetMemFree:
     def __init__(self):
-        self.device_name = ui_conf_file.get_option_value(ui_conf_file.section_ui_to_background,
-                                                         ui_conf_file.ui_option_device_name)
+        self.device_name = ui_conf_file.get_option_value(ui_conf_file.section_ui_to_background, ui_conf_file.ui_option_device_name)
 
         self.log = Log()
 
     def root_devices(self):
         devices_lists = shell.invoke("adb devices").replace('\r', '').replace('\t', '').replace(' ', '')
         device_online = self.device_name + "device"
-        cmd_raw = ui_conf_file.get_option_value(ui_conf_file.section_ui_to_background,
+        cmd_raw = ui_conf_file.get_option_value(ui_conf_file.section_DDR_EMMC,
                                                 ui_conf_file.ui_option_root_steps)
         if len(cmd_raw) != 0:
             cmds = ""
@@ -81,8 +80,7 @@ class GetMemFree:
 
     def get_mem_free_info(self):
         self.root_devices()
-        system_type = ui_conf_file.get_option_value(ui_conf_file.section_ui_to_background,
-                                                    ui_conf_file.ui_option_system_type)
+        system_type = ui_conf_file.get_option_value(ui_conf_file.section_DDR_EMMC, ui_conf_file.ui_option_system_type)
         if system_type == "Android":
             self.log.append_log("\n %s" % shell.invoke("adb -s %s shell cat /proc/meminfo \"|grep Mem\"" % self.device_name))
         else:
