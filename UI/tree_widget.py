@@ -31,12 +31,12 @@ class Ui_MainWindow(config_path.UIConfigPath):
         self.label_device_name = QtWidgets.QLabel("设备名称:")
         self.edit_device_name = QComboBox()
 
-        self.system_label = QtWidgets.QLabel("系统类型")
-        self.system_type = QComboBox()
-        self.system_type.addItem("Android")
-        self.system_type.addItem("Linux")
-        self.system_type.addItem("Debian")
-        self.system_type.addItem("T31")
+        # self.system_label = QtWidgets.QLabel("系统类型")
+        # self.system_type = QComboBox()
+        # self.system_type.addItem("Android")
+        # self.system_type.addItem("Linux")
+        # self.system_type.addItem("Debian")
+        # self.system_type.addItem("T31")
 
         # 测试COM
         self.COM_tips = QtWidgets.QLabel("测试COM口:")
@@ -44,8 +44,8 @@ class Ui_MainWindow(config_path.UIConfigPath):
 
         layout_device_info.addWidget(self.label_device_name)
         layout_device_info.addWidget(self.edit_device_name)
-        layout_device_info.addWidget(self.system_label)
-        layout_device_info.addWidget(self.system_type)
+        # layout_device_info.addWidget(self.system_label)
+        # layout_device_info.addWidget(self.system_type)
         layout_device_info.addWidget(self.COM_tips)
         layout_device_info.addWidget(self.test_COM)
         layout_device_info.addStretch(1)
@@ -98,8 +98,8 @@ class Ui_MainWindow(config_path.UIConfigPath):
                                 """)
 
         # 设置伸展因子确保两侧距离一致
-        splitter.setStretchFactor(0, 4)  # 左侧部件的伸展因子
-        splitter.setStretchFactor(1, 5)  # 右侧部件的伸展因子
+        splitter.setStretchFactor(0, 1)  # 左侧部件的伸展因子
+        splitter.setStretchFactor(1, 1)  # 右侧部件的伸展因子
 
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)

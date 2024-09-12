@@ -43,6 +43,7 @@ class Config:
     ui_option_is_stress_app_test = "is_stress_app_test"
     ui_option_is_stress_app_switch = "is_stress_app_switch"
     ui_option_is_emmc_test = "is_emmc_test"
+    ui_option_ddr_emmc_test_times = "emmc_test_times"
     ui_option_device_name = "device_name"
     bg_option_devices_name = "devices_name"
     bg_option_COM_ports = "COM_ports"

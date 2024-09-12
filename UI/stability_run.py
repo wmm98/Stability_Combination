@@ -150,7 +150,7 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
         self.qt_process.finished.connect(self.handle_finished)
         self.mem_free_process.finished.connect(self.mem_free_finished_handle)
         self.logo_window.submit_button.clicked.connect(self.display_boot_logo_cases_test_times)
-
+        self.DDR_EMMC_window.submit_button.clicked.connect(self.display_ddr_emmc_cases_test_times)
         # 初始化图片cursor
         # self.cursor = QTextCursor(self.document)
 
@@ -253,21 +253,40 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
         self.item_L_G_STA_adapter_battery_button_unormal.setFlags(
             self.item_L_G_STA_adapter_battery_button_unormal.flags() | Qt.ItemIsSelectable | Qt.ItemIsUserCheckable | Qt.ItemIsEditable)
 
+    def display_ddr_emmc_cases_test_times(self):
+        if self.item_D_E_EMMC.checkState(0) == 2:
+            emmc_times = self.ui_config.get_option_value(self.ui_config.section_DDR_EMMC,
+                                                         self.ui_config.ui_option_emmmc_duration)
+            self.item_D_E_EMMC.setText(1, emmc_times)
+            self.item_D_E_EMMC.setTextAlignment(1, Qt.AlignRight)  # 设置第二列文本右对齐
+        if self.item_D_E_STA_memtester.checkState(0) == 2:
+            memtester_times = self.ui_config.get_option_value(self.ui_config.section_DDR_EMMC,
+                                                         self.ui_config.ui_option_memtester_duration)
+            self.item_D_E_STA_memtester.setText(1, memtester_times)
+            self.item_D_E_STA_memtester.setTextAlignment(1, Qt.AlignRight)
+        if self.item_D_E_STA_stressapptest.checkState(0) == 2:
+            stressapptest_times = self.ui_config.get_option_value(self.ui_config.section_DDR_EMMC,
+                                                              self.ui_config.ui_option_stressapptest_duration)
+            self.item_D_E_STA_stressapptest.setText(1, stressapptest_times)
+            self.item_D_E_STA_stressapptest.setTextAlignment(1, Qt.AlignRight)
+        if self.item_D_E_STA_switch_stressapptest.checkState(0) == 2:
+            stressapptest_switch_times = self.ui_config.get_option_value(self.ui_config.section_DDR_EMMC,
+                                                                  self.ui_config.ui_option_switch_stressapptest_duration)
+            self.item_D_E_STA_switch_stressapptest.setText(1, stressapptest_switch_times)
+            self.item_D_E_STA_switch_stressapptest.setTextAlignment(1, Qt.AlignRight)
+
     def display_boot_logo_cases_test_times(self):
-        try:
-            times = self.ui_config.get_option_value(self.ui_config.section_ui_logo, self.ui_config.ui_option_logo_test_times)
-            if self.item_L_G_STA_adapter_boot.checkState(0) == 2:
-                self.item_L_G_STA_adapter_boot.setText(1, times)
-                self.item_L_G_STA_adapter_boot.setTextAlignment(1, Qt.AlignRight)  # 设置第二列文本右对齐
-            if self.item_L_G_STA_power_button_normal.checkState(0) == 2:
-                self.item_L_G_STA_power_button_normal.setText(1, times)
-                self.item_L_G_STA_power_button_normal.setTextAlignment(1, Qt.AlignRight)
-            if self.item_L_G_STA_adapter_battery_button_unormal.checkState(0) == 2:
-                self.item_L_G_STA_adapter_battery_button_unormal.setText(1, times)
-                self.item_L_G_STA_adapter_battery_button_unormal.setTextAlignment(1, Qt.AlignRight)
-        except Exception as e:
-            print(e)
-            return
+        times = self.ui_config.get_option_value(self.ui_config.section_ui_logo,
+                                                self.ui_config.ui_option_logo_test_times)
+        if self.item_L_G_STA_adapter_boot.checkState(0) == 2:
+            self.item_L_G_STA_adapter_boot.setText(1, times)
+            self.item_L_G_STA_adapter_boot.setTextAlignment(1, Qt.AlignRight)  # 设置第二列文本右对齐
+        if self.item_L_G_STA_power_button_normal.checkState(0) == 2:
+            self.item_L_G_STA_power_button_normal.setText(1, times)
+            self.item_L_G_STA_power_button_normal.setTextAlignment(1, Qt.AlignRight)
+        if self.item_L_G_STA_adapter_battery_button_unormal.checkState(0) == 2:
+            self.item_L_G_STA_adapter_battery_button_unormal.setText(1, times)
+            self.item_L_G_STA_adapter_battery_button_unormal.setTextAlignment(1, Qt.AlignRight)
 
     def on_item_clicked(self, item):
         # 开关机卡logo窗口处理
@@ -454,8 +473,6 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
                         self.ui_config.add_config_option(self.ui_config.section_ui_logo,
                                                          self.ui_config.ui_option_logo_cases, "3")
                     # if
-
-
 
         if len(self.cases) == 0:
             self.get_message_box("请勾选用例！！！")
