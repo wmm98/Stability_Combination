@@ -109,9 +109,7 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
         self.last_position = 0
         self.last_modify_time = 0
         self.bg_config = configfile.ConfigP(self.background_config_file_path)
-        # self.bg_config.create_config_file()
         self.ui_config = configfile.ConfigP(self.ui_config_file_path)
-        # self.ui_config.create_config_file()
         # 初始化子界面
         self.logo_window = LogoDisplay()
         self.DDR_EMMC_window = DDRDisplay()
@@ -131,31 +129,6 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
 
         # 展示用例树
         self.list_tree_cases()
-        # self.item_sta_root = QTreeWidgetItem(self.AllTestCase)
-        # self.item_sta_root.setText(0, "压测")
-        # self.item_sta_root.setFlags(self.item_sta_root.flags() | Qt.ItemIsSelectable)
-        #
-        # self.item_L_G_STA = QTreeWidgetItem(self.item_sta_root)
-        # self.item_L_G_STA.setText(0, "开关机压测")
-        # self.item_L_G_STA.setCheckState(0, Qt.Unchecked)
-        # self.item_L_G_STA.setFlags(self.item_L_G_STA.flags() | Qt.ItemIsSelectable)
-        #
-        # self.item_L_G_STA_child_1 = QTreeWidgetItem(self.item_L_G_STA)
-        # self.item_L_G_STA_child_1.setText(0, "这是调试")
-        # self.item_L_G_STA_child_1.setCheckState(0, Qt.Unchecked)
-        # self.item_L_G_STA_child_1.setText(1, "")
-        # self.item_L_G_STA_child_1.setText(2, "次")
-        # self.item_L_G_STA_child_1.setFlags(
-        #     self.item_L_G_STA_child_1.flags() | Qt.ItemIsSelectable | Qt.ItemIsUserCheckable | Qt.ItemIsEditable)
-        #
-        # parent_item = self.item_L_G_STA_child_1.parent()
-        # if parent_item:
-        #     print(f"Parent Item Text: {parent_item.text(0)}")
-        # else:
-        #     print("This item has no parent (it might be a top-level item).")
-
-        # self.treeWidget.setItemDelegateForColumn(1, ComboBoxDelegate(duration_options, self))
-
         # 节点全部展开
         self.treeWidget.expandAll()
         # self.item_D_E_STA.setExpanded(False)
@@ -175,7 +148,6 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
         self.stop_process_button.clicked.connect(self.stop_process)
         # 进程完成
         self.qt_process.finished.connect(self.handle_finished)
-        self.check_mem_button.clicked.connect(self.query_mem_free)
         self.mem_free_process.finished.connect(self.mem_free_finished_handle)
         self.logo_window.submit_button.clicked.connect(self.display_boot_logo_cases_test_times)
 
@@ -251,12 +223,6 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
         self.item_D_E_EMMC.setFlags(
             self.item_D_E_EMMC.flags() | Qt.ItemIsSelectable | Qt.ItemIsUserCheckable | Qt.ItemIsEditable)
 
-        # "DDR/EMMC压测": AllCertCaseValue.ROOT_PROTOCON_D_E_STA_CHILD,
-        # "DDR-memtester压力测试": AllCertCaseValue.ROOT_PROTOCON_D_E_STA_TMISCAN_B0,
-        # "DDR-stressapptest": AllCertCaseValue.ROOT_PROTOCON_D_E_STA_TMISCAN_B1,
-        # "DDR-switch_stressapptest-高低内存切换": AllCertCaseValue.ROOT_PROTOCON_D_E_STA_TMISCAN_B2,
-        # "EMMC测试": AllCertCaseValue.ROOT_PROTOCON_D_E_STA_TMISCAN_B3,
-
         # 开关机卡logo
         self.item_L_G_STA = QTreeWidgetItem(self.item_sta_root)
         self.item_L_G_STA.setText(0, "开机卡logo压测")
@@ -287,94 +253,16 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
         self.item_L_G_STA_adapter_battery_button_unormal.setFlags(
             self.item_L_G_STA_adapter_battery_button_unormal.flags() | Qt.ItemIsSelectable | Qt.ItemIsUserCheckable | Qt.ItemIsEditable)
 
-        # "适配器开关机": AllCertCaseValue.ROOT_PROTOCON_L_G_STA_C1,
-        # "适配器/电池+电源--正常关机": AllCertCaseValue.ROOT_PROTOCON_L_G_STA_C2,
-        # "适配器/电池+电源--异常关机": AllCertCaseValue.ROOT_PROTOCON_L_G_STA_C3,
-
-        # duration_options = [str(i) for i in range(1, 25)]
-        # for value in DictCommandInfo.keys():
-        #     if DictCommandInfo[value] == AllCertCaseValue.ROOT_PROTOCON_STA:
-        #         self.item_sta_root = QTreeWidgetItem(self.AllTestCase)
-        #         self.item_sta_root.setText(0, value)
-        #         self.item_sta_root.setFlags(self.item_sta_root.flags() | Qt.ItemIsSelectable)
-        #
-        #     elif DictCommandInfo[value] == AllCertCaseValue.ROOT_PROTOCON_L_X_STA_CHILD:
-        #         self.item_L_X_STA = QTreeWidgetItem(self.item_sta_root)
-        #         self.item_L_X_STA.setText(0, value)
-        #         self.item_L_X_STA.setCheckState(0, Qt.Unchecked)
-        #         self.item_L_X_STA.setFlags(self.item_L_X_STA.flags() | Qt.ItemIsSelectable)
-        #
-        #     elif AllCertCaseValue.ROOT_PROTOCON_L_X_STA_CHILD < DictCommandInfo[
-        #         value] < AllCertCaseValue.ROOT_PROTOCON_L_X_STA_MAX:
-        #         self.item_L_X_STA_child = QTreeWidgetItem(self.item_L_X_STA)
-        #         self.item_L_X_STA_child.setText(0, value)
-        #         self.item_L_X_STA_child.setCheckState(0, Qt.Unchecked)
-        #         self.item_L_X_STA_child.setText(1, "")
-        #         self.item_L_X_STA_child.setText(2, "次")
-        #         self.item_L_X_STA_child.setFlags(
-        #             self.item_L_X_STA_child.flags() | Qt.ItemIsSelectable | Qt.ItemIsUserCheckable | Qt.ItemIsEditable)
-        #
-        #     elif DictCommandInfo[value] == AllCertCaseValue.ROOT_PROTOCON_D_E_STA_CHILD:
-        #         self.item_D_E_STA = QTreeWidgetItem(self.item_sta_root)
-        #         self.item_D_E_STA.setText(0, value)
-        #         self.item_D_E_STA.setCheckState(0, Qt.Unchecked)
-        #         self.item_D_E_STA.setFlags(self.item_D_E_STA.flags() | Qt.ItemIsSelectable)
-        #
-        #     elif AllCertCaseValue.ROOT_PROTOCON_D_E_STA_CHILD < DictCommandInfo[
-        #         value] < AllCertCaseValue.ROOT_PROTOCON_D_E_STA_MAX:
-        #         self.item_D_E_STA_child = QTreeWidgetItem(self.item_D_E_STA)
-        #         self.item_D_E_STA_child.setText(0, value)
-        #         self.item_D_E_STA_child.setCheckState(0, Qt.Unchecked)
-        #         self.item_D_E_STA_child.setText(1, "")
-        #         if "DDR-memtester" in value:
-        #             self.item_D_E_STA_child.setText(2, "次")
-        #         else:
-        #             self.item_D_E_STA_child.setText(2, "小时")
-        #         self.item_D_E_STA_child.setFlags(
-        #             self.item_D_E_STA_child.flags() | Qt.ItemIsSelectable | Qt.ItemIsUserCheckable | Qt.ItemIsEditable)
-        #
-        #     elif DictCommandInfo[value] == AllCertCaseValue.ROOT_PROTOCON_L_G_STA_CHILD:
-        #         self.item_L_G_STA = QTreeWidgetItem(self.item_sta_root)
-        #         self.item_L_G_STA.setText(0, value)
-        #         self.item_L_G_STA.setCheckState(0, Qt.Unchecked)
-        #         self.item_L_G_STA.setFlags(self.item_L_G_STA.flags() | Qt.ItemIsSelectable)
-        #
-        #     elif AllCertCaseValue.ROOT_PROTOCON_L_G_STA_CHILD < DictCommandInfo[
-        #         value] < AllCertCaseValue.ROOT_PROTOCON_L_G_STA_MAX:
-        #         self.item_L_G_STA_child = QTreeWidgetItem(self.item_L_G_STA)
-        #         self.item_L_G_STA_child.setText(0, value)
-        #         self.item_L_G_STA_child.setCheckState(0, Qt.Unchecked)
-        #         self.item_L_G_STA_child.setText(1, "")
-        #         self.item_L_G_STA_child.setText(2, "次")
-        #         self.item_L_G_STA_child.setFlags(
-        #             self.item_L_G_STA_child.flags() | Qt.ItemIsSelectable | Qt.ItemIsUserCheckable | Qt.ItemIsEditable)
-        #
-        #     elif DictCommandInfo[value] == AllCertCaseValue.ROOT_PROTOCON_W_H_STA_CHILD:
-        #         self.item_W_H_STA = QTreeWidgetItem(self.item_sta_root)
-        #         self.item_W_H_STA.setText(0, value)
-        #         self.item_W_H_STA.setCheckState(0, Qt.Unchecked)
-        #         self.item_W_H_STA.setFlags(self.item_L_G_STA.flags() | Qt.ItemIsSelectable)
-        #
-        #     elif AllCertCaseValue.ROOT_PROTOCON_W_H_STA_CHILD < DictCommandInfo[
-        #         value] < AllCertCaseValue.ROOT_PROTOCON_W_H_STA_MAX:
-        #         self.item_W_H_STA_child = QTreeWidgetItem(self.item_W_H_STA)
-        #         self.item_W_H_STA_child.setText(0, value)
-        #         self.item_W_H_STA_child.setCheckState(0, Qt.Unchecked)
-        #         self.item_W_H_STA_child.setText(1, "")
-        #         self.item_W_H_STA_child.setText(2, "次")
-        #         self.item_W_H_STA_child.setFlags(
-        #             self.item_W_H_STA_child.flags() | Qt.ItemIsSelectable | Qt.ItemIsUserCheckable | Qt.ItemIsEditable)
-
     def display_boot_logo_cases_test_times(self):
         try:
             times = self.ui_config.get_option_value(self.ui_config.section_ui_logo, self.ui_config.ui_option_logo_test_times)
             if self.item_L_G_STA_adapter_boot.checkState(0) == 2:
                 self.item_L_G_STA_adapter_boot.setText(1, times)
-                self.item_L_G_STA_adapter_boot.setTextAlignment(1, Qt.AlignRight)  # 设置第二列文本右边
-            elif self.item_L_G_STA_power_button_normal.checkState(0) == 2:
+                self.item_L_G_STA_adapter_boot.setTextAlignment(1, Qt.AlignRight)  # 设置第二列文本右对齐
+            if self.item_L_G_STA_power_button_normal.checkState(0) == 2:
                 self.item_L_G_STA_power_button_normal.setText(1, times)
                 self.item_L_G_STA_power_button_normal.setTextAlignment(1, Qt.AlignRight)
-            elif self.item_L_G_STA_adapter_battery_button_unormal.checkState(0) == 2:
+            if self.item_L_G_STA_adapter_battery_button_unormal.checkState(0) == 2:
                 self.item_L_G_STA_adapter_battery_button_unormal.setText(1, times)
                 self.item_L_G_STA_adapter_battery_button_unormal.setTextAlignment(1, Qt.AlignRight)
         except Exception as e:
@@ -428,15 +316,6 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
         else:
             self.text_edit.insertPlainText("读取可用运行内存数据失败， 请检查！！！")
         self.text_edit.insertPlainText("查询结束.")
-
-    def query_mem_free(self):
-        # 保存root steps
-        self.double_check_root()
-        self.ui_config.add_config_option(self.ui_config.section_ui_to_background,
-                                         self.ui_config.ui_option_system_type, self.system_type.currentText())
-        self.ui_config.add_config_option(self.ui_config.section_ui_to_background, self.ui_config.ui_option_device_name,
-                                         self.edit_device_name.currentText())
-        self.mem_free_process.start(conf_path.bat_mem_info_path)
 
     def double_check_root(self):
         # adb shell setprop persist.debuggable 1,adb reboot
@@ -492,11 +371,6 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
         with open(self.debug_log_path, "w") as f:
             f.close()
 
-        # 检查可输入的内存
-        # if len(self.mem_free.text()) == 0:
-        #     self.get_message_box("请输入可用的运行内存！！！")
-        #     return
-
         # 检查用例是否为空
         self.tree_status = []
         # 用例跑的时间集
@@ -512,31 +386,6 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
         cases_duration = []
         tree_status = self.tree_status[0]["children"][0]["children"]
 
-        # 初始化
-        # self.ui_config.add_config_option(self.ui_config.section_ui_to_background,
-        #                                  self.ui_config.ui_option_memtester_duration,
-        #                                  "0")
-        # self.ui_config.add_config_option(self.ui_config.section_ui_to_background,
-        #                                  self.ui_config.ui_option_is_memtester,
-        #                                  "no")
-        # self.ui_config.add_config_option(self.ui_config.section_ui_to_background,
-        #                                  self.ui_config.ui_option_stressapptest_duration,
-        #                                  "0")
-        # self.ui_config.add_config_option(self.ui_config.section_ui_to_background,
-        #                                  self.ui_config.ui_option_is_stress_app_test,
-        #                                  "no")
-        # self.ui_config.add_config_option(self.ui_config.section_ui_to_background,
-        #                                  self.ui_config.ui_option_switch_stressapptest_duration,
-        #                                  "0")
-        # self.ui_config.add_config_option(self.ui_config.section_ui_to_background,
-        #                                  self.ui_config.ui_option_is_stress_app_switch,
-        #                                  "no")
-        # self.ui_config.add_config_option(self.ui_config.section_ui_to_background,
-        #                                  self.ui_config.ui_option_emmmc_duration,
-        #                                  "0")
-        # self.ui_config.add_config_option(self.ui_config.section_ui_to_background,
-        #                                  self.ui_config.ui_option_is_emmc_test,
-        #                                  "no")
         # 提取压测用例
         for slave in tree_status:
             for children in slave['children']:
@@ -604,6 +453,10 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
                                 self.cases.append("boot_logo")
                         self.ui_config.add_config_option(self.ui_config.section_ui_logo,
                                                          self.ui_config.ui_option_logo_cases, "3")
+                    # if
+
+
+
         if len(self.cases) == 0:
             self.get_message_box("请勾选用例！！！")
             return

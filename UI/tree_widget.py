@@ -53,46 +53,6 @@ class Ui_MainWindow(config_path.UIConfigPath):
         # 间隔
         self.verticalLayout_left.addWidget(QtWidgets.QLabel())
 
-        # 填入root方式
-        root_layout_tips = QHBoxLayout()
-        self.root_lable = QtWidgets.QLabel("请填入root步骤：")
-        self.root_step_tips = QtWidgets.QLabel("步骤之间请以逗号隔开，例如：adb root,adb remount")
-        self.root_steps_edit = QtWidgets.QComboBox()
-        self.root_steps_edit.setEditable(True)
-        # 添加原本存在的root方式
-        self.root_steps_edit.addItem("adb root,adb remount")
-        self.root_steps_edit.addItem("adb shell setprop persist.debuggable 1,adb reboot")
-        self.root_step_tips.setStyleSheet("color: blue;")
-        root_layout_tips.addWidget(self.root_lable)
-        root_layout_tips.addWidget(self.root_step_tips)
-        root_layout_tips.addStretch(1)
-        self.verticalLayout_left.addLayout(root_layout_tips)
-        self.verticalLayout_left.addWidget(self.root_steps_edit)
-
-        self.verticalLayout_left.addWidget(QtWidgets.QLabel())
-        self.mem_label = QtWidgets.QLabel("请输入可用的运行内存（M）：")
-        self.verticalLayout_left.addWidget(self.mem_label)
-        layout_mem_info = QHBoxLayout()
-        self.check_mem_button = QtWidgets.QPushButton("查询")
-        self.mem_free = QtWidgets.QLineEdit()
-        layout_mem_info.addWidget(self.check_mem_button)
-        layout_mem_info.addWidget(self.mem_free)
-        self.verticalLayout_left.addLayout(layout_mem_info)
-
-        # check_root_layout = QHBoxLayout()
-        # self.check_root_lable = QtWidgets.QLabel("点击验证root:")
-        # self.root_button = QtWidgets.QPushButton("一键验证")
-        # check_root_layout.addWidget(self.check_root_lable)
-        # check_root_layout.addWidget(self.root_button)
-        # check_root_layout.addStretch(1)
-        # self.verticalLayout_left.addLayout(check_root_layout)
-
-        # 间隔
-        self.verticalLayout_left.addWidget(QtWidgets.QLabel())
-
-        self.cases_tips = QtWidgets.QLabel("memtester、EMMC填测试轮数，其他的填测试时间，双击用例右侧即可填写")
-        self.cases_tips.setStyleSheet("color: blue;")
-        self.verticalLayout_left.addWidget(self.cases_tips)
         # 用例树
         self.treeWidget = QtWidgets.QTreeWidget()
         self.treeWidget.setSelectionMode(QtWidgets.QTreeWidget.ExtendedSelection)  # 设置多选模式
