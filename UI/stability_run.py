@@ -386,138 +386,132 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
         QMessageBox.warning(self, "错误提示", text)
 
     def handle_submit(self):
-        # 初始化log文件
-        with open(self.debug_log_path, "w") as f:
-            f.close()
+        try:
+            # 初始化log文件
+            with open(self.debug_log_path, "w") as f:
+                f.close()
 
-        # 检查用例是否为空
-        self.tree_status = []
-        # 用例跑的时间集
-        self.tree_values = []
-        for i in range(self.treeWidget.topLevelItemCount()):
-            item = self.treeWidget.topLevelItem(i)
-            # 2 表示已勾选，0 表示未勾选，1 表示半选中
-            self.tree_status.append(self.get_tree_item_status(item))
+            # 检查用例是否为空
+            self.tree_status = []
+            # 用例跑的时间集
+            self.tree_values = []
+            for i in range(self.treeWidget.topLevelItemCount()):
+                item = self.treeWidget.topLevelItem(i)
+                # 2 表示已勾选，0 表示未勾选，1 表示半选中
+                self.tree_status.append(self.get_tree_item_status(item))
 
-        # 保存要跑的用例
-        self.durations = []
-        self.cases = []
-        cases_duration = []
-        tree_status = self.tree_status[0]["children"][0]["children"]
+            # 保存要跑的用例
+            self.durations = []
+            self.cases = []
+            cases_duration = []
+            tree_status = self.tree_status[0]["children"][0]["children"]
 
-        # 提取压测用例
-        for slave in tree_status:
-            for children in slave['children']:
-                if children["status"] == 2:
-                    # 立项压测
+            # 提取压测用例
+            for slave in tree_status:
+                for children in slave['children']:
+                    if children["status"] == 2:
+                        # 立项压测
 
-                    # # DDR/EMMC压测
-                    # if "DDR-memtester" in children["text"]:
-                    #     self.cases.append("DDR-memtester")
-                    #     self.ui_config.add_config_option(self.ui_config.section_ui_to_background,
-                    #                                      self.ui_config.ui_option_memtester_duration,
-                    #                                      slave["duration"])
-                    #     self.ui_config.add_config_option(self.ui_config.section_ui_to_background,
-                    #                                      self.ui_config.ui_option_is_memtester,
-                    #                                      "yes")
-                    #     self.durations.append(children["duration"])
-                    #
-                    # if "DDR-stressapptest" in children["text"]:
-                    #     self.cases.append("DDR-stressapptest")
-                    #     self.ui_config.add_config_option(self.ui_config.section_ui_to_background,
-                    #                                      self.ui_config.ui_option_stressapptest_duration,
-                    #                                      children["duration"])
-                    #     self.ui_config.add_config_option(self.ui_config.section_ui_to_background,
-                    #                                      self.ui_config.ui_option_is_stress_app_test,
-                    #                                      "yes")
-                    #     self.durations.append(children["duration"])
-                    #
-                    # if "DDR-switch_stressapptest-高低内存切换" in children["text"]:
-                    #     self.cases.append("DDR-stressapptest-switch")
-                    #     self.ui_config.add_config_option(self.ui_config.section_ui_to_background,
-                    #                                      self.ui_config.ui_option_switch_stressapptest_duration,
-                    #                                      children["duration"])
-                    #     self.ui_config.add_config_option(self.ui_config.section_ui_to_background,
-                    #                                      self.ui_config.ui_option_is_stress_app_switch,
-                    #                                      "yes")
-                    #     self.durations.append(children["duration"])
-                    #
-                    # if "EMMC测试" in children["text"]:
-                    #     self.cases.append("EMMC")
-                    #     self.ui_config.add_config_option(self.ui_config.section_ui_to_background,
-                    #                                      self.ui_config.ui_option_emmmc_duration,
-                    #                                      children["duration"])
-                    #     self.ui_config.add_config_option(self.ui_config.section_ui_to_background,
-                    #                                      self.ui_config.ui_option_is_emmc_test,
-                    #                                      "yes")
-                    #     self.durations.append(children["duration"])
+                        # # DDR/EMMC压测
+                        # if "DDR-memtester" in children["text"]:
+                        #     self.cases.append("DDR-memtester")
+                        #     self.ui_config.add_config_option(self.ui_config.section_ui_to_background,
+                        #                                      self.ui_config.ui_option_memtester_duration,
+                        #                                      slave["duration"])
+                        #     self.ui_config.add_config_option(self.ui_config.section_ui_to_background,
+                        #                                      self.ui_config.ui_option_is_memtester,
+                        #                                      "yes")
+                        #     self.durations.append(children["duration"])
+                        #
+                        # if "DDR-stressapptest" in children["text"]:
+                        #     self.cases.append("DDR-stressapptest")
+                        #     self.ui_config.add_config_option(self.ui_config.section_ui_to_background,
+                        #                                      self.ui_config.ui_option_stressapptest_duration,
+                        #                                      children["duration"])
+                        #     self.ui_config.add_config_option(self.ui_config.section_ui_to_background,
+                        #                                      self.ui_config.ui_option_is_stress_app_test,
+                        #                                      "yes")
+                        #     self.durations.append(children["duration"])
+                        #
+                        # if "DDR-switch_stressapptest-高低内存切换" in children["text"]:
+                        #     self.cases.append("DDR-stressapptest-switch")
+                        #     self.ui_config.add_config_option(self.ui_config.section_ui_to_background,
+                        #                                      self.ui_config.ui_option_switch_stressapptest_duration,
+                        #                                      children["duration"])
+                        #     self.ui_config.add_config_option(self.ui_config.section_ui_to_background,
+                        #                                      self.ui_config.ui_option_is_stress_app_switch,
+                        #                                      "yes")
+                        #     self.durations.append(children["duration"])
+                        #
+                        # if "EMMC测试" in children["text"]:
+                        #     self.cases.append("EMMC")
+                        #     self.ui_config.add_config_option(self.ui_config.section_ui_to_background,
+                        #                                      self.ui_config.ui_option_emmmc_duration,
+                        #                                      children["duration"])
+                        #     self.ui_config.add_config_option(self.ui_config.section_ui_to_background,
+                        #                                      self.ui_config.ui_option_is_emmc_test,
+                        #                                      "yes")
+                        #     self.durations.append(children["duration"])
 
-                    # 开关机卡logo测试
-                    if "适配器开关机" in children["text"]:
-                        if "boot_logo" not in self.cases:
-                            self.cases.append("boot_logo")
-                        self.ui_config.add_config_option(self.ui_config.section_ui_logo,
-                                                         self.ui_config.ui_option_logo_cases, "1")
-                    if "适配器/电池+电源--正常关机" in children["text"]:
-                        if "boot_logo" not in self.cases:
-                            self.cases.append("boot_logo")
+                        # 开关机卡logo测试
+                        if "适配器开关机" in children["text"]:
                             if "boot_logo" not in self.cases:
                                 self.cases.append("boot_logo")
-                        self.ui_config.add_config_option(self.ui_config.section_ui_logo,
-                                                         self.ui_config.ui_option_logo_cases, "2")
-                    if "适配器/电池+电源--异常关机" in children["text"]:
-                        if "boot_logo" not in self.cases:
-                            self.cases.append("boot_logo")
+                            self.ui_config.add_config_option(self.ui_config.section_ui_logo,
+                                                             self.ui_config.ui_option_logo_cases, "1")
+                        if "适配器/电池+电源--正常关机" in children["text"]:
                             if "boot_logo" not in self.cases:
                                 self.cases.append("boot_logo")
-                        self.ui_config.add_config_option(self.ui_config.section_ui_logo,
-                                                         self.ui_config.ui_option_logo_cases, "3")
-                    # if
+                                if "boot_logo" not in self.cases:
+                                    self.cases.append("boot_logo")
+                            self.ui_config.add_config_option(self.ui_config.section_ui_logo,
+                                                             self.ui_config.ui_option_logo_cases, "2")
+                        if "适配器/电池+电源--异常关机" in children["text"]:
+                            if "boot_logo" not in self.cases:
+                                self.cases.append("boot_logo")
+                                if "boot_logo" not in self.cases:
+                                    self.cases.append("boot_logo")
+                            self.ui_config.add_config_option(self.ui_config.section_ui_logo,
+                                                             self.ui_config.ui_option_logo_cases, "3")
+                        # if
+                        if children["text"] in ["DDR-memtester压力测试", "DDR-stressapptest", "DDR-stressapptest", "EMMC测试"]:
+                            if "DDR-Integration-testing" not in self.cases:
+                                self.cases.append("DDR-Integration-testing")
+                        # "DDR/EMMC压测": AllCertCaseValue.ROOT_PROTOCON_D_E_STA_CHILD,
+                        # "DDR-memtester压力测试": AllCertCaseValue.ROOT_PROTOCON_D_E_STA_TMISCAN_B0,
+                        # "DDR-stressapptest": AllCertCaseValue.ROOT_PROTOCON_D_E_STA_TMISCAN_B1,
+                        # "DDR-switch_stressapptest-高低内存切换": AllCertCaseValue.ROOT_PROTOCON_D_E_STA_TMISCAN_B2,
+                        # "EMMC测试": AllCertCaseValue.ROOT_PROTOCON_D_E_STA_TMISCAN_B3,
 
-        if len(self.cases) == 0:
-            self.get_message_box("请勾选用例！！！")
-            return
+            if len(self.cases) == 0:
+                self.get_message_box("请勾选用例！！！")
+                return
 
-        # if len(self.durations) == 0:
-        #     self.get_message_box("请填写用例的测试时间或者测试次数， 请检查！！！")
-        #     return
-        #
-        # for dur in self.durations:
-        #     if len(dur) == 0:
-        #         self.get_message_box("有用例没有填写上测试时间或者测试次数，请检查！！！")
-        #         return
-        self.ui_config.add_config_option(self.ui_config.section_ui_to_background, self.ui_config.ui_option_device_name,
-                                         self.edit_device_name.currentText())
+            self.ui_config.add_config_option(self.ui_config.section_ui_to_background, self.ui_config.ui_option_device_name,
+                                             self.edit_device_name.currentText())
+            # 保存用例
+            self.ui_config.add_config_option(self.ui_config.section_ui_to_background,
+                                             self.ui_config.ui_option_cases, ",".join(self.cases))
 
-        self.ui_config.add_config_option(self.ui_config.section_ui_to_background, self.ui_config.ui_option_system_type,
-                                         self.system_type.currentText())
-        # 保存用例
-        self.ui_config.add_config_option(self.ui_config.section_ui_to_background,
-                                         self.ui_config.ui_option_cases, ",".join(self.cases))
-        # 保存用例测试时长
-        self.ui_config.add_config_option(self.ui_config.section_ui_to_background,
-                                         self.ui_config.ui_option_test_duration, ",".join(cases_duration))
+            # 检查完保存配置
+            # self.save_config(self.config_file_path)
+            # 启动
+            self.start_qt_process(self.run_bat_path)
 
-        self.ui_config.add_config_option(self.ui_config.section_ui_to_background,
-                                         self.ui_config.ui_option_mem_free_value, self.mem_free.text())
+            self.timer = QTimer(self)
+            self.timer.timeout.connect(self.update_debug_log)
 
-        # 检查完保存配置
-        # self.save_config(self.config_file_path)
-        # 启动
-        self.start_qt_process(self.run_bat_path)
+            # self.file_timer = QTimer(self)
+            # self.file_timer.timeout.connect(self.check_image_modification)
 
-        self.timer = QTimer(self)
-        self.timer.timeout.connect(self.update_debug_log)
-
-        # self.file_timer = QTimer(self)
-        # self.file_timer.timeout.connect(self.check_image_modification)
-
-        self.check_interval = 1000  # 定时器间隔，单位毫秒
-        self.timer.start(self.check_interval)  # 启动定时器
-        # self.file_timer.start(self.check_interval)
-        self.stop_process_button.setEnabled(True)
-        self.submit_button.setDisabled(True)
-        self.submit_button.setText("测试中...")
+            self.check_interval = 1000  # 定时器间隔，单位毫秒
+            self.timer.start(self.check_interval)  # 启动定时器
+            # self.file_timer.start(self.check_interval)
+            self.stop_process_button.setEnabled(True)
+            self.submit_button.setDisabled(True)
+            self.submit_button.setText("测试中...")
+        except Exception as e:
+            print(e)
 
     def get_COM_config(self):
         return ["1路", "2路", "3路", "4路"]
