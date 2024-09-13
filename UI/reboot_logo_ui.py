@@ -218,6 +218,7 @@ class LogoDisplay(QtWidgets.QMainWindow, Reboot_Logo_MainWindow):
         super(LogoDisplay, self).__init__()
         self.setupUi(self)
         self.intiui()
+        self.submit_flag = False
 
     def intiui(self):
         # 初始化进程
@@ -284,6 +285,7 @@ class LogoDisplay(QtWidgets.QMainWindow, Reboot_Logo_MainWindow):
 
         # 检查完保存配置
         self.save_config()
+        self.submit_flag = True
         self.get_message_box("开机卡logo用例配置保存成功")
         # 每次提交先删除失败的照片，避免检错误
         if os.path.exists(self.failed_image_key_path):

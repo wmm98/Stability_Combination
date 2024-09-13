@@ -107,6 +107,7 @@ if [ "$is_stress_app_switch" = "yes" ]; then
 			   echo $(date +"%Y-%m-%d %H:%M:%S") >> /data/stress_test_log/stresstestlog/strssapptest_cut.log
 		       /data/stressapptest -s 10 -M "$new_free_value" >> /data/stress_test_log/stresstestlog/strssapptest_cut.log
 			   echo "循环次数为 $t_times"
+			   echo "******************************************" >> /data/stress_test_log/stresstestlog/strssapptest_cut.log
 			   ((t_times++))
 			   sleep 5
 			done
@@ -116,6 +117,7 @@ if [ "$is_stress_app_switch" = "yes" ]; then
 		echo "$quotient 条进程"
 		#循环 多次次发送指令
 		t_times=1
+		echo "******************************************" >> /data/stress_test_log/stresstestlog/strssapptest_cut.log
 		while [ $t_times -le $test_times ]
 		do
 			echo "循环次数为： $t_times"
@@ -124,6 +126,7 @@ if [ "$is_stress_app_switch" = "yes" ]; then
 			do
 			  echo $(date +"%Y-%m-%d %H:%M:%S") >> /data/stress_test_log/stresstestlog/strssapptest_cut.log
 			  /data/stressapptest -s 10 -M 1750 >> /data/stress_test_log/stresstestlog/strssapptest_cut.log
+			  echo "******************************************" >> /data/stress_test_log/stresstestlog/strssapptest_cut.log
 			  ((count++))
 			  sleep 1
 			done

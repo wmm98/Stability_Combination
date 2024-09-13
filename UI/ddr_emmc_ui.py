@@ -102,7 +102,7 @@ class DDR_MainWindow(config_path.UIConfigPath):
         self.DDR_stressapptest_label = QtWidgets.QLabel("stressapptest压测小时")
         self.DDR_stressapptest_times = QComboBox()
         self.DDR_stressapptest_times.setEditable(True)
-        self.DDR_stressapptest_switch_label = QtWidgets.QLabel("stressapptest高低切换压测次数")
+        self.DDR_stressapptest_switch_label = QtWidgets.QLabel("stressapptest高低切换压测小时")
         self.DDR_stressapptest_switch_times = QComboBox()
         self.DDR_stressapptest_switch_times.setEditable(True)
         self.EMMC_label = QtWidgets.QLabel("EMMC压测次数")
@@ -196,7 +196,7 @@ class DDRDisplay(QtWidgets.QMainWindow, DDR_MainWindow):
 
         self.DDR_memtester_test_times.addItems(times)
         self.DDR_stressapptest_times.addItems(duration)
-        self.DDR_stressapptest_switch_times.addItems(times)
+        self.DDR_stressapptest_switch_times.addItems(duration)
         self.EMMC_times.addItems(times)
 
     def list_devices_name(self):
@@ -286,7 +286,7 @@ class DDRDisplay(QtWidgets.QMainWindow, DDR_MainWindow):
 
         if self.is_DDR_streessapptest_test.isChecked():
             if len(self.DDR_stressapptest_times.currentText()) == 0:
-                self.get_message_box("请设置DDR streessapptest压测次数！！！")
+                self.get_message_box("请设置DDR streessapptest压测小时！！！")
                 return
             self.ui_config.add_config_option(self.ui_config.section_DDR_EMMC, self.ui_config.ui_option_is_stress_app_test, "yes")
             self.ui_config.add_config_option(self.ui_config.section_DDR_EMMC, self.ui_config.ui_option_stressapptest_duration, self.DDR_stressapptest_times.currentText())
@@ -296,7 +296,7 @@ class DDRDisplay(QtWidgets.QMainWindow, DDR_MainWindow):
 
         if self.is_DDR_streessapptest_switch_test.isChecked():
             if len(self.DDR_stressapptest_switch_times.currentText()) == 0:
-                self.get_message_box("请设置DDR streessapptest高低切换压测次数！！！")
+                self.get_message_box("请设置DDR streessapptest高低切换压测时间！！！")
                 return
             self.ui_config.add_config_option(self.ui_config.section_DDR_EMMC, self.ui_config.ui_option_is_stress_app_switch, "yes")
             self.ui_config.add_config_option(self.ui_config.section_DDR_EMMC, self.ui_config.ui_option_switch_stressapptest_duration, self.DDR_stressapptest_switch_times.currentText())

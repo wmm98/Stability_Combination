@@ -211,7 +211,7 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
         self.item_D_E_STA_switch_stressapptest.setText(0, "DDR-switch_stressapptest-高低内存切换")
         self.item_D_E_STA_switch_stressapptest.setCheckState(0, Qt.Unchecked)
         self.item_D_E_STA_switch_stressapptest.setText(1, "")
-        self.item_D_E_STA_switch_stressapptest.setText(2, "次")
+        self.item_D_E_STA_switch_stressapptest.setText(2, "小时")
         self.item_D_E_STA_switch_stressapptest.setFlags(
             self.item_D_E_STA_switch_stressapptest.flags() | Qt.ItemIsSelectable | Qt.ItemIsUserCheckable | Qt.ItemIsEditable)
 
@@ -279,17 +279,19 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
                 self.item_D_E_STA_switch_stressapptest.setTextAlignment(1, Qt.AlignRight)
 
     def display_boot_logo_cases_test_times(self):
-        times = self.ui_config.get_option_value(self.ui_config.section_ui_logo,
-                                                self.ui_config.ui_option_logo_test_times)
-        if self.item_L_G_STA_adapter_boot.checkState(0) == 2:
-            self.item_L_G_STA_adapter_boot.setText(1, times)
-            self.item_L_G_STA_adapter_boot.setTextAlignment(1, Qt.AlignRight)  # 设置第二列文本右对齐
-        if self.item_L_G_STA_power_button_normal.checkState(0) == 2:
-            self.item_L_G_STA_power_button_normal.setText(1, times)
-            self.item_L_G_STA_power_button_normal.setTextAlignment(1, Qt.AlignRight)
-        if self.item_L_G_STA_adapter_battery_button_unormal.checkState(0) == 2:
-            self.item_L_G_STA_adapter_battery_button_unormal.setText(1, times)
-            self.item_L_G_STA_adapter_battery_button_unormal.setTextAlignment(1, Qt.AlignRight)
+        time.sleep(1)
+        if self.logo_window.submit_flag:
+            times = self.ui_config.get_option_value(self.ui_config.section_ui_logo,
+                                                    self.ui_config.ui_option_logo_test_times)
+            if self.item_L_G_STA_adapter_boot.checkState(0) == 2:
+                self.item_L_G_STA_adapter_boot.setText(1, times)
+                self.item_L_G_STA_adapter_boot.setTextAlignment(1, Qt.AlignRight)  # 设置第二列文本右对齐
+            if self.item_L_G_STA_power_button_normal.checkState(0) == 2:
+                self.item_L_G_STA_power_button_normal.setText(1, times)
+                self.item_L_G_STA_power_button_normal.setTextAlignment(1, Qt.AlignRight)
+            if self.item_L_G_STA_adapter_battery_button_unormal.checkState(0) == 2:
+                self.item_L_G_STA_adapter_battery_button_unormal.setText(1, times)
+                self.item_L_G_STA_adapter_battery_button_unormal.setTextAlignment(1, Qt.AlignRight)
 
     def on_item_clicked(self, item):
         # 开关机卡logo窗口处理
@@ -315,6 +317,21 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
                     self.DDR_EMMC_window.is_DDR_streessapptest_switch_test.setChecked(True)
                 if item == self.item_D_E_EMMC:
                     self.DDR_EMMC_window.is_EEMC_test.setChecked(True)
+            else:
+                # 在子界面勾上的需要测试的选项
+                if item == self.item_D_E_STA:
+                    self.DDR_EMMC_window.is_EEMC_test.setChecked(False)
+                    self.DDR_EMMC_window.is_DDR_memtester_test.setChecked(False)
+                    self.DDR_EMMC_window.is_DDR_streessapptest_test.setChecked(False)
+                    self.DDR_EMMC_window.is_DDR_streessapptest_switch_test.setChecked(False)
+                if item == self.item_D_E_STA_memtester:
+                    self.DDR_EMMC_window.is_DDR_memtester_test.setChecked(False)
+                if item == self.item_D_E_STA_stressapptest:
+                    self.DDR_EMMC_window.is_DDR_streessapptest_test.setChecked(False)
+                if item == self.item_D_E_STA_switch_stressapptest:
+                    self.DDR_EMMC_window.is_DDR_streessapptest_switch_test.setChecked(False)
+                if item == self.item_D_E_EMMC:
+                    self.DDR_EMMC_window.is_EEMC_test.setChecked(False)
 
     def handlechanged(self, item, column):
         # 获取选中节点的子节点个数
@@ -477,14 +494,9 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
                             self.ui_config.add_config_option(self.ui_config.section_ui_logo,
                                                              self.ui_config.ui_option_logo_cases, "3")
                         # if
-                        if children["text"] in ["DDR-memtester压力测试", "DDR-stressapptest", "DDR-stressapptest", "EMMC测试"]:
+                        if children["text"] in ["DDR-memtester压力测试", "DDR-stressapptest压力测试", "DDR-switch_stressapptest-高低内存切换", "EMMC测试"]:
                             if "DDR-Integration-testing" not in self.cases:
                                 self.cases.append("DDR-Integration-testing")
-                        # "DDR/EMMC压测": AllCertCaseValue.ROOT_PROTOCON_D_E_STA_CHILD,
-                        # "DDR-memtester压力测试": AllCertCaseValue.ROOT_PROTOCON_D_E_STA_TMISCAN_B0,
-                        # "DDR-stressapptest": AllCertCaseValue.ROOT_PROTOCON_D_E_STA_TMISCAN_B1,
-                        # "DDR-switch_stressapptest-高低内存切换": AllCertCaseValue.ROOT_PROTOCON_D_E_STA_TMISCAN_B2,
-                        # "EMMC测试": AllCertCaseValue.ROOT_PROTOCON_D_E_STA_TMISCAN_B3,
 
             if len(self.cases) == 0:
                 self.get_message_box("请勾选用例！！！")
