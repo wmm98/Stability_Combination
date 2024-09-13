@@ -29,15 +29,14 @@ class TestStabilityCombination:
     @allure.title("DDR-EMMC压力测试")
     def test_stability_combination_all(self):
         log.info("********测试开始*********")
-        # 1.推送memtester的相关
-        # root设备
-        if self.ui_conf_file.get(Config.section_ui_to_background,
-                                 Config.ui_option_is_memtester) == "yes":
+        # try:
+            # 1.推送memtester的相关
+            # root设备
+        if self.ui_conf_file.get(Config.section_DDR_EMMC, Config.ui_option_is_memtester) == "yes":
             self.device.adb_push_file(os.path.join(Config.DDR_memtester_path, "memtester"), "/data")
             self.device.send_adb_shell_command("chmod 777 /data/memtester")
         # 2.推送stressapptest
-        if self.ui_conf_file.get(Config.section_ui_to_background,
-                                 Config.ui_option_is_stress_app_test) == "yes":
+        if self.ui_conf_file.get(Config.section_DDR_EMMC, Config.ui_option_is_stress_app_test) == "yes":
             self.device.adb_push_file(os.path.join(Config.DDR_stressapptest_path, "stressapptest"), "/data")
             self.device.send_adb_shell_command("chmod 777 /data/stressapptest")
             time.sleep(2)
@@ -45,8 +44,7 @@ class TestStabilityCombination:
                                       "/system/lib/libstlport.so")
             self.device.send_adb_shell_command("chmod 644 /system/lib/libstlport.so")
         # 2.推送stressapptest-cut
-        if self.ui_conf_file.get(Config.section_ui_to_background,
-                                 Config.ui_option_is_stress_app_switch) == "yes":
+        if self.ui_conf_file.get(Config.section_DDR_EMMC, Config.ui_option_is_stress_app_switch) == "yes":
             self.device.adb_push_file(os.path.join(Config.DDR_stressapptest_switch_path, "stressapptest"), "/data")
             self.device.send_adb_shell_command("chmod 777 /data/stressapptest")
             time.sleep(2)
@@ -54,8 +52,7 @@ class TestStabilityCombination:
                                       "/system/lib/")
             self.device.send_adb_shell_command("chmod 644 /system/lib/libstlport.so")
         # 推送shell脚本
-        if self.ui_conf_file.get(Config.section_ui_to_background,
-                                 Config.ui_option_system_type) == "Android":
+        if self.ui_conf_file.get(Config.section_DDR_EMMC, Config.ui_option_system_type) == "Android":
             self.device.adb_push_file(os.path.join(Config.pretesting_path, "test_demo_Android.sh"), "/data")
             self.device.send_adb_shell_command("chmod 777 /data/test_demo_Android.sh")
             self.device.adb_push_file(Config.ui_config_ini_path, "/data")
@@ -70,6 +67,8 @@ class TestStabilityCombination:
             log.info("可脱机测试")
         else:
             log.info(".sh脚本没跑起来，请检查！！！")
+        # except Exception as e:
+        #     print(e)
         log.info("测试结束")
         log.info("********测试结束*********")
 

@@ -176,6 +176,7 @@ class DDRDisplay(QtWidgets.QMainWindow, DDR_MainWindow):
         self.ddr_window = DDR_MainWindow()
         self.setupUi(self)
         self.intiui()
+        self.submit_flag = False
 
     def intiui(self):
         # 添加字段
@@ -183,7 +184,7 @@ class DDRDisplay(QtWidgets.QMainWindow, DDR_MainWindow):
         # 初始化进程
         self.root_process = QProcess()
         self.mem_free_process = QProcess()
-        self.submit_button.clicked.connect(self.handle_submit)
+        self.submit_button.clicked.connect(self.info_submit)
         self.check_mem_button.clicked.connect(self.query_mem_free)
         self.mem_free_process.finished.connect(self.mem_free_finished_handle)
         self.list_devices_name()
@@ -246,69 +247,67 @@ class DDRDisplay(QtWidgets.QMainWindow, DDR_MainWindow):
             self.ui_config.add_config_option(self.ui_config.section_DDR_EMMC,
                                              self.ui_config.ui_option_root_steps, "")
 
-    def handle_finished(self):
-        self.stop_process()
-
     def get_message_box(self, text):
         QMessageBox.warning(self, "错误提示", text)
 
-    def handle_submit(self):
-        try:
-            if len(self.device_name.currentText()) == 0:
-                self.get_message_box("没识别到相应的设备，请检查并且重启界面！！！")
+    def info_submit(self):
+        if len(self.device_name.currentText()) == 0:
+            self.get_message_box("没识别到相应的设备，请检查并且重启界面！！！")
+            return
+        #
+        if len(self.mem_free.text()) == 0:
+            self.get_message_box("请填入可运行的内存！！！")
+            return
+
+        if not (self.is_EEMC_test.isChecked() or self.is_DDR_memtester_test.isChecked() or self.is_DDR_streessapptest_test.isChecked()
+                or self.is_DDR_streessapptest_switch_test.isChecked()):
+            self.get_message_box("请勾选测试项！！！")
+            return
+
+        if self.is_EEMC_test.isChecked():
+            if len(self.EMMC_times.currentText()) == 0:
+                self.get_message_box("请设置EMMC压测次数！！！")
                 return
+            self.ui_config.add_config_option(self.ui_config.section_DDR_EMMC, self.ui_config.ui_option_is_emmc_test, "yes")
+            self.ui_config.add_config_option(self.ui_config.section_DDR_EMMC, self.ui_config.ui_option_emmmc_duration, self.EMMC_times.currentText())
+        else:
+            self.ui_config.add_config_option(self.ui_config.section_DDR_EMMC, self.ui_config.ui_option_is_emmc_test, "no")
+            self.ui_config.add_config_option(self.ui_config.section_DDR_EMMC, self.ui_config.ui_option_emmmc_duration, "0")
 
-            if len(self.mem_free.text()) == 0:
-                self.get_message_box("请填入可运行的内存！！！")
+        if self.is_DDR_memtester_test.isChecked():
+            if len(self.DDR_memtester_test_times.currentText()) == 0:
+                self.get_message_box("请设置DDR Memtester压测次数！！！")
                 return
+            self.ui_config.add_config_option(self.ui_config.section_DDR_EMMC, self.ui_config.ui_option_is_memtester, "yes")
+            self.ui_config.add_config_option(self.ui_config.section_DDR_EMMC, self.ui_config.ui_option_memtester_duration, self.DDR_memtester_test_times.currentText())
+        else:
+            self.ui_config.add_config_option(self.ui_config.section_DDR_EMMC, self.ui_config.ui_option_is_memtester, "no")
+            self.ui_config.add_config_option(self.ui_config.section_DDR_EMMC, self.ui_config.ui_option_memtester_duration, "0")
 
-            if not (self.is_EEMC_test.isChecked() or self.is_DDR_memtester_test.isChecked() or self.is_DDR_streessapptest_test.isChecked()
-                    or self.is_DDR_streessapptest_switch_test.isChecked()):
-                self.get_message_box("请勾选测试项！！！")
+        if self.is_DDR_streessapptest_test.isChecked():
+            if len(self.DDR_stressapptest_times.currentText()) == 0:
+                self.get_message_box("请设置DDR streessapptest压测次数！！！")
                 return
+            self.ui_config.add_config_option(self.ui_config.section_DDR_EMMC, self.ui_config.ui_option_is_stress_app_test, "yes")
+            self.ui_config.add_config_option(self.ui_config.section_DDR_EMMC, self.ui_config.ui_option_stressapptest_duration, self.DDR_stressapptest_times.currentText())
+        else:
+            self.ui_config.add_config_option(self.ui_config.section_DDR_EMMC, self.ui_config.ui_option_is_stress_app_test, "no")
+            self.ui_config.add_config_option(self.ui_config.section_DDR_EMMC, self.ui_config.ui_option_stressapptest_duration, "0")
 
-            if self.is_EEMC_test.isChecked():
-                if len(self.EMMC_times.currentText()) == 0:
-                    self.get_message_box("请设置EMMC压测次数！！！")
-                    return
-                self.ui_config.add_config_option(self.ui_config.section_DDR_EMMC, self.ui_config.ui_option_is_emmc_test, "yes")
-                self.ui_config.add_config_option(self.ui_config.section_DDR_EMMC, self.ui_config.ui_option_emmmc_duration, self.EMMC_times.currentText())
-            else:
-                self.ui_config.add_config_option(self.ui_config.section_DDR_EMMC, self.ui_config.ui_option_is_emmc_test, "no")
+        if self.is_DDR_streessapptest_switch_test.isChecked():
+            if len(self.DDR_stressapptest_switch_times.currentText()) == 0:
+                self.get_message_box("请设置DDR streessapptest高低切换压测次数！！！")
+                return
+            self.ui_config.add_config_option(self.ui_config.section_DDR_EMMC, self.ui_config.ui_option_is_stress_app_switch, "yes")
+            self.ui_config.add_config_option(self.ui_config.section_DDR_EMMC, self.ui_config.ui_option_switch_stressapptest_duration, self.DDR_stressapptest_switch_times.currentText())
+        else:
+            self.ui_config.add_config_option(self.ui_config.section_DDR_EMMC, self.ui_config.ui_option_is_stress_app_switch, "no")
+            self.ui_config.add_config_option(self.ui_config.section_DDR_EMMC, self.ui_config.ui_option_switch_stressapptest_duration, "0")
 
-            if self.is_DDR_memtester_test.isChecked():
-                if len(self.DDR_memtester_test_times.currentText()) == 0:
-                    self.get_message_box("请设置DDR Memtester压测次数！！！")
-                    return
-                self.ui_config.add_config_option(self.ui_config.section_DDR_EMMC, self.ui_config.ui_option_is_memtester, "yes")
-                self.ui_config.add_config_option(self.ui_config.section_DDR_EMMC, self.ui_config.ui_option_memtester_duration, self.DDR_memtester_test_times.currentText())
-            else:
-                self.ui_config.add_config_option(self.ui_config.section_DDR_EMMC, self.ui_config.ui_option_is_memtester, "no")
-            self.get_message_box("配置保存成功")
-
-            if self.is_DDR_streessapptest_test.isChecked():
-                if len(self.DDR_stressapptest_times.currentText()) == 0:
-                    self.get_message_box("请设置DDR streessapptest压测次数！！！")
-                    return
-                self.ui_config.add_config_option(self.ui_config.section_DDR_EMMC, self.ui_config.ui_option_is_stress_app_test, "yes")
-                self.ui_config.add_config_option(self.ui_config.section_DDR_EMMC, self.ui_config.ui_option_stressapptest_duration, self.DDR_stressapptest_times.currentText())
-            else:
-                self.ui_config.add_config_option(self.ui_config.section_DDR_EMMC, self.ui_config.ui_option_is_stress_app_test, "no")
-            self.get_message_box("配置保存成功")
-
-            if self.is_DDR_streessapptest_switch_test.isChecked():
-                if len(self.DDR_stressapptest_switch_times.currentText()) == 0:
-                    self.get_message_box("请设置DDR streessapptest高低切换压测次数！！！")
-                    return
-                self.ui_config.add_config_option(self.ui_config.section_DDR_EMMC, self.ui_config.ui_option_is_stress_app_switch, "yes")
-                self.ui_config.add_config_option(self.ui_config.section_DDR_EMMC, self.ui_config.ui_option_switch_stressapptest_duration, self.DDR_stressapptest_switch_times.currentText())
-            else:
-                self.ui_config.add_config_option(self.ui_config.section_DDR_EMMC, self.ui_config.ui_option_is_stress_app_test, "no")
-
-            self.ui_config.add_config_option(self.ui_config.section_DDR_EMMC, self.ui_config.ui_option_mem_free_value, self.mem_free.text())
-            self.get_message_box("配置保存成功")
-        except Exception as e:
-            print(e)
+        self.ui_config.add_config_option(self.ui_config.section_DDR_EMMC, self.ui_config.ui_option_mem_free_value, self.mem_free.text())
+        self.ui_config.add_config_option(self.ui_config.section_DDR_EMMC, self.ui_config.ui_option_system_type, self.system_type.currentText())
+        self.submit_flag = True
+        self.get_message_box("配置保存成功")
 
     def remove_file(self, path):
         if os.path.isfile(path):

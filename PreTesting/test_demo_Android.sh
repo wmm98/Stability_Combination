@@ -44,9 +44,6 @@ get_cfg_value()
 }
 
 system=`get_cfg_value system`
-cases=`get_cfg_value cases`
-test_duration=`get_cfg_value test_duration`
-root_steps=`get_cfg_value root_steps`
 mem_free_value=`get_cfg_value mem_free_value`
 is_memtester=`get_cfg_value is_memtester`
 is_stress_app_test=`get_cfg_value is_stress_app_test`

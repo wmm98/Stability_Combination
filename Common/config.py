@@ -31,6 +31,8 @@ class Config:
 
     section_ui_to_background = "UI-Background"
     section_background_to_ui = "Background-UI"
+    # EMMC, DDR
+    section_DDR_EMMC = "DDR_EMMC"
     ui_option_root_steps = "root_steps"
     ui_option_system_type = "system"
     ui_option_mem_free_value = "mem_free_value"

@@ -178,7 +178,7 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
         self.item_L_X_STA.setFlags(self.item_L_X_STA.flags() | Qt.ItemIsSelectable)
         # 立项测试子用例
         self.item_L_X_STA_child = QTreeWidgetItem(self.item_L_X_STA)
-        self.item_L_X_STA_child.setText(0, "立项压测1")
+        self.item_L_X_STA_child.setText(0, "开关机检查基本功能")
         self.item_L_X_STA_child.setCheckState(0, Qt.Unchecked)
         self.item_L_X_STA_child.setText(1, "")
         self.item_L_X_STA_child.setText(2, "次")
@@ -203,7 +203,7 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
         self.item_D_E_STA_stressapptest.setText(0, "DDR-stressapptest压力测试")
         self.item_D_E_STA_stressapptest.setCheckState(0, Qt.Unchecked)
         self.item_D_E_STA_stressapptest.setText(1, "")
-        self.item_D_E_STA_stressapptest.setText(2, "次")
+        self.item_D_E_STA_stressapptest.setText(2, "小时")
         self.item_D_E_STA_stressapptest.setFlags(
             self.item_D_E_STA_stressapptest.flags() | Qt.ItemIsSelectable | Qt.ItemIsUserCheckable | Qt.ItemIsEditable)
 
@@ -254,26 +254,29 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
             self.item_L_G_STA_adapter_battery_button_unormal.flags() | Qt.ItemIsSelectable | Qt.ItemIsUserCheckable | Qt.ItemIsEditable)
 
     def display_ddr_emmc_cases_test_times(self):
-        if self.item_D_E_EMMC.checkState(0) == 2:
-            emmc_times = self.ui_config.get_option_value(self.ui_config.section_DDR_EMMC,
-                                                         self.ui_config.ui_option_emmmc_duration)
-            self.item_D_E_EMMC.setText(1, emmc_times)
-            self.item_D_E_EMMC.setTextAlignment(1, Qt.AlignRight)  # 设置第二列文本右对齐
-        if self.item_D_E_STA_memtester.checkState(0) == 2:
-            memtester_times = self.ui_config.get_option_value(self.ui_config.section_DDR_EMMC,
-                                                         self.ui_config.ui_option_memtester_duration)
-            self.item_D_E_STA_memtester.setText(1, memtester_times)
-            self.item_D_E_STA_memtester.setTextAlignment(1, Qt.AlignRight)
-        if self.item_D_E_STA_stressapptest.checkState(0) == 2:
-            stressapptest_times = self.ui_config.get_option_value(self.ui_config.section_DDR_EMMC,
-                                                              self.ui_config.ui_option_stressapptest_duration)
-            self.item_D_E_STA_stressapptest.setText(1, stressapptest_times)
-            self.item_D_E_STA_stressapptest.setTextAlignment(1, Qt.AlignRight)
-        if self.item_D_E_STA_switch_stressapptest.checkState(0) == 2:
-            stressapptest_switch_times = self.ui_config.get_option_value(self.ui_config.section_DDR_EMMC,
-                                                                  self.ui_config.ui_option_switch_stressapptest_duration)
-            self.item_D_E_STA_switch_stressapptest.setText(1, stressapptest_switch_times)
-            self.item_D_E_STA_switch_stressapptest.setTextAlignment(1, Qt.AlignRight)
+        time.sleep(1)
+        if self.DDR_EMMC_window.submit_flag:
+            if self.item_D_E_EMMC.checkState(0) == 2:
+                emmc_times = self.ui_config.get_option_value(self.ui_config.section_DDR_EMMC,
+                                                             self.ui_config.ui_option_emmmc_duration)
+
+                self.item_D_E_EMMC.setText(1, emmc_times)
+                self.item_D_E_EMMC.setTextAlignment(1, Qt.AlignRight)  # 设置第二列文本右对齐
+            if self.item_D_E_STA_memtester.checkState(0) == 2:
+                memtester_times = self.ui_config.get_option_value(self.ui_config.section_DDR_EMMC,
+                                                             self.ui_config.ui_option_memtester_duration)
+                self.item_D_E_STA_memtester.setText(1, memtester_times)
+                self.item_D_E_STA_memtester.setTextAlignment(1, Qt.AlignRight)
+            if self.item_D_E_STA_stressapptest.checkState(0) == 2:
+                stressapptest_times = self.ui_config.get_option_value(self.ui_config.section_DDR_EMMC,
+                                                                  self.ui_config.ui_option_stressapptest_duration)
+                self.item_D_E_STA_stressapptest.setText(1, stressapptest_times)
+                self.item_D_E_STA_stressapptest.setTextAlignment(1, Qt.AlignRight)
+            if self.item_D_E_STA_switch_stressapptest.checkState(0) == 2:
+                stressapptest_switch_times = self.ui_config.get_option_value(self.ui_config.section_DDR_EMMC,
+                                                                      self.ui_config.ui_option_switch_stressapptest_duration)
+                self.item_D_E_STA_switch_stressapptest.setText(1, stressapptest_switch_times)
+                self.item_D_E_STA_switch_stressapptest.setTextAlignment(1, Qt.AlignRight)
 
     def display_boot_logo_cases_test_times(self):
         times = self.ui_config.get_option_value(self.ui_config.section_ui_logo,

@@ -58,7 +58,6 @@ class Ui_MainWindow(config_path.UIConfigPath):
         self.treeWidget.setSelectionMode(QtWidgets.QTreeWidget.ExtendedSelection)  # 设置多选模式
         self.treeWidget.setObjectName("treeWidget")
         self.treeWidget.headerItem().setText(0, "1")
-        # self.treeWidget.setFixedSize(500, 300)
         self.treeWidget.setFixedHeight(400)
         self.verticalLayout_left.addWidget(self.treeWidget)
 
@@ -114,7 +113,7 @@ class Ui_MainWindow(config_path.UIConfigPath):
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
+        MainWindow.setWindowTitle(_translate("MainWindow", "压测用例配置界面"))
 
 
 class ScrollablePlainTextEdit(QTextEdit):

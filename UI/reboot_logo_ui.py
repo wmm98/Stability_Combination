@@ -345,91 +345,66 @@ class LogoDisplay(QtWidgets.QMainWindow, Reboot_Logo_MainWindow):
         section = config.section_ui_logo
         config.add_config_section(section)
 
-        # config[section]['device_name'] = self.edit_device_name.currentText()
         config.add_config_option(section, "COM", self.test_COM.currentText())
         config.add_config_option(section, "logcat_duration", self.adb_log_duration.currentText())
-        # config[section]["logcat_duration"] = self.adb_log_duration.currentText()
 
         # 接线方式
         if self.is_adapter.isChecked():
-            # config[section]["is_adapter"] = "1"
             config.add_config_option(section, "is_adapter", "1")
         else:
-            # config[section]["is_adapter"] = "0"
             config.add_config_option(section, "is_adapter", "0")
         if self.is_power_button.isChecked():
-            # config[section]["is_power_button"] = "1"
             config.add_config_option(section, "is_power_button", "1")
         else:
-            # config[section]["is_power_button"] = "0"
             config.add_config_option(section, "is_power_button", "0")
         if self.is_usb.isChecked():
-            # config[section]["is_usb"] = "1"
             config.add_config_option(section, "is_usb", "1")
         else:
-            # config[section]["is_usb"] = "0"
             config.add_config_option(section, "is_usb", "0")
 
         # 接线配置
         if self.adapter_config.isEnabled():
             if self.adapter_config.currentText() == "1路":
-                # config[section]["adapter_power_config"] = "relay_1"
                 config.add_config_option(section, "adapter_power_config", "relay_1")
             elif self.adapter_config.currentText() == "2路":
-                # config[section]["adapter_power_config"] = "relay_2"
                 config.add_config_option(section, "adapter_power_config", "relay_2")
             elif self.adapter_config.currentText() == "3路":
-                # config[section]["adapter_power_config"] = "relay_3"
                 config.add_config_option(section, "adapter_power_config", "relay_3")
             else:
-                # config[section]["adapter_power_config"] = "relay_4"
                 config.add_config_option(section, "adapter_power_config", "relay_4")
 
         if self.power_button_config.isEnabled():
             if self.power_button_config.currentText() == "1路":
-                # config[section]["power_button_config"] = "relay_1"
                 config.add_config_option(section, "power_button_config", "relay_1")
             elif self.power_button_config.currentText() == "2路":
-                # config[section]["power_button_config"] = "relay_2"
                 config.add_config_option(section, "power_button_config", "relay_2")
             elif self.power_button_config.currentText() == "3路":
-                # config[section]["power_button_config"] = "relay_3"
                 config.add_config_option(section, "power_button_config", "relay_3")
             else:
-                # config[section]["power_button_config"] = "relay_4"
                 config.add_config_option(section, "power_button_config", "relay_4")
 
         if self.usb_config.isEnabled():
             if self.usb_config.currentText() == "1路":
-                # config[section]["usb_config"] = "relay_1"
                 config.add_config_option(section, "usb_config", "relay_1")
             elif self.usb_config.currentText() == "2路":
-                # config[section]["usb_config"] = "relay_2"
                 config.add_config_option(section, "usb_config", "relay_2")
             elif self.usb_config.currentText() == "3路":
-                # config[section]["usb_config"] = "relay_3"
                 config.add_config_option(section, "usb_config", "relay_3")
             else:
-                # config[section]["usb_config"] = "relay_4"
                 config.add_config_option(section, "usb_config", "relay_4")
 
         # 其他配置信息
         if self.only_boot.isChecked():
-            # config[section]["only_boot_config"] = "1"
             config.add_config_option(section, "only_boot_config", "1")
         else:
-            # config[section]["only_boot_config"] = "0"
             config.add_config_option(section, "only_boot_config", "0")
 
         if self.double_screen.isChecked():
-            # config[section]["double_screen_config"] = "1"
             config.add_config_option(section, "double_screen_config", "1")
         else:
-            # config[section]["double_screen_config"] = "0"
             config.add_config_option(section, "double_screen_config", "0")
 
         if self.button_boot_time.isEnabled():
-            # config[section]["button_boot_time"] = self.button_boot_time.currentText()
             config.add_config_option(section, "button_boot_time", self.button_boot_time.currentText())
 
         # 保存用例压测次数设置
