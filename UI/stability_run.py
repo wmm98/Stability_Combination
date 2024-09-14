@@ -438,50 +438,6 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
             for slave in tree_status:
                 for children in slave['children']:
                     if children["status"] == 2:
-                        # 立项压测
-
-                        # # DDR/EMMC压测
-                        # if "DDR-memtester" in children["text"]:
-                        #     self.cases.append("DDR-memtester")
-                        #     self.ui_config.add_config_option(self.ui_config.section_ui_to_background,
-                        #                                      self.ui_config.ui_option_memtester_duration,
-                        #                                      slave["duration"])
-                        #     self.ui_config.add_config_option(self.ui_config.section_ui_to_background,
-                        #                                      self.ui_config.ui_option_is_memtester,
-                        #                                      "yes")
-                        #     self.durations.append(children["duration"])
-                        #
-                        # if "DDR-stressapptest" in children["text"]:
-                        #     self.cases.append("DDR-stressapptest")
-                        #     self.ui_config.add_config_option(self.ui_config.section_ui_to_background,
-                        #                                      self.ui_config.ui_option_stressapptest_duration,
-                        #                                      children["duration"])
-                        #     self.ui_config.add_config_option(self.ui_config.section_ui_to_background,
-                        #                                      self.ui_config.ui_option_is_stress_app_test,
-                        #                                      "yes")
-                        #     self.durations.append(children["duration"])
-                        #
-                        # if "DDR-switch_stressapptest-高低内存切换" in children["text"]:
-                        #     self.cases.append("DDR-stressapptest-switch")
-                        #     self.ui_config.add_config_option(self.ui_config.section_ui_to_background,
-                        #                                      self.ui_config.ui_option_switch_stressapptest_duration,
-                        #                                      children["duration"])
-                        #     self.ui_config.add_config_option(self.ui_config.section_ui_to_background,
-                        #                                      self.ui_config.ui_option_is_stress_app_switch,
-                        #                                      "yes")
-                        #     self.durations.append(children["duration"])
-                        #
-                        # if "EMMC测试" in children["text"]:
-                        #     self.cases.append("EMMC")
-                        #     self.ui_config.add_config_option(self.ui_config.section_ui_to_background,
-                        #                                      self.ui_config.ui_option_emmmc_duration,
-                        #                                      children["duration"])
-                        #     self.ui_config.add_config_option(self.ui_config.section_ui_to_background,
-                        #                                      self.ui_config.ui_option_is_emmc_test,
-                        #                                      "yes")
-                        #     self.durations.append(children["duration"])
-
-                        # 开关机卡logo测试
                         if "适配器开关机" in children["text"]:
                             if "boot_logo" not in self.cases:
                                 self.cases.append("boot_logo")
