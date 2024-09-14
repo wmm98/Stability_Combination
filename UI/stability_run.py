@@ -177,13 +177,21 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
         self.item_L_X_STA.setCheckState(0, Qt.Unchecked)
         self.item_L_X_STA.setFlags(self.item_L_X_STA.flags() | Qt.ItemIsSelectable)
         # 立项测试子用例
-        self.item_L_X_STA_child = QTreeWidgetItem(self.item_L_X_STA)
-        self.item_L_X_STA_child.setText(0, "开关机检查基本功能")
-        self.item_L_X_STA_child.setCheckState(0, Qt.Unchecked)
-        self.item_L_X_STA_child.setText(1, "")
-        self.item_L_X_STA_child.setText(2, "次")
-        self.item_L_X_STA_child.setFlags(
-            self.item_L_X_STA_child.flags() | Qt.ItemIsSelectable | Qt.ItemIsUserCheckable | Qt.ItemIsEditable)
+        self.item_L_X_STA_child_boot_check = QTreeWidgetItem(self.item_L_X_STA)
+        self.item_L_X_STA_child_boot_check.setText(0, "开关机检查基本功能")
+        self.item_L_X_STA_child_boot_check.setCheckState(0, Qt.Unchecked)
+        self.item_L_X_STA_child_boot_check.setText(1, "")
+        self.item_L_X_STA_child_boot_check.setText(2, "次")
+        self.item_L_X_STA_child_boot_check.setFlags(
+            self.item_L_X_STA_child_boot_check.flags() | Qt.ItemIsSelectable | Qt.ItemIsUserCheckable | Qt.ItemIsEditable)
+
+        self.item_L_X_STA_child_camera_compare = QTreeWidgetItem(self.item_L_X_STA)
+        self.item_L_X_STA_child_camera_compare.setText(0, "前后摄像头拍照问题对比")
+        self.item_L_X_STA_child_camera_compare.setCheckState(0, Qt.Unchecked)
+        self.item_L_X_STA_child_camera_compare.setText(1, "")
+        self.item_L_X_STA_child_camera_compare.setText(2, "次")
+        self.item_L_X_STA_child_camera_compare.setFlags(
+            self.item_L_X_STA_child_camera_compare.flags() | Qt.ItemIsSelectable | Qt.ItemIsUserCheckable | Qt.ItemIsEditable)
 
         # DDR、EMMC压测
         self.item_D_E_STA = QTreeWidgetItem(self.item_sta_root)
@@ -264,17 +272,17 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
                 self.item_D_E_EMMC.setTextAlignment(1, Qt.AlignRight)  # 设置第二列文本右对齐
             if self.item_D_E_STA_memtester.checkState(0) == 2:
                 memtester_times = self.ui_config.get_option_value(self.ui_config.section_DDR_EMMC,
-                                                             self.ui_config.ui_option_memtester_duration)
+                                                                  self.ui_config.ui_option_memtester_duration)
                 self.item_D_E_STA_memtester.setText(1, memtester_times)
                 self.item_D_E_STA_memtester.setTextAlignment(1, Qt.AlignRight)
             if self.item_D_E_STA_stressapptest.checkState(0) == 2:
                 stressapptest_times = self.ui_config.get_option_value(self.ui_config.section_DDR_EMMC,
-                                                                  self.ui_config.ui_option_stressapptest_duration)
+                                                                      self.ui_config.ui_option_stressapptest_duration)
                 self.item_D_E_STA_stressapptest.setText(1, stressapptest_times)
                 self.item_D_E_STA_stressapptest.setTextAlignment(1, Qt.AlignRight)
             if self.item_D_E_STA_switch_stressapptest.checkState(0) == 2:
                 stressapptest_switch_times = self.ui_config.get_option_value(self.ui_config.section_DDR_EMMC,
-                                                                      self.ui_config.ui_option_switch_stressapptest_duration)
+                                                                             self.ui_config.ui_option_switch_stressapptest_duration)
                 self.item_D_E_STA_switch_stressapptest.setText(1, stressapptest_switch_times)
                 self.item_D_E_STA_switch_stressapptest.setTextAlignment(1, Qt.AlignRight)
 
@@ -479,30 +487,35 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
                                 self.cases.append("boot_logo")
                             self.ui_config.add_config_option(self.ui_config.section_ui_logo,
                                                              self.ui_config.ui_option_logo_cases, "1")
-                        if "适配器/电池+电源--正常关机" in children["text"]:
+                        elif "适配器/电池+电源--正常关机" in children["text"]:
                             if "boot_logo" not in self.cases:
                                 self.cases.append("boot_logo")
                                 if "boot_logo" not in self.cases:
                                     self.cases.append("boot_logo")
                             self.ui_config.add_config_option(self.ui_config.section_ui_logo,
                                                              self.ui_config.ui_option_logo_cases, "2")
-                        if "适配器/电池+电源--异常关机" in children["text"]:
+                        elif "适配器/电池+电源--异常关机" in children["text"]:
                             if "boot_logo" not in self.cases:
                                 self.cases.append("boot_logo")
                                 if "boot_logo" not in self.cases:
                                     self.cases.append("boot_logo")
                             self.ui_config.add_config_option(self.ui_config.section_ui_logo,
                                                              self.ui_config.ui_option_logo_cases, "3")
-                        # if
-                        if children["text"] in ["DDR-memtester压力测试", "DDR-stressapptest压力测试", "DDR-switch_stressapptest-高低内存切换", "EMMC测试"]:
+
+                        elif children["text"] in ["DDR-memtester压力测试", "DDR-stressapptest压力测试",
+                                                  "DDR-switch_stressapptest-高低内存切换", "EMMC测试"]:
                             if "DDR-Integration-testing" not in self.cases:
                                 self.cases.append("DDR-Integration-testing")
+
+                        else:
+                            self.cases.append(children["text"])
 
             if len(self.cases) == 0:
                 self.get_message_box("请勾选用例！！！")
                 return
 
-            self.ui_config.add_config_option(self.ui_config.section_ui_to_background, self.ui_config.ui_option_device_name,
+            self.ui_config.add_config_option(self.ui_config.section_ui_to_background,
+                                             self.ui_config.ui_option_device_name,
                                              self.edit_device_name.currentText())
             # 保存用例
             self.ui_config.add_config_option(self.ui_config.section_ui_to_background,

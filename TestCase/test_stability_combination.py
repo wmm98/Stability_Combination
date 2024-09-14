@@ -30,8 +30,8 @@ class TestStabilityCombination:
     def test_stability_combination_all(self):
         log.info("********测试开始*********")
         # try:
-            # 1.推送memtester的相关
-            # root设备
+        # 1.推送memtester的相关
+        # root设备
         if self.ui_conf_file.get(Config.section_DDR_EMMC, Config.ui_option_is_memtester) == "yes":
             self.device.adb_push_file(os.path.join(Config.DDR_memtester_path, "memtester"), "/data")
             self.device.send_adb_shell_command("chmod 777 /data/memtester")
