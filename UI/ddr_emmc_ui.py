@@ -272,7 +272,7 @@ class DDRDisplay(QtWidgets.QMainWindow, DDR_MainWindow):
             self.ui_config.add_config_option(self.ui_config.section_DDR_EMMC, self.ui_config.ui_option_emmmc_duration, self.EMMC_times.currentText())
         else:
             self.ui_config.add_config_option(self.ui_config.section_DDR_EMMC, self.ui_config.ui_option_is_emmc_test, "no")
-            self.ui_config.add_config_option(self.ui_config.section_DDR_EMMC, self.ui_config.ui_option_emmmc_duration, "0")
+            self.ui_config.add_config_option(self.ui_config.section_DDR_EMMC, self.ui_config.ui_option_emmmc_duration, self.EMMC_times.currentText())
 
         if self.is_DDR_memtester_test.isChecked():
             if len(self.DDR_memtester_test_times.currentText()) == 0:
@@ -282,7 +282,7 @@ class DDRDisplay(QtWidgets.QMainWindow, DDR_MainWindow):
             self.ui_config.add_config_option(self.ui_config.section_DDR_EMMC, self.ui_config.ui_option_memtester_duration, self.DDR_memtester_test_times.currentText())
         else:
             self.ui_config.add_config_option(self.ui_config.section_DDR_EMMC, self.ui_config.ui_option_is_memtester, "no")
-            self.ui_config.add_config_option(self.ui_config.section_DDR_EMMC, self.ui_config.ui_option_memtester_duration, "0")
+            self.ui_config.add_config_option(self.ui_config.section_DDR_EMMC, self.ui_config.ui_option_memtester_duration, self.DDR_memtester_test_times.currentText())
 
         if self.is_DDR_streessapptest_test.isChecked():
             if len(self.DDR_stressapptest_times.currentText()) == 0:
@@ -292,7 +292,7 @@ class DDRDisplay(QtWidgets.QMainWindow, DDR_MainWindow):
             self.ui_config.add_config_option(self.ui_config.section_DDR_EMMC, self.ui_config.ui_option_stressapptest_duration, self.DDR_stressapptest_times.currentText())
         else:
             self.ui_config.add_config_option(self.ui_config.section_DDR_EMMC, self.ui_config.ui_option_is_stress_app_test, "no")
-            self.ui_config.add_config_option(self.ui_config.section_DDR_EMMC, self.ui_config.ui_option_stressapptest_duration, "0")
+            self.ui_config.add_config_option(self.ui_config.section_DDR_EMMC, self.ui_config.ui_option_stressapptest_duration, self.DDR_stressapptest_times.currentText())
 
         if self.is_DDR_streessapptest_switch_test.isChecked():
             if len(self.DDR_stressapptest_switch_times.currentText()) == 0:
@@ -302,7 +302,7 @@ class DDRDisplay(QtWidgets.QMainWindow, DDR_MainWindow):
             self.ui_config.add_config_option(self.ui_config.section_DDR_EMMC, self.ui_config.ui_option_switch_stressapptest_duration, self.DDR_stressapptest_switch_times.currentText())
         else:
             self.ui_config.add_config_option(self.ui_config.section_DDR_EMMC, self.ui_config.ui_option_is_stress_app_switch, "no")
-            self.ui_config.add_config_option(self.ui_config.section_DDR_EMMC, self.ui_config.ui_option_switch_stressapptest_duration, "0")
+            self.ui_config.add_config_option(self.ui_config.section_DDR_EMMC, self.ui_config.ui_option_switch_stressapptest_duration, self.DDR_stressapptest_switch_times.currentText())
 
         self.ui_config.add_config_option(self.ui_config.section_DDR_EMMC, self.ui_config.ui_option_mem_free_value, self.mem_free.text())
         self.ui_config.add_config_option(self.ui_config.section_DDR_EMMC, self.ui_config.ui_option_system_type, self.system_type.currentText())

@@ -7,6 +7,7 @@ from PyQt5.QtCore import QTimer, QProcess, Qt, pyqtSlot
 from tree_widget import Ui_MainWindow
 from reboot_logo_ui import LogoDisplay
 from ddr_emmc_ui import DDRDisplay
+from boot_check_ui import BootCheckDisplay
 import os
 import shutil
 from PyQt5.QtGui import QPixmap
@@ -113,6 +114,7 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
         # 初始化子界面
         self.logo_window = LogoDisplay()
         self.DDR_EMMC_window = DDRDisplay()
+        self.lx_boot_check_window = BootCheckDisplay()
         self.setupUi(self)
         self.AllTestCase = None
         self.intiui()
@@ -151,6 +153,7 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
         self.mem_free_process.finished.connect(self.mem_free_finished_handle)
         self.logo_window.submit_button.clicked.connect(self.display_boot_logo_cases_test_times)
         self.DDR_EMMC_window.submit_button.clicked.connect(self.display_ddr_emmc_cases_test_times)
+        # self.lx_boot_check_window.submit_button.clicked.connect(self.display_ddr_emmc_cases_test_times)
         # 初始化图片cursor
         # self.cursor = QTextCursor(self.document)
 

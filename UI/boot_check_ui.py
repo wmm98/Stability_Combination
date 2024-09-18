@@ -20,7 +20,7 @@ from configfile import ConfigP
 import config_path
 
 
-class Reboot_Logo_MainWindow(config_path.UIConfigPath):
+class Boot_Check_MainWindow(config_path.UIConfigPath):
     options = QtWidgets.QFileDialog.Options()
     options |= QtWidgets.QFileDialog.ReadOnly
 
@@ -213,9 +213,9 @@ class Reboot_Logo_MainWindow(config_path.UIConfigPath):
 """
 
 
-class LogoDisplay(QtWidgets.QMainWindow, Reboot_Logo_MainWindow):
+class BootCheckDisplay(QtWidgets.QMainWindow, Boot_Check_MainWindow):
     def __init__(self):
-        super(LogoDisplay, self).__init__()
+        super(BootCheckDisplay, self).__init__()
         self.setupUi(self)
         self.intiui()
         self.submit_flag = False
