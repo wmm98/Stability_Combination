@@ -84,7 +84,7 @@ stressapptest_duration_sec=`expr $stressapptest_duration \* 3600`
 if [ "$is_stress_app_test" = "yes" ]; then
 	echo "stressapptest测试开始"
 	if [ "$new_free_value" -le 1750 ]; then
-		echo $(date +"%Y-%m-%d %H:%M:%S") > /data/stress_test_log/stresstestlog/strssapptest.log &
+		echo $(date +"%Y-%m-%d %H:%M:%S") >> /data/stress_test_log/stresstestlog/strssapptest.log &
 		/data/stressapptest -s "$stressapptest_duration_sec" -M "$new_free_value" >> /data/stress_test_log/stresstestlog/strssapptest.log &
 	else
 		remainder=`expr $mem_free_value % 1800`
@@ -93,7 +93,7 @@ if [ "$is_stress_app_test" = "yes" ]; then
 		count=1
 		while [ $count -le $quotient ]
 		do
-		  echo $(date +"%Y-%m-%d %H:%M:%S") > /data/stress_test_log/stresstestlog/strssapptest_$count.log &
+		  echo $(date +"%Y-%m-%d %H:%M:%S") >> /data/stress_test_log/stresstestlog/strssapptest_$count.log &
 		  /data/stressapptest -s "$stressapptest_duration_sec" -M 1750 >> /data/stress_test_log/stresstestlog/strssapptest_$count.log &
 		  ((count++))
 		  sleep 0.1

@@ -159,6 +159,26 @@ class Boot_Check_MainWindow(config_path.UIConfigPath):
         # 间隔
         self.verticalLayout_left.addWidget(QtWidgets.QLabel())
 
+        # 开关机场景选择
+        self.verticalLayout_left.addWidget(QtWidgets.QLabel("开关机场景："))
+        layout_boot_scenario = QHBoxLayout()
+        self.adapter_boot = QCheckBox("适配器开关机")
+        self.normal_boot = QCheckBox("适配器/电池+电源按键-正常关机")
+        self.abnormal_boot = QCheckBox("适配器/电池+电源按键-异常关机")
+        layout_boot_scenario.addWidget(self.adapter_boot)
+        layout_boot_scenario.addWidget(self.normal_boot)
+        layout_boot_scenario.addWidget(self.abnormal_boot)
+        layout_boot_scenario.addStretch(1)
+        self.scenario_group = QButtonGroup()
+        self.scenario_group.addButton(self.adapter_boot, id=1)
+        self.scenario_group.addButton(self.normal_boot, id=2)
+        self.scenario_group.addButton(self.abnormal_boot, id=3)
+        self.scenario_group.setExclusive(True)
+        self.verticalLayout_left.addLayout(layout_boot_scenario)
+
+        # 间隔
+        self.verticalLayout_left.addWidget(QtWidgets.QLabel())
+
         # 上传图片
         self.reboot_logo_info = QtWidgets.QLabel("上传开机logo照片：")
         self.verticalLayout_left.addWidget(self.reboot_logo_info)
@@ -205,7 +225,7 @@ class Boot_Check_MainWindow(config_path.UIConfigPath):
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "开关机卡logo相关用例参数配置"))
+        MainWindow.setWindowTitle(_translate("MainWindow", "开关机基本功能检查配置"))
 
 
 """
@@ -344,7 +364,7 @@ class BootCheckDisplay(QtWidgets.QMainWindow, Boot_Check_MainWindow):
 
     def save_config(self):
         config = ConfigP(self.ui_config_file_path)
-        section = config.section_ui_logo
+        section = config.section_ui_boot_check
         config.add_config_section(section)
 
         config.add_config_option(section, "COM", self.test_COM.currentText())
@@ -408,6 +428,13 @@ class BootCheckDisplay(QtWidgets.QMainWindow, Boot_Check_MainWindow):
 
         if self.button_boot_time.isEnabled():
             config.add_config_option(section, "button_boot_time", self.button_boot_time.currentText())
+
+        if self.adapter_boot.isChecked():
+            config.add_config_option(section, config.ui_option_logo_cases, "1")
+        elif self.normal_boot.isChecked():
+            config.add_config_option(section, config.ui_option_logo_cases, "2")
+        elif self.abnormal_boot.isChecked():
+            config.add_config_option(section, config.ui_option_logo_cases, "3")
 
         # 保存用例压测次数设置
         config.add_config_option(section, "logo_test_times", self.test_times.currentText())
@@ -487,6 +514,6 @@ class ScrollablePlainTextEdit(QTextEdit):
 
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
-    logo_show = LogoDisplay()
+    logo_show = BootCheckDisplay()
     logo_show.show()
     app.exec_()

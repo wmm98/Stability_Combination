@@ -329,7 +329,7 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
                 if item == self.item_D_E_EMMC:
                     self.DDR_EMMC_window.is_EEMC_test.setChecked(True)
             else:
-                # 在子界面勾上的需要测试的选项
+                # 取消相关选项
                 if item == self.item_D_E_STA:
                     self.DDR_EMMC_window.is_EEMC_test.setChecked(False)
                     self.DDR_EMMC_window.is_DDR_memtester_test.setChecked(False)
@@ -343,6 +343,11 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
                     self.DDR_EMMC_window.is_DDR_streessapptest_switch_test.setChecked(False)
                 if item == self.item_D_E_EMMC:
                     self.DDR_EMMC_window.is_EEMC_test.setChecked(False)
+
+        if item == self.item_L_X_STA_child_boot_check:
+            if item.checkState(0) == 2:
+                if not self.lx_boot_check_window.isVisible():
+                    self.lx_boot_check_window.show()
 
     def handlechanged(self, item, column):
         # 获取选中节点的子节点个数

@@ -61,7 +61,7 @@ echo "系统类型为：$system"
 new_free_value=0
 # 检查结果是否小于 10
 if [ "$mem_free_value" -lt 1800 ]; then
-    new_free_value=$((mem_free_value - 50))
+    new_free_value=`expr $mem_free_value - 50`
 elif [ "$mem_free_value" -eq 1800 ]; then
    new_free_value=1750
 else
@@ -71,27 +71,28 @@ fi
 # memtester 测试
 half_free_value=$((mem_free_value / 2))
 
-stressapptest_duration_sec=$((stressapptest_duration * 3600))
+stressapptest_duration_sec=`expr $stressapptest_duration \* 3600`
 
 if [ "$is_stress_app_test" = "yes" ]; then
 	echo "stressapptest测试开始"
-	echo "运行到这里来******************"
 	if [ "$new_free_value" -le 1750 ]; then
-		echo $(date +"%Y-%m-%d %H:%M:%S") > /data/stress_test_log/stresstestlog/strssapptest.log
-		stressapptest -s "$stressapptest_duration_sec" -M "$new_free_value" >> /data/stress_test_log/stresstestlog/strssapptest.log
+		echo $(date +"%Y-%m-%d %H:%M:%S") >> /data/stress_test_log/stresstestlog/strssapptest.log &
+		stressapptest -s "$stressapptest_duration_sec" -M "$new_free_value" >> /data/stress_test_log/stresstestlog/strssapptest.log &
 	else
-		remainder=$((mem_free_value % 1800))
-		quotient=$((mem_free_value / 1800))
+		echo "运行到这里来******************"
+		remainder=`expr $mem_free_value % 1800`
+		quotient=`expr $mem_free_value / 1800`
 		#循环 多次次发送指令
 		count=1
 		while [ $count -le $quotient ]
 		do
-		  echo $(date +"%Y-%m-%d %H:%M:%S") > /data/stress_test_log/stresstestlog/strssapptest_$count.log
-		  stressapptest -s "$stressapptest_duration" -M 1750 >> /data/stress_test_log/stresstestlog/strssapptest_$count.log
+		  echo $(date +"%Y-%m-%d %H:%M:%S") & >> /data/stress_test_log/stresstestlog/strssapptest_$count.log 
+		  stressapptest -s "$stressapptest_duration_sec" -M 1750 & >> /data/stress_test_log/stresstestlog/strssapptest_$count.log 
 		  count=`expr $count + 1`
+		  sleep 0.1
 		done
-		echo $(date +"%Y-%m-%d %H:%M:%S") >> /data/stresstestlog/strssapptest_$count.log
-		stressapptest -s "$stressapptest_duration" -M $remainder >> /data/stress_test_log/stresstestlog/strssapptest_$count.log
+		echo $(date +"%Y-%m-%d %H:%M:%S") & >> /data/stresstestlog/strssapptest_$count.log 
+		stressapptest -s "$stressapptest_duration_sec" -M $remainder & >> /data/stress_test_log/stresstestlog/strssapptest_$count.log 
     fi
 	echo "stressapptest测试结束"
 fi
@@ -99,15 +100,15 @@ fi
 
 if [ "$is_stress_app_switch" = "yes" ]; then
 	# 获取轮数
-	test_times=$((switch_stressapptest_duration * 3600 / 15))
+	test_times=`expr $switch_stressapptest_duration \* 3600 / 15`
 
 	echo "stressapptest高低切换测试开始"
 	if [ "$new_free_value" -le 1750 ]; then
 	    t_times=1
 		while [ $t_times -le $test_times ]
 			do
-			   echo $(date +"%Y-%m-%d %H:%M:%S") >> /data/stress_test_log/stresstestlog/strssapptest_cut.log
-		       stressapptest -s 10 -M "$new_free_value" >> /data/stress_test_log/stresstestlog/strssapptest_cut.log
+			   echo $(date +"%Y-%m-%d %H:%M:%S") >> /data/stress_test_log/stresstestlog/strssapptest_cut.log &
+		       stressapptest -s 10 -M "$new_free_value" >> /data/stress_test_log/stresstestlog/strssapptest_cut.log &
 			   echo "循环次数为 $t_times"
 			   t_times=`expr $t_times + 1`
 			   sleep 5
@@ -124,13 +125,13 @@ if [ "$is_stress_app_switch" = "yes" ]; then
 			count=1
 			while [ $count -le $quotient ]
 			do
-			  echo $(date +"%Y-%m-%d %H:%M:%S") >> /data/stress_test_log/stresstestlog/strssapptest_cut.log
-			  stressapptest -s 10 -M 1750 >> /data/stress_test_log/stresstestlog/strssapptest_cut.log
+			  echo $(date +"%Y-%m-%d %H:%M:%S") >> /data/stress_test_log/stresstestlog/strssapptest_cut.log &
+			  stressapptest -s 10 -M 1750 >> /data/stress_test_log/stresstestlog/strssapptest_cut.log &
 			  count=`expr $count + 1`
-			  sleep 1
+			  sleep 0.1
 			done
-			echo $(date +"%Y-%m-%d %H:%M:%S") >> /data/stress_test_log/stresstestlog/strssapptest_cut.log
-			stressapptest -s 10 -M $remainder >> /data/stress_test_log/stresstestlog/strssapptest_cut.log
+			echo $(date +"%Y-%m-%d %H:%M:%S") >> /data/stress_test_log/stresstestlog/strssapptest_cut.log &
+			stressapptest -s 10 -M $remainder >> /data/stress_test_log/stresstestlog/strssapptest_cut.log &
 			t_times=`expr $t_times + 1`
 			sleep 5
 		done

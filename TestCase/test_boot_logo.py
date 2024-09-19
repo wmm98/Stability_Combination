@@ -9,7 +9,6 @@ from Common.device_check import DeviceCheck
 import configparser
 from Common.config import Config
 
-
 conf = Config()
 log = MyLog()
 analysis = image_analysis.Analysis()
@@ -23,6 +22,7 @@ bg_conf_file = configparser.ConfigParser()
 bg_conf_file.read(Config.bg_config_ini_path)
 ui_conf_file = configparser.ConfigParser()
 ui_conf_file.read(Config.ui_config_ini_path)
+
 
 # 检查adb在线
 def check_adb_online_with_thread(device, timeout=90):
@@ -63,7 +63,6 @@ class TestBootLogo:
     def setup_class(self):
         self.bg_conf_file = bg_conf_file
         self.ui_conf_file = ui_conf_file
-        print(Config.ui_config_ini_path)
         self.device_name = self.ui_conf_file.get(Config.section_ui_to_background,
                                                  Config.ui_option_device_name)
         self.device = Device(self.device_name)
@@ -114,7 +113,9 @@ class TestBootLogo:
                 log.info("关机")
 
                 if self.ui_conf_file.get(Config.section_ui_logo, Config.ui_option_logo_cases) == "1":
-                    num = int(self.ui_conf_file.get(Config.section_ui_logo, Config.option_logo_adapter_power_config).split("_")[1])
+                    num = int(
+                        self.ui_conf_file.get(Config.section_ui_logo, Config.option_logo_adapter_power_config).split(
+                            "_")[1])
                     t_ser.open_relay(num)
                     log.info("适配器开路")
                     time.sleep(1)
@@ -131,7 +132,8 @@ class TestBootLogo:
                         raise Exception("指令设备关机失败，请检查！！！")
                     log.info("指令关机")
                     # 开机
-                    num = int(self.ui_conf_file.get(Config.section_ui_logo, Config.option_power_button_config).split("_")[1])
+                    num = int(
+                        self.ui_conf_file.get(Config.section_ui_logo, Config.option_power_button_config).split("_")[1])
                     t_ser.open_relay(num)
                     log.info("按下电源按键")
                     time.sleep(int(self.ui_conf_file.get(Config.section_ui_logo, Config.option_logo_boot_time)))
@@ -139,8 +141,11 @@ class TestBootLogo:
                     log.info("松开电源按键")
                 # 适配器异常下电
                 elif self.ui_conf_file.get(Config.section_ui_logo, Config.ui_option_logo_cases) == "3":
-                    num_adapter_power = int(self.ui_conf_file.get(Config.section_ui_logo, Config.option_logo_adapter_power_config).split("_")[1])
-                    num_power_button = int(self.ui_conf_file[Config.section_ui_logo][Config.option_power_button_config].split("_")[1])
+                    num_adapter_power = int(
+                        self.ui_conf_file.get(Config.section_ui_logo, Config.option_logo_adapter_power_config).split(
+                            "_")[1])
+                    num_power_button = int(
+                        self.ui_conf_file[Config.section_ui_logo][Config.option_power_button_config].split("_")[1])
                     # 断开适配器/电池
                     t_ser.open_relay(num_adapter_power)
                     log.info("电池/适配器开路")
@@ -159,8 +164,11 @@ class TestBootLogo:
                     log.info("松开电源按键")
 
                 log.info("正在开机，请等...")
-                if check_adb_online_with_thread(self.ui_conf_file.get(Config.section_ui_to_background, Config.ui_option_device_name)):
-                    if check_boot_complete_with_thread(self.ui_conf_file.get(Config.section_ui_to_background, Config.ui_option_device_name), timeout=120):
+                if check_adb_online_with_thread(
+                        self.ui_conf_file.get(Config.section_ui_to_background, Config.ui_option_device_name)):
+                    if check_boot_complete_with_thread(
+                            self.ui_conf_file.get(Config.section_ui_to_background, Config.ui_option_device_name),
+                            timeout=120):
                         log.info("设备完全启动")
                     else:
                         log.info("设备无法完全启动, 请检查!!!")
@@ -204,8 +212,10 @@ class TestBootLogo:
                             log.error("当前认为复现了卡logo情景，请检查！！！")
                             if device_check.device_is_online():
                                 log.info("设备在线")
-                                device_check.logcat(int(self.ui_conf_file.get(Config.section_ui_logo, Config.option_logcat_duration)) * 60)
-                                log.info("成功捕捉了%s 分钟 adb log" % self.ui_conf_file.get(Config.section_ui_logo, Config.option_logcat_duration))
+                                device_check.logcat(int(
+                                    self.ui_conf_file.get(Config.section_ui_logo, Config.option_logcat_duration)) * 60)
+                                log.info("成功捕捉了%s 分钟 adb log" % self.ui_conf_file.get(Config.section_ui_logo,
+                                                                                      Config.option_logcat_duration))
                                 log.info("任务结束")
                             else:
                                 log.info("设备不在线")
@@ -229,8 +239,10 @@ class TestBootLogo:
                         log.error("当前认为复现了卡logo情景，请检查！！！")
                         if device_check.device_is_online():
                             log.info("设备在线")
-                            device_check.logcat(int(self.ui_conf_file.get(Config.section_ui_logo, Config.option_logcat_duration)) * 60)
-                            log.info("成功捕捉了%s 分钟 adb log" % self.ui_conf_file.get(Config.section_ui_logo, Config.option_logcat_duration))
+                            device_check.logcat(
+                                int(self.ui_conf_file.get(Config.section_ui_logo, Config.option_logcat_duration)) * 60)
+                            log.info("成功捕捉了%s 分钟 adb log" % self.ui_conf_file.get(Config.section_ui_logo,
+                                                                                  Config.option_logcat_duration))
                             log.info("任务结束")
                         else:
                             log.info("设备不在线")
@@ -245,10 +257,3 @@ class TestBootLogo:
             log.info(str(e))
 
         log.info("停止压测.")
-
-
-
-
-
-
-

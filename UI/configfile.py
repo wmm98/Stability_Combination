@@ -45,6 +45,9 @@ class ConfigP(UIConfigPath):
     ui_option_logo_cases = "logo_cases"
     ui_option_logo_test_times = "logo_test_times"
 
+    # 开关机检查
+    section_ui_boot_check = "Boot-Check"
+
     def __init__(self, ini_path):
         self.ini_path = ini_path
         self.config = configparser.ConfigParser()
