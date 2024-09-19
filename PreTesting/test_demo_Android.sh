@@ -84,8 +84,8 @@ stressapptest_duration_sec=`expr $stressapptest_duration \* 3600`
 if [ "$is_stress_app_test" = "yes" ]; then
 	echo "stressapptest测试开始"
 	if [ "$new_free_value" -le 1750 ]; then
-		echo $(date +"%Y-%m-%d %H:%M:%S") > /data/stress_test_log/stresstestlog/strssapptest.log
-		/data/stressapptest -s "$stressapptest_duration_sec" -M "$new_free_value" >> /data/stress_test_log/stresstestlog/strssapptest.log
+		echo $(date +"%Y-%m-%d %H:%M:%S") > /data/stress_test_log/stresstestlog/strssapptest.log &
+		/data/stressapptest -s "$stressapptest_duration_sec" -M "$new_free_value" >> /data/stress_test_log/stresstestlog/strssapptest.log &
 	else
 		remainder=`expr $mem_free_value % 1800`
 		quotient=`expr $mem_free_value / 1800`
@@ -93,12 +93,13 @@ if [ "$is_stress_app_test" = "yes" ]; then
 		count=1
 		while [ $count -le $quotient ]
 		do
-		  echo $(date +"%Y-%m-%d %H:%M:%S") > /data/stress_test_log/stresstestlog/strssapptest_$count.log
-		  /data/stressapptest -s "$stressapptest_duration" -M 1750 >> /data/stress_test_log/stresstestlog/strssapptest_$count.log
+		  echo $(date +"%Y-%m-%d %H:%M:%S") > /data/stress_test_log/stresstestlog/strssapptest_$count.log &
+		  /data/stressapptest -s "$stressapptest_duration_sec" -M 1750 >> /data/stress_test_log/stresstestlog/strssapptest_$count.log &
 		  ((count++))
+		  sleep 0.1
 		done
-		echo $(date +"%Y-%m-%d %H:%M:%S") >> /data/stress_test_log/stresstestlog/strssapptest_$count.log
-		/data/stressapptest -s "$stressapptest_duration" -M $remainder >> /data/stress_test_log/stresstestlog/strssapptest_$count.log
+		echo $(date +"%Y-%m-%d %H:%M:%S") >> /data/stress_test_log/stresstestlog/strssapptest_$count.log &
+		/data/stressapptest -s "$stressapptest_duration_sec" -M $remainder >> /data/stress_test_log/stresstestlog/strssapptest_$count.log &
     fi
 	echo "stressapptest测试结束"
 fi
@@ -107,6 +108,7 @@ fi
 if [ "$is_stress_app_switch" = "yes" ]; then
 	# 获取轮数
 	test_times=`expr $switch_stressapptest_duration \* 3600 / 15`
+	
 	echo "stressapptest高低切换测试开始"
 	if [ "$new_free_value" -le 1750 ]; then
 	    t_times=1
@@ -133,14 +135,14 @@ if [ "$is_stress_app_switch" = "yes" ]; then
 			while [ $count -le $quotient ]
 			do
 			  echo $(date +"%Y-%m-%d %H:%M:%S") >> /data/stress_test_log/stresstestlog/strssapptest_cut.log & 
-			  /data/stressapptest -s 100 -M 1750 >> /data/stress_test_log/stresstestlog/strssapptest_cut.log &
+			  /data/stressapptest -s 10 -M 1750 >> /data/stress_test_log/stresstestlog/strssapptest_cut.log &
 			  ((count++))
 			  sleep 0.1
 			done
 			
 			echo "*****************$t_times*************************" >> /data/stress_test_log/stresstestlog/strssapptest_cut_1.log &
 			echo $(date +"%Y-%m-%d %H:%M:%S") >> /data/stress_test_log/stresstestlog/strssapptest_cut_1.log &
-			/data/stressapptest -s 100 -M $remainder >> /data/stress_test_log/stresstestlog/strssapptest_cut_1.log &
+			/data/stressapptest -s 10 -M $remainder >> /data/stress_test_log/stresstestlog/strssapptest_cut_1.log &
 			# 等待所有后台任务完成
 			wait
 			((t_times++))
