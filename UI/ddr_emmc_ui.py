@@ -205,7 +205,7 @@ class DDRDisplay(QtWidgets.QMainWindow, DDR_MainWindow):
         self.device_name.addItems(devices)
 
     def mem_free_finished_handle(self):
-        with open(conf_path.mem_log_path, "r", encoding="utf-8") as f:
+        with open(conf_path.mem_log_path, "r") as f:
             text = f.read()
         if len(text) != 0:
             self.text_edit.insertPlainText(text)
