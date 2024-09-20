@@ -169,9 +169,7 @@ class DDRDisplay(QtWidgets.QMainWindow, DDR_MainWindow):
         self.last_position = 0
         self.last_modify_time = 0
         self.bg_config = configfile.ConfigP(self.background_config_file_path)
-        # self.bg_config.create_config_file()
         self.ui_config = configfile.ConfigP(self.ui_config_file_path)
-        # self.ui_config.create_config_file()
         # 初始化子界面
         self.ddr_window = DDR_MainWindow()
         self.setupUi(self)
