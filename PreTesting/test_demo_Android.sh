@@ -78,7 +78,7 @@ fi
 half_free_value=`expr $mem_free_value / 2`
 
 
-stressapptest_duration_sec=`expr $stressapptest_duration \* 3600`
+stressapptest_duration_sec=$stressapptest_duration
 
 
 if [ "$is_stress_app_test" = "yes" ]; then
@@ -107,8 +107,8 @@ fi
 
 if [ "$is_stress_app_switch" = "yes" ]; then
 	# 获取轮数
-	test_times=`expr $switch_stressapptest_duration \* 3600 / 15`
-	
+	test_times=$switch_stressapptest_duration
+	echo "#################高低切换次数: $test_times"
 	echo "stressapptest高低切换测试开始"
 	if [ "$new_free_value" -le 1750 ]; then
 	    t_times=1

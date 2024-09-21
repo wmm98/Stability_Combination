@@ -58,7 +58,7 @@ class DDR_MainWindow(config_path.UIConfigPath):
         self.verticalLayout_left.addWidget(self.root_steps_edit)
 
         self.verticalLayout_left.addWidget(QtWidgets.QLabel())
-        self.mem_label = QtWidgets.QLabel("请输入可用的运行内存（M）：")
+        self.mem_label = QtWidgets.QLabel("请输入可用的运行内存（KB、整数）：")
         self.verticalLayout_left.addWidget(self.mem_label)
         layout_mem_info = QHBoxLayout()
         self.check_mem_button = QtWidgets.QPushButton("查询")
@@ -287,22 +287,22 @@ class DDRDisplay(QtWidgets.QMainWindow, DDR_MainWindow):
                 self.get_message_box("请设置DDR streessapptest压测小时！！！")
                 return
             self.ui_config.add_config_option(self.ui_config.section_DDR_EMMC, self.ui_config.ui_option_is_stress_app_test, "yes")
-            self.ui_config.add_config_option(self.ui_config.section_DDR_EMMC, self.ui_config.ui_option_stressapptest_duration, self.DDR_stressapptest_times.currentText())
+            self.ui_config.add_config_option(self.ui_config.section_DDR_EMMC, self.ui_config.ui_option_stressapptest_duration, str(int(self.DDR_stressapptest_times.currentText()) * 3600))
         else:
             self.ui_config.add_config_option(self.ui_config.section_DDR_EMMC, self.ui_config.ui_option_is_stress_app_test, "no")
-            self.ui_config.add_config_option(self.ui_config.section_DDR_EMMC, self.ui_config.ui_option_stressapptest_duration, self.DDR_stressapptest_times.currentText())
+            self.ui_config.add_config_option(self.ui_config.section_DDR_EMMC, self.ui_config.ui_option_stressapptest_duration, str(int(self.DDR_stressapptest_times.currentText()) * 3600))
 
         if self.is_DDR_streessapptest_switch_test.isChecked():
             if len(self.DDR_stressapptest_switch_times.currentText()) == 0:
                 self.get_message_box("请设置DDR streessapptest高低切换压测时间！！！")
                 return
             self.ui_config.add_config_option(self.ui_config.section_DDR_EMMC, self.ui_config.ui_option_is_stress_app_switch, "yes")
-            self.ui_config.add_config_option(self.ui_config.section_DDR_EMMC, self.ui_config.ui_option_switch_stressapptest_duration, self.DDR_stressapptest_switch_times.currentText())
+            self.ui_config.add_config_option(self.ui_config.section_DDR_EMMC, self.ui_config.ui_option_switch_stressapptest_duration, str(int(int(self.DDR_stressapptest_switch_times.currentText()) * 3600 / 15)))
         else:
             self.ui_config.add_config_option(self.ui_config.section_DDR_EMMC, self.ui_config.ui_option_is_stress_app_switch, "no")
-            self.ui_config.add_config_option(self.ui_config.section_DDR_EMMC, self.ui_config.ui_option_switch_stressapptest_duration, self.DDR_stressapptest_switch_times.currentText())
+            self.ui_config.add_config_option(self.ui_config.section_DDR_EMMC, self.ui_config.ui_option_switch_stressapptest_duration, str(int(int(self.DDR_stressapptest_switch_times.currentText()) * 3600 / 15)))
 
-        self.ui_config.add_config_option(self.ui_config.section_DDR_EMMC, self.ui_config.ui_option_mem_free_value, self.mem_free.text())
+        self.ui_config.add_config_option(self.ui_config.section_DDR_EMMC, self.ui_config.ui_option_mem_free_value, str(int(int(self.mem_free.text()) / 1024)))
         self.ui_config.add_config_option(self.ui_config.section_DDR_EMMC, self.ui_config.ui_option_system_type, self.system_type.currentText())
         self.submit_flag = True
         self.get_message_box("配置保存成功")
