@@ -14,6 +14,9 @@ class Device:
         shell.invoke("adb kill-server")
         shell.invoke("adb start-server")
 
+    def reboot(self):
+        self.send_adb_standalone_command("reboot")
+
     def device_is_online(self):
         devices = shell.invoke("adb devices")
         # log.info(device_check.device_is_online())
@@ -64,6 +67,12 @@ class Device:
     def get_wifi_btn_status(self):
         self.send_adb_shell_command("settings get global wifi_on")
 
+    def wifi_is_enable(self):
+        if "1" in self.get_wifi_btn_status():
+            return True
+        else:
+            return False
+
     def enable_bt_btn(self):
         self.send_adb_shell_command("svc bluetooth enable")
 
@@ -72,6 +81,12 @@ class Device:
 
     def get_bt_btn_status(self):
         self.send_adb_shell_command("settings get global bluetooth_on")
+
+    def bt_is_enable(self):
+        if "1" in self.get_bt_btn_status():
+            return True
+        else:
+            return False
 
     def enable_mobile_btn(self):
         self.send_adb_shell_command("svc data enable")
