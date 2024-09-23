@@ -54,3 +54,48 @@ class Device:
             return True
         else:
             return False
+
+    def enable_wifi_btn(self):
+        self.send_adb_shell_command("svc wifi enable")
+
+    def disable_wifi_btn(self):
+        self.send_adb_shell_command("svc wifi disable")
+
+    def get_wifi_btn_status(self):
+        self.send_adb_shell_command("settings get global wifi_on")
+
+    def enable_bt_btn(self):
+        self.send_adb_shell_command("svc bluetooth enable")
+
+    def disable_bt_btn(self):
+        self.send_adb_shell_command("svc bluetooth disable")
+
+    def get_bt_btn_status(self):
+        self.send_adb_shell_command("settings get global bluetooth_on")
+
+    def enable_mobile_btn(self):
+        self.send_adb_shell_command("svc data enable")
+
+    def disable_mobile_btn(self):
+        self.send_adb_shell_command("svc data disable")
+
+    def get_mobile_btn_status(self):
+        pass
+
+    def enable_nfc_btn(self):
+        self.send_adb_shell_command("svc nfc enable")
+
+    def disable_nfc_btn(self):
+        self.send_adb_shell_command("svc nfc disable")
+
+    def get_nfc_btn_status(self):
+        pass
+
+    def enable_eth_btn(self):
+        pass
+
+    def disable_eth_btn(self):
+        pass
+
+    def get_eth_btn_status(self):
+        pass

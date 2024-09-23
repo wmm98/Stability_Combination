@@ -1,6 +1,6 @@
 import os
 from PyQt5 import QtCore, QtWidgets
-from PyQt5.QtWidgets import QHBoxLayout, QCheckBox, QComboBox, QButtonGroup, QWidget, QSplitter, QTextEdit
+from PyQt5.QtWidgets import QHBoxLayout, QCheckBox, QComboBox, QButtonGroup, QWidget, QSplitter, QTextEdit, QLabel
 from PyQt5.QtCore import pyqtSlot
 import subprocess
 import sys
@@ -24,25 +24,6 @@ class Boot_Check_MainWindow(config_path.UIConfigPath):
     options = QtWidgets.QFileDialog.Options()
     options |= QtWidgets.QFileDialog.ReadOnly
 
-    # project_path = path_dir = str(os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir)))
-    # config_file_path = os.path.join(project_path, "UI", "config.ini")
-    # logo_take_path = os.path.join(project_path, "Photo", "Logo", "Logo", "Logo.png")
-    # logo_key_path = os.path.join(project_path, "Photo", "Logo", "Key", "Key.png")
-    # camera_key_path = os.path.join(project_path, "Photo", "CameraPhoto", "Key", "Key.png")
-    # camera2_key_path = os.path.join(project_path, "Photo", "CameraPhoto", "Key", "Key2.png")
-    # debug_log_path = os.path.join(project_path, "Log", "Debug", "debug_log.txt")
-    # # failed_logcat.txt
-    # adb_log_path = os.path.join(project_path, "Log", "Logcat", "failed_logcat.txt")
-    # run_bat_path = os.path.join(project_path, "Run", "bat_run.bat")
-    # failed_image_key_path = os.path.join(project_path, "Photo", "CameraPhoto", "Key", "Failed.png")
-    # 测试前先清除
-    # if os.path.exists(debug_log_path):
-    #     os.remove(debug_log_path)
-    # if os.path.exists(adb_log_path):
-    #     os.remove(adb_log_path)
-    # if os.path.exists(logo_key_path):
-    #     os.remove(logo_key_path)
-
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(600, 600)
@@ -58,12 +39,16 @@ class Boot_Check_MainWindow(config_path.UIConfigPath):
         left_widget = QWidget()
         self.verticalLayout_left = QtWidgets.QVBoxLayout(left_widget)
 
+        self.verticalLayout_left.addWidget(QLabel("开关机配置："))
+        # 间隔
+        self.verticalLayout_left.addWidget(QLabel())
+
         layout_device_info = QHBoxLayout()
         # 测试COM
-        self.COM_tips = QtWidgets.QLabel("测试COM口:")
+        self.COM_tips = QLabel("测试COM口:")
         self.test_COM = QComboBox()
         # adb log 时长
-        self.adb_log_lable = QtWidgets.QLabel("Logcat时长(min):")
+        self.adb_log_lable = QLabel("Logcat时长(min):")
         self.adb_log_duration = QComboBox()
 
         layout_device_info.addWidget(self.COM_tips)
@@ -73,14 +58,14 @@ class Boot_Check_MainWindow(config_path.UIConfigPath):
         layout_device_info.addStretch(1)
         self.verticalLayout_left.addLayout(layout_device_info)
         # 间隔
-        self.verticalLayout_left.addWidget(QtWidgets.QLabel())
+        self.verticalLayout_left.addWidget(QLabel())
 
         layout_device_control = QHBoxLayout()
-        self.boot_way = QtWidgets.QLabel("接线方式:")
+        self.boot_way = QLabel("接线方式:")
         self.is_adapter = QCheckBox("适配器/电池")
         self.is_power_button = QCheckBox("电源按键")
         self.is_usb = QCheckBox("Type-c/mico-usb")
-        self.usb_tips = QtWidgets.QLabel("usb接继电器仅限900P")
+        self.usb_tips = QLabel("usb接继电器仅限900P")
         self.usb_tips.setStyleSheet("color: blue;")
 
         layout_device_control.addWidget(self.boot_way)
@@ -92,27 +77,27 @@ class Boot_Check_MainWindow(config_path.UIConfigPath):
         # 将水平布局放入垂直布局
         self.verticalLayout_left.addLayout(layout_device_control)
         # 间隔
-        self.verticalLayout_left.addWidget(QtWidgets.QLabel())
+        self.verticalLayout_left.addWidget(QLabel())
 
         layout_COM_config = QHBoxLayout()
-        self.config_label = QtWidgets.QLabel("接线配置:")
-        self.adapter_label = QtWidgets.QLabel("适配器/电池:")
+        self.config_label = QLabel("接线配置:")
+        self.adapter_label = QLabel("适配器/电池:")
         self.adapter_config = QComboBox()
         self.adapter_config.setDisabled(True)
         layout_COM_config.addWidget(self.config_label)
         layout_COM_config.addWidget(self.adapter_label)
         layout_COM_config.addWidget(self.adapter_config)
 
-        self.power_button_label = QtWidgets.QLabel("电源按键:")
+        self.power_button_label = QLabel("电源按键:")
         self.power_button_config = QComboBox()
         self.power_button_config.setDisabled(True)
         layout_COM_config.addWidget(self.power_button_label)
         layout_COM_config.addWidget(self.power_button_config)
 
-        self.usb_label = QtWidgets.QLabel("USB:")
+        self.usb_label = QLabel("USB:")
         self.usb_config = QComboBox()
         self.usb_config.setDisabled(True)
-        self.config_tips = QtWidgets.QLabel("接线提示:电源按键接常开端(COM,N0）,其他接常闭端(COM,NC)")
+        self.config_tips = QLabel("接线提示:电源按键接常开端(COM,N0）,其他接常闭端(COM,NC)")
         self.config_tips.setStyleSheet("color: blue;")
         layout_COM_config.addWidget(self.usb_label)
         layout_COM_config.addWidget(self.usb_config)
@@ -120,16 +105,16 @@ class Boot_Check_MainWindow(config_path.UIConfigPath):
         self.verticalLayout_left.addLayout(layout_COM_config)
         self.verticalLayout_left.addWidget(self.config_tips)
         # 间隔
-        self.verticalLayout_left.addWidget(QtWidgets.QLabel())
+        self.verticalLayout_left.addWidget(QLabel())
 
         other_layout_device_info = QHBoxLayout()
-        self.other_device_info = QtWidgets.QLabel("其他配置:")
+        self.other_device_info = QLabel("其他配置:")
         # 只测开关机，不拍照
         self.only_boot = QCheckBox("只开关机")
 
         self.double_screen = QCheckBox("双屏")
         # 按键开机时长
-        self.button_boot_lable = QtWidgets.QLabel("按键开机时长(sec):")
+        self.button_boot_lable = QLabel("按键开机时长(sec):")
         self.button_boot_time = QComboBox()
         self.button_boot_time.setDisabled(True)
         other_layout_device_info.addWidget(self.other_device_info)
@@ -139,16 +124,16 @@ class Boot_Check_MainWindow(config_path.UIConfigPath):
         other_layout_device_info.addWidget(self.button_boot_time)
         other_layout_device_info.addStretch(1)
         self.verticalLayout_left.addLayout(other_layout_device_info)
-        self.button_boot_tips = QtWidgets.QLabel("提示：“只测开关机”不进行图片拍照对比，只查看adb是否起来")
+        self.button_boot_tips = QLabel("提示：“只测开关机”不进行图片拍照对比，只查看adb是否起来")
         self.button_boot_tips.setStyleSheet("color: blue;")
         self.verticalLayout_left.addWidget(self.button_boot_tips)
 
         # 间隔
-        self.verticalLayout_left.addWidget(QtWidgets.QLabel())
+        self.verticalLayout_left.addWidget(QLabel())
 
         # 压测次数
         layout_test_times_info = QHBoxLayout()
-        self.test_times_label = QtWidgets.QLabel("用例压测次数设置")
+        self.test_times_label = QLabel("用例压测次数设置")
         self.test_times = QComboBox()
         self.test_times.setEditable(True)
         layout_test_times_info.addWidget(self.test_times_label)
@@ -157,10 +142,10 @@ class Boot_Check_MainWindow(config_path.UIConfigPath):
         self.verticalLayout_left.addLayout(layout_test_times_info)
 
         # 间隔
-        self.verticalLayout_left.addWidget(QtWidgets.QLabel())
+        self.verticalLayout_left.addWidget(QLabel())
 
         # 开关机场景选择
-        self.verticalLayout_left.addWidget(QtWidgets.QLabel("开关机场景："))
+        self.verticalLayout_left.addWidget(QLabel("开关机模式："))
         layout_boot_scenario = QHBoxLayout()
         self.adapter_boot = QCheckBox("适配器开关机")
         self.normal_boot = QCheckBox("适配器/电池+电源按键-正常关机")
@@ -177,10 +162,10 @@ class Boot_Check_MainWindow(config_path.UIConfigPath):
         self.verticalLayout_left.addLayout(layout_boot_scenario)
 
         # 间隔
-        self.verticalLayout_left.addWidget(QtWidgets.QLabel())
+        self.verticalLayout_left.addWidget(QLabel())
 
         # 上传图片
-        self.reboot_logo_info = QtWidgets.QLabel("上传开机logo照片：")
+        self.reboot_logo_info = QLabel("上传设备开机后第一个画面的照片：")
         self.verticalLayout_left.addWidget(self.reboot_logo_info)
         layout_upload_logo = QHBoxLayout()
         self.logo_path_edit = QtWidgets.QLineEdit()
@@ -194,14 +179,49 @@ class Boot_Check_MainWindow(config_path.UIConfigPath):
         self.show_keying_button = QtWidgets.QPushButton("显示抠图")
         self.verticalLayout_left.addWidget(self.show_keying_button)
 
-        self.exp_image_label = QtWidgets.QLabel()
+        self.exp_image_label = QLabel()
         self.exp_image_label.setScaledContents(True)
         self.verticalLayout_left.addWidget(self.exp_image_label)
 
-        self.test_image_label = QtWidgets.QLabel()
+        self.test_image_label = QLabel()
         self.test_image_label.setScaledContents(True)
         self.verticalLayout_left.addWidget(self.test_image_label)
         self.verticalLayout_left.setSpacing(10)
+
+        self.verticalLayout_left.addWidget(QLabel())
+        # 设备信息配置
+        layout_device_config = QHBoxLayout()
+        self.device_config_info = QLabel("设备信息：")
+        self.is_wifi_test = QCheckBox("wifi")
+        self.is_eth_test = QCheckBox("以太网")
+        self.is_mobile_test = QCheckBox("4G")
+        self.is_bt_test = QCheckBox("蓝牙")
+        self.is_nfc_test = QCheckBox("NFC")
+        self.is_usb_test = QCheckBox("U盘")
+        layout_device_config.addWidget(self.device_config_info)
+        layout_device_config.addWidget(self.is_wifi_test)
+        layout_device_config.addWidget(self.is_eth_test)
+        layout_device_config.addWidget(self.is_mobile_test)
+        layout_device_config.addWidget(self.is_bt_test)
+        layout_device_config.addWidget(self.is_nfc_test)
+        layout_device_config.addWidget(self.is_usb_test)
+        layout_device_config.addStretch(1)
+        self.verticalLayout_left.addLayout(layout_device_config)
+
+        self.verticalLayout_left.addWidget(QLabel())
+
+        layout_device_type = QHBoxLayout()
+        self.device_type_label = QLabel("设备分类：")
+        self.is_team_one = QCheckBox("一部")
+        self.is_team_two = QCheckBox("二部")
+        self.device_type_group = QButtonGroup()
+        self.device_type_group.addButton(self.is_team_one, id=1)
+        self.device_type_group.addButton(self.is_team_two, id=2)
+        layout_device_type.addWidget(self.device_type_label)
+        layout_device_type.addWidget(self.is_team_one)
+        layout_device_type.addWidget(self.is_team_two)
+        layout_device_type.addStretch(1)
+        self.verticalLayout_left.addLayout(layout_device_type)
 
         # 提交按钮
         self.submit_button = QtWidgets.QPushButton("保存配置")
@@ -298,9 +318,21 @@ class BootCheckDisplay(QtWidgets.QMainWindow, Boot_Check_MainWindow):
             self.get_message_box("请设置压测次数")
             return
 
+        if not self.adapter_boot.isChecked() and not self.normal_boot.isChecked() and not self.abnormal_boot.isChecked():
+            self.get_message_box("请选择开关机模式！！！")
+            return
+
         # 检查是否抠图了
         if not os.path.exists(self.logo_key_path):
             self.get_message_box("请抠图检查图片是否完整！！！")
+            return
+
+        if not self.is_wifi_test.isChecked() and not self.is_eth_test.isChecked() and not self.is_mobile_test.isChecked() and not self.is_bt_test.isChecked() and not self.is_nfc_test.isChecked() and not self.is_usb_test.isChecked():
+            self.get_message_box("请勾选设备信息！！！")
+            return
+
+        if not self.is_team_one.isChecked() and not self.is_team_two.isChecked():
+            self.get_message_box("请勾选设备分类！！！")
             return
 
         # 检查完保存配置
@@ -438,6 +470,7 @@ class BootCheckDisplay(QtWidgets.QMainWindow, Boot_Check_MainWindow):
 
         # 保存用例压测次数设置
         config.add_config_option(section, "logo_test_times", self.test_times.currentText())
+        config.add_config_option(section, config.option_wifi_test, )
 
     def copy_file(self, origin, des):
         shutil.copy(origin, des)

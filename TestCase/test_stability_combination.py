@@ -56,7 +56,7 @@ class TestStabilityCombination:
             self.device.adb_push_file(os.path.join(Config.pretesting_path, "test_demo_Android.sh"), "/data")
             self.device.send_adb_shell_command("chmod 777 /data/test_demo_Android.sh")
             self.device.adb_push_file(Config.ui_config_ini_path, "/data")
-            self.device.send_adb_shell_command("/data/test_demo_Android.sh")
+            self.device.send_adb_shell_command("\"setsid /data/test_demo_Android.sh > /data/test_demo.log 2>&1 &\"")
         else:
             self.device.adb_push_file(os.path.join(Config.pretesting_path, "test_demo_Linux.sh"), "/data")
             self.device.send_adb_shell_command("chmod 777 /data/test_demo_Linux.sh")
@@ -64,7 +64,7 @@ class TestStabilityCombination:
             if self.device.is_existed("/data/%s" % os.path.basename(Config.ui_config_ini_path)):
                 self.device.send_adb_shell_command("rm /data/%s" % os.path.basename(Config.ui_config_ini_path))
                 self.device.adb_push_file(Config.ui_config_ini_path, "/data")
-            self.device.send_adb_shell_command("./data/test_demo_Linux.sh")
+            self.device.send_adb_shell_command("setsid /data/test_demo_Linux.sh &")
         time.sleep(10)
         if "debug.txt" in self.device.send_adb_shell_command("ls /data/stress_test_log"):
             log.info("可脱机测试")

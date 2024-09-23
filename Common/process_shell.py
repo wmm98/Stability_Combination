@@ -6,7 +6,7 @@ log = MyLog()
 
 class Shell:
     @staticmethod
-    def invoke(cmd, runtime=30):
+    def invoke(cmd, runtime=10):
         try:
             output, errors = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE,
                                               stderr=subprocess.PIPE,

@@ -127,13 +127,13 @@ if [ "$is_stress_app_switch" = "yes" ]; then
 		echo "$quotient 条进程"
 		#循环 多次次发送指令
 		t_times=1
-		echo "******************************************" >> /data/stress_test_log/stresstestlog/strssapptest_cut.log
 		while [ $t_times -le $test_times ]
 		do
-			echo "循环次数为： $t_times"
+			#echo "循环次数为： $t_times"
 			count=1
 			while [ $count -le $quotient ]
 			do
+			  echo "*****************$t_times*************************" >> /data/stress_test_log/stresstestlog/strssapptest_cut.log &
 			  echo $(date +"%Y-%m-%d %H:%M:%S") >> /data/stress_test_log/stresstestlog/strssapptest_cut.log & 
 			  /data/stressapptest -s 10 -M 1750 >> /data/stress_test_log/stresstestlog/strssapptest_cut.log &
 			  ((count++))

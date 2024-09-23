@@ -28,7 +28,8 @@ def check_adb_online_with_thread(device, timeout=90):
     if ui_conf_file.get(Config.section_ui_boot_check, Config.option_logo_is_is_usb) == "1":
         log.info("选了USB")
         adb_checker.usb = True
-        adb_checker.usb_relay = int(ui_conf_file.get(Config.section_ui_boot_check, Config.option_usb_config).split("_")[1])
+        adb_checker.usb_relay = int(
+            ui_conf_file.get(Config.section_ui_boot_check, Config.option_usb_config).split("_")[1])
 
     adb_checker.start_check()
     # Wait until timeout or ADB is found
@@ -64,7 +65,6 @@ class TestLXStability:
         self.device_name = self.ui_conf_file.get(Config.section_ui_to_background,
                                                  Config.ui_option_device_name)
         self.device = Device(self.device_name)
-
     def teardown_class(self):
         log.info("压测运行完毕")
         time.sleep(3)
@@ -73,8 +73,9 @@ class TestLXStability:
     @allure.title("开关机检查基本功能")
     def test_lx_boot_check_stability_test(self):
         log.info("****************立项测试-开关机检查基本功能用例开始******************")
-        device_check = DeviceCheck(self.ui_conf_file.get(Config.section_ui_to_background, Config.ui_option_device_name))
 
+        # 1、关机开机检测卡logo，是否进入recovery模式等部分处理
+        device_check = DeviceCheck(self.ui_conf_file.get(Config.section_ui_to_background, Config.ui_option_device_name))
         # 确认二部机器adb btn 开
         device_check.adb_btn_open()
         # 先对设备的时间进行修改，使用网络时间，方便看log
@@ -96,8 +97,6 @@ class TestLXStability:
         3 适配器/电池+电源按键--异常关机（适配器开路关机）
         """
 
-        # interval = [i*2 for i in range(1, 100)]
-        # 获取cases
         try:
             while flag < int(self.ui_conf_file.get(Config.section_ui_boot_check, Config.ui_option_logo_test_times)):
                 flag += 1
@@ -112,7 +111,8 @@ class TestLXStability:
 
                 if self.ui_conf_file.get(Config.section_ui_boot_check, Config.ui_option_logo_cases) == "1":
                     num = int(
-                        self.ui_conf_file.get(Config.section_ui_boot_check, Config.option_logo_adapter_power_config).split(
+                        self.ui_conf_file.get(Config.section_ui_boot_check,
+                                              Config.option_logo_adapter_power_config).split(
                             "_")[1])
                     t_ser.open_relay(num)
                     log.info("适配器开路")
@@ -131,7 +131,8 @@ class TestLXStability:
                     log.info("指令关机")
                     # 开机
                     num = int(
-                        self.ui_conf_file.get(Config.section_ui_boot_check, Config.option_power_button_config).split("_")[1])
+                        self.ui_conf_file.get(Config.section_ui_boot_check, Config.option_power_button_config).split(
+                            "_")[1])
                     t_ser.open_relay(num)
                     log.info("按下电源按键")
                     time.sleep(int(self.ui_conf_file.get(Config.section_ui_boot_check, Config.option_logo_boot_time)))
@@ -140,10 +141,12 @@ class TestLXStability:
                 # 适配器异常下电
                 elif self.ui_conf_file.get(Config.section_ui_boot_check, Config.ui_option_logo_cases) == "3":
                     num_adapter_power = int(
-                        self.ui_conf_file.get(Config.section_ui_boot_check, Config.option_logo_adapter_power_config).split(
+                        self.ui_conf_file.get(Config.section_ui_boot_check,
+                                              Config.option_logo_adapter_power_config).split(
                             "_")[1])
                     num_power_button = int(
-                        self.ui_conf_file[Config.section_ui_boot_check][Config.option_power_button_config].split("_")[1])
+                        self.ui_conf_file[Config.section_ui_boot_check][Config.option_power_button_config].split("_")[
+                            1])
                     # 断开适配器/电池
                     t_ser.open_relay(num_adapter_power)
                     log.info("电池/适配器开路")
@@ -211,7 +214,8 @@ class TestLXStability:
                             if device_check.device_is_online():
                                 log.info("设备在线")
                                 device_check.logcat(int(
-                                    self.ui_conf_file.get(Config.section_ui_boot_check, Config.option_logcat_duration)) * 60)
+                                    self.ui_conf_file.get(Config.section_ui_boot_check,
+                                                          Config.option_logcat_duration)) * 60)
                                 log.info("成功捕捉了%s 分钟 adb log" % self.ui_conf_file.get(Config.section_ui_boot_check,
                                                                                       Config.option_logcat_duration))
                                 log.info("任务结束")
@@ -238,7 +242,8 @@ class TestLXStability:
                         if device_check.device_is_online():
                             log.info("设备在线")
                             device_check.logcat(
-                                int(self.ui_conf_file.get(Config.section_ui_boot_check, Config.option_logcat_duration)) * 60)
+                                int(self.ui_conf_file.get(Config.section_ui_boot_check,
+                                                          Config.option_logcat_duration)) * 60)
                             log.info("成功捕捉了%s 分钟 adb log" % self.ui_conf_file.get(Config.section_ui_boot_check,
                                                                                   Config.option_logcat_duration))
                             log.info("任务结束")
@@ -253,4 +258,9 @@ class TestLXStability:
                 time.sleep(3)
         except Exception as e:
             log.info(str(e))
+
+        # 2、检查wifi，蓝牙，usb,4G、以太网模块状态，关闭并且再次开启检查状态
+
+
+
         log.info("****************立项测试-开关机检查基本功能用例结束******************")

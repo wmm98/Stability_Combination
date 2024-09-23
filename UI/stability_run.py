@@ -153,7 +153,7 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
         self.mem_free_process.finished.connect(self.mem_free_finished_handle)
         self.logo_window.submit_button.clicked.connect(self.display_boot_logo_cases_test_times)
         self.DDR_EMMC_window.submit_button.clicked.connect(self.display_ddr_emmc_cases_test_times)
-        # self.lx_boot_check_window.submit_button.clicked.connect(self.display_ddr_emmc_cases_test_times)
+        self.lx_boot_check_window.submit_button.clicked.connect(self.display_ddr_emmc_cases_test_times)
         # 初始化图片cursor
         # self.cursor = QTextCursor(self.document)
 
@@ -222,7 +222,7 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
         self.item_D_E_STA_switch_stressapptest.setText(0, "DDR-switch_stressapptest-高低内存切换")
         self.item_D_E_STA_switch_stressapptest.setCheckState(0, Qt.Unchecked)
         self.item_D_E_STA_switch_stressapptest.setText(1, "")
-        self.item_D_E_STA_switch_stressapptest.setText(2, "小时")
+        self.item_D_E_STA_switch_stressapptest.setText(2, "次")
         self.item_D_E_STA_switch_stressapptest.setFlags(
             self.item_D_E_STA_switch_stressapptest.flags() | Qt.ItemIsSelectable | Qt.ItemIsUserCheckable | Qt.ItemIsEditable)
 
