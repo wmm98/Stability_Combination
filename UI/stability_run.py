@@ -655,6 +655,7 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
 
 
 if __name__ == '__main__':
+    print(conf_path.project_path)
     subprocess.Popen(conf_path.bat_pre_info_path, shell=True, stdout=subprocess.PIPE,
                      stderr=subprocess.PIPE).communicate(timeout=120)
     app = QtWidgets.QApplication(sys.argv)

@@ -131,19 +131,6 @@ class Boot_Check_MainWindow(config_path.UIConfigPath):
         # 间隔
         self.verticalLayout_left.addWidget(QLabel())
 
-        # 压测次数
-        layout_test_times_info = QHBoxLayout()
-        self.test_times_label = QLabel("用例压测次数设置")
-        self.test_times = QComboBox()
-        self.test_times.setEditable(True)
-        layout_test_times_info.addWidget(self.test_times_label)
-        layout_test_times_info.addWidget(self.test_times)
-        layout_test_times_info.addStretch(1)
-        self.verticalLayout_left.addLayout(layout_test_times_info)
-
-        # 间隔
-        self.verticalLayout_left.addWidget(QLabel())
-
         # 开关机场景选择
         self.verticalLayout_left.addWidget(QLabel("开关机模式："))
         layout_boot_scenario = QHBoxLayout()
@@ -198,6 +185,8 @@ class Boot_Check_MainWindow(config_path.UIConfigPath):
         self.is_bt_test = QCheckBox("蓝牙")
         self.is_nfc_test = QCheckBox("NFC")
         self.is_usb_test = QCheckBox("U盘")
+        self.device_config_tips = QLabel("有些设备开启ADB不支持U盘")
+        self.device_config_tips.setStyleSheet("color: blue;")
         layout_device_config.addWidget(self.device_config_info)
         layout_device_config.addWidget(self.is_wifi_test)
         layout_device_config.addWidget(self.is_eth_test)
@@ -205,6 +194,7 @@ class Boot_Check_MainWindow(config_path.UIConfigPath):
         layout_device_config.addWidget(self.is_bt_test)
         layout_device_config.addWidget(self.is_nfc_test)
         layout_device_config.addWidget(self.is_usb_test)
+        layout_device_config.addWidget(self.device_config_tips)
         layout_device_config.addStretch(1)
         self.verticalLayout_left.addLayout(layout_device_config)
 
@@ -222,6 +212,21 @@ class Boot_Check_MainWindow(config_path.UIConfigPath):
         layout_device_type.addWidget(self.is_team_two)
         layout_device_type.addStretch(1)
         self.verticalLayout_left.addLayout(layout_device_type)
+
+        self.verticalLayout_left.addWidget(QLabel())
+
+        # 压测次数
+        layout_test_times_info = QHBoxLayout()
+        self.test_times_label = QLabel("用例压测次数设置")
+        self.test_times = QComboBox()
+        self.test_times.setEditable(True)
+        layout_test_times_info.addWidget(self.test_times_label)
+        layout_test_times_info.addWidget(self.test_times)
+        layout_test_times_info.addStretch(1)
+        self.verticalLayout_left.addLayout(layout_test_times_info)
+
+        # 间隔
+        self.verticalLayout_left.addWidget(QLabel())
 
         # 提交按钮
         self.submit_button = QtWidgets.QPushButton("保存配置")
@@ -470,7 +475,36 @@ class BootCheckDisplay(QtWidgets.QMainWindow, Boot_Check_MainWindow):
 
         # 保存用例压测次数设置
         config.add_config_option(section, "logo_test_times", self.test_times.currentText())
-        config.add_config_option(section, config.option_wifi_test, )
+        # 保存测试点配置信息
+        if self.is_wifi_test.isChecked():
+            config.add_config_option(section, config.option_wifi_test, "1")
+        else:
+            config.add_config_option(section, config.option_wifi_test, "0")
+
+        if self.is_eth_test.isChecked():
+            config.add_config_option(section, config.option_eth_test, "1")
+        else:
+            config.add_config_option(section, config.option_eth_test, "0")
+
+        if self.is_mobile_test.isChecked():
+            config.add_config_option(section, config.option_mobile_test, "1")
+        else:
+            config.add_config_option(section, config.option_mobile_test, "0")
+
+        if self.is_bt_test.isChecked():
+            config.add_config_option(section, config.option_bt_test, "1")
+        else:
+            config.add_config_option(section, config.option_bt_test, "0")
+
+        if self.is_nfc_test.isChecked():
+            config.add_config_option(section, config.option_nfc_test, '1')
+        else:
+            config.add_config_option(section, config.option_nfc_test, "0")
+
+        if self.is_usb_test.isChecked():
+            config.add_config_option(section, config.option_usb_test, "1")
+        else:
+            config.add_config_option(section, config.option_usb_test, "0")
 
     def copy_file(self, origin, des):
         shutil.copy(origin, des)
