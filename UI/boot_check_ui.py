@@ -197,6 +197,12 @@ class Boot_Check_MainWindow(config_path.UIConfigPath):
         layout_device_config.addWidget(self.device_config_tips)
         layout_device_config.addStretch(1)
         self.verticalLayout_left.addLayout(layout_device_config)
+        config_tips1 = QLabel("提示：测试时请根据勾选的测试项打开并且连接上wifi、打开连接上以太网，插入4G卡")
+        config_tips1.setStyleSheet("color: blue;")
+        self.verticalLayout_left.addWidget(config_tips1)
+        config_tips2 = QLabel("      打开蓝牙并且连接上仅一台设备、打开NFC、插上U盘")
+        config_tips2.setStyleSheet("color: blue;")
+        self.verticalLayout_left.addWidget(config_tips2)
 
         self.verticalLayout_left.addWidget(QLabel())
 

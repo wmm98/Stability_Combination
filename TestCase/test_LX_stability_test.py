@@ -84,26 +84,74 @@ class TestLXStability:
         is_usb = self.ui_conf_file.get(Config.section_ui_to_background, Config.option_usb_test)
 
         # 测试前先检查所有的按钮开关
-        # 检查蓝牙开关，提醒测试人员提前匹配好一个设备，通过adb shell manager 去每次检查有没有连接上唯一的设备，通过蓝牙地址检查
-        slave_device_bt_addr = ""
-        if not int(is_bt):
-            self.device.enable_bt_btn()
-            time.sleep(3)
+        if int(is_bt):
             if not self.device.bt_is_enable():
                 self.device.enable_bt_btn()
-            # 记录从设备的蓝牙地址
+                time.sleep(3)
+            if not self.device.bt_is_enable():
+                self.device.enable_bt_btn()
+                time.sleep(3)
+            if not self.device.bt_is_enable():
+                log.error("无法开启蓝牙，请检查！！！")
+                time.sleep(3)
+                raise Exception
 
-        if not int(is_wifi):
-            self.device.enable_wifi_btn()
-            time.sleep(3)
+        if int(is_wifi):
             if not self.device.wifi_is_enable():
+                if int(is_eth):
+                    self.device.disable_eth0_btn()
+                if int(is_mobile):
+                    self.device.disable_mobile_btn()
                 self.device.enable_wifi_btn()
-        # 以太网明天适配
-        # if not int(is_eth):
-        #     self.device.enable_eth_btn()
-        #     time.sleep(3)
-        #     if not self.device.et_is_enable():
-        #         self.device.enable_eth_btn()
+                time.sleep(3)
+            try:
+                self.device.ping_network(5, 60)
+                if int(is_eth):
+                    self.device.enable_eth0_btn()
+                if int(is_mobile):
+                    self.device.enable_mobile_btn()
+            except Exception:
+                log.error("无法上网，请连接wifi")
+                time.sleep(3)
+                raise Exception
+
+        if int(is_eth):
+            if not self.device.eth0_is_enable():
+                if int(is_wifi):
+                    self.device.disable_wifi_btn()
+                if int(is_mobile):
+                    self.device.disable_mobile_btn()
+                self.device.enable_eth0_btn()
+                time.sleep(3)
+            try:
+                self.device.ping_network(5, 60)
+                if int(is_wifi):
+                    self.device.enable_wifi_btn()
+                if int(is_mobile):
+                    self.device.enable_mobile_btn()
+            except Exception:
+                log.error("无法上网，请检查以太网！！！")
+                time.sleep(3)
+                raise Exception
+
+        if int(is_mobile):
+            if int(is_wifi):
+                self.device.disable_wifi_btn()
+            if int(is_eth):
+                self.device.disable_eth0_btn()
+            self.device.enable_eth0_btn()
+            time.sleep(3)
+            try:
+                self.device.ping_network(5, 60)
+                if int(is_wifi):
+                    self.device.enable_wifi_btn()
+                if int(is_mobile):
+                    self.device.enable_eth0_btn()
+            except Exception:
+                log.error("无法上网，请插上4G卡！！！")
+                time.sleep(3)
+                raise Exception
+
 
         # 1、关机开机检测卡logo，是否进入recovery模式等部分处理
         device_check = DeviceCheck(self.ui_conf_file.get(Config.section_ui_to_background, Config.ui_option_device_name))

@@ -1,6 +1,7 @@
 from Common.config import Config
 from Common.log import MyLog
 from Common.process_shell import Shell
+import time
 
 log = MyLog()
 shell = Shell()
@@ -106,11 +107,47 @@ class Device:
     def get_nfc_btn_status(self):
         pass
 
-    def enable_eth_btn(self):
-        pass
+    def enable_eth0_btn(self):
+        self.send_adb_shell_command("ifconfig eth0 up")
 
-    def disable_eth_btn(self):
-        pass
+    def disable_eth0_btn(self):
+        self.send_adb_shell_command("ifconfig eth0 down")
 
-    def get_eth_btn_status(self):
-        pass
+    def eth0_is_enable(self):
+        if "eth0" in self.send_adb_shell_command("ifconfig | grep eht0"):
+            return True
+        else:
+            return False
+
+    def get_bt_bonded_devices(self):
+        cmd = "dumpsys bluetooth_manager |grep \"BR/EDR\""
+        bonded_device_info = self.remove_info_space(self.send_adb_shell_command(cmd))
+        return bonded_device_info
+
+    def remove_info_space(self, info):
+        return info.replace('\r', '').replace('\t', '').replace(' ', '').replace('\n', '')
+
+    def return_end_time(self, now_time, timeout=180):
+        timedelta = 1
+        end_time = now_time + timeout
+        return end_time
+
+    def get_current_time(self):
+        return time.time()
+
+    def ping_network(self, times=5, timeout=300):
+        # 每隔0.6秒ping一次，一共ping5次
+        # ping - c 5 - i 0.6 qq.com
+        cmd = " ping -c %s %s" % (times, "www.baidu.com")
+        exp = self.remove_info_space("ping: unknown host %s" % "www.baidu.com")
+        now_time = self.get_current_time()
+        while True:
+            log.info(cmd)
+            res = self.remove_info_space(self.send_adb_shell_command(cmd))
+            log.info(res)
+            if exp not in res:
+                break
+            if self.get_current_time() > self.return_end_time(now_time, timeout):
+                assert False, "@@@@超过5分钟无法上网,请检查网络"
+            time.sleep(3)
+
