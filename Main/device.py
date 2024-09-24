@@ -95,8 +95,19 @@ class Device:
     def disable_mobile_btn(self):
         self.send_adb_shell_command("svc data disable")
 
-    def get_mobile_btn_status(self):
-        pass
+    def mobile_is_enable(self):
+        info = self.send_adb_shell_command("settings list global |grep mobile_data")
+        # 先暂时设置有10个4G网卡
+        flag = 0
+        base_mobile = "mobile_data"
+        for i in range(1, 11):
+            if (base_mobile + "%d" % i) in info:
+                if (base_mobile + "%d=1" % i) in info:
+                    flag += 1
+        if flag > 0:
+            return True
+        else:
+            return False
 
     def enable_nfc_btn(self):
         self.send_adb_shell_command("svc nfc enable")
@@ -104,8 +115,11 @@ class Device:
     def disable_nfc_btn(self):
         self.send_adb_shell_command("svc nfc disable")
 
-    def get_nfc_btn_status(self):
-        pass
+    def nfc_is_enable(self):
+        if "on" in self.send_adb_shell_command("dumpsys nfc | grep mState"):
+            return True
+        else:
+            return False
 
     def enable_eth0_btn(self):
         self.send_adb_shell_command("ifconfig eth0 up")
