@@ -148,8 +148,9 @@ class Device(publicInterface):
         now_time = self.get_current_time()
         while True:
             res = self.remove_info_space(self.send_adb_shell_command(cmd))
-            if exp not in res:
-                break
+            log.info(res[:100])
+            if len(res) != 0 and exp not in res:
+                return True
             if self.get_current_time() > self.return_end_time(now_time, timeout):
-                assert False, "@@@@超过5分钟无法上网,请检查网络"
+                return False
             time.sleep(3)
