@@ -153,7 +153,7 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
         self.mem_free_process.finished.connect(self.mem_free_finished_handle)
         self.logo_window.submit_button.clicked.connect(self.display_boot_logo_cases_test_times)
         self.DDR_EMMC_window.submit_button.clicked.connect(self.display_ddr_emmc_cases_test_times)
-        self.lx_boot_check_window.submit_button.clicked.connect(self.display_ddr_emmc_cases_test_times)
+        self.lx_boot_check_window.submit_button.clicked.connect(self.display_lx_boot_check_case_test_times)
         # 初始化图片cursor
         # self.cursor = QTextCursor(self.document)
 
@@ -263,6 +263,14 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
         self.item_L_G_STA_adapter_battery_button_unormal.setText(2, "次")
         self.item_L_G_STA_adapter_battery_button_unormal.setFlags(
             self.item_L_G_STA_adapter_battery_button_unormal.flags() | Qt.ItemIsSelectable | Qt.ItemIsUserCheckable | Qt.ItemIsEditable)
+
+    def display_lx_boot_check_case_test_times(self):
+        time.sleep(1)
+        if self.lx_boot_check_window.submit_flag:
+            if self.item_L_X_STA_child_boot_check.checkState(0) == 2:
+                boot_check_times = self.ui_config.get_option_value(self.ui_config.section_ui_boot_check, self.ui_config.ui_option_logo_test_times)
+                self.item_L_X_STA_child_boot_check.setText(1, boot_check_times)
+                self.item_L_X_STA_child_boot_check.setTextAlignment(1, Qt.AlignRight)  # 设置第二列文本右对齐
 
     def display_ddr_emmc_cases_test_times(self):
         time.sleep(1)
@@ -489,10 +497,8 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
             # self.save_config(self.config_file_path)
             # 启动
             self.start_qt_process(self.run_bat_path)
-
             self.timer = QTimer(self)
             self.timer.timeout.connect(self.update_debug_log)
-
             # self.file_timer = QTimer(self)
             # self.file_timer.timeout.connect(self.check_image_modification)
 

@@ -1,21 +1,20 @@
 import pytest
 from Common import log, config, process_shell
+from Main.public import publicInterface
 import shutil
 import datetime
 import configparser
 
 if __name__ == '__main__':
+    pub_interface = publicInterface()
     shell = process_shell.Shell()
     debug_log = log.MyLog()
     conf = config.Config()
     bg_config = configparser.ConfigParser()
-    bg_config.read(conf.bg_config_ini_path)
-
-    # bg_config = configf(configf.ui_config_file_path)
-    # ui_config = configf(configf.background_config_file_path)
+    pub_interface.read_ini_file(bg_config, conf.bg_config_ini_path)
 
     ui_config = configparser.ConfigParser()
-    ui_config.read(conf.ui_config_ini_path)
+    pub_interface.read_ini_file(ui_config, conf.ui_config_ini_path)
 
     xml_report_path = conf.xml_report_path
     html_report_path = conf.html_report_path

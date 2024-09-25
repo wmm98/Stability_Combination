@@ -26,7 +26,6 @@ class Log:
 class GetMemFree:
     def __init__(self):
         self.device_name = ui_conf_file.get_option_value(ui_conf_file.section_ui_to_background, ui_conf_file.ui_option_device_name)
-
         self.log = Log()
 
     def root_devices(self):

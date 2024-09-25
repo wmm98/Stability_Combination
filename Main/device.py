@@ -1,13 +1,14 @@
 from Common.config import Config
 from Common.log import MyLog
 from Common.process_shell import Shell
+from Main.public import publicInterface
 import time
 
 log = MyLog()
 shell = Shell()
 
 
-class Device:
+class Device(publicInterface):
     def __init__(self, device):
         self.device_name = device
 
@@ -66,7 +67,7 @@ class Device:
         self.send_adb_shell_command("svc wifi disable")
 
     def get_wifi_btn_status(self):
-        self.send_adb_shell_command("settings get global wifi_on")
+        return self.send_adb_shell_command("settings get global wifi_on")
 
     def wifi_is_enable(self):
         if "1" in self.get_wifi_btn_status():
@@ -81,7 +82,7 @@ class Device:
         self.send_adb_shell_command("svc bluetooth disable")
 
     def get_bt_btn_status(self):
-        self.send_adb_shell_command("settings get global bluetooth_on")
+        return self.send_adb_shell_command("settings get global bluetooth_on")
 
     def bt_is_enable(self):
         if "1" in self.get_bt_btn_status():
@@ -96,17 +97,18 @@ class Device:
         self.send_adb_shell_command("svc data disable")
 
     def mobile_is_enable(self):
-        info = self.send_adb_shell_command("settings list global |grep mobile_data")
+        info = self.send_adb_shell_command("\"settings list global |grep mobile_data\"")
         # 先暂时设置有10个4G网卡
         flag = 0
         base_mobile = "mobile_data"
-        for i in range(1, 11):
-            if (base_mobile + "%d" % i) in info:
-                if (base_mobile + "%d=1" % i) in info:
+        for i in range(1, 8):
+            mobile_info = base_mobile + "%d" % i
+            mobile_info_detail = base_mobile + "%d=1" % i
+            if mobile_info in info:
+                if mobile_info_detail in info:
                     flag += 1
-        if flag > 0:
-            return True
-        else:
+                    return True
+        if flag == 0:
             return False
 
     def enable_nfc_btn(self):
@@ -116,7 +118,7 @@ class Device:
         self.send_adb_shell_command("svc nfc disable")
 
     def nfc_is_enable(self):
-        if "on" in self.send_adb_shell_command("dumpsys nfc | grep mState"):
+        if "on" in self.send_adb_shell_command("\"dumpsys nfc | grep mState\""):
             return True
         else:
             return False
@@ -128,7 +130,7 @@ class Device:
         self.send_adb_shell_command("ifconfig eth0 down")
 
     def eth0_is_enable(self):
-        if "eth0" in self.send_adb_shell_command("ifconfig | grep eht0"):
+        if "eth0" in self.send_adb_shell_command("\"ifconfig | grep eht0\""):
             return True
         else:
             return False
@@ -138,17 +140,6 @@ class Device:
         bonded_device_info = self.remove_info_space(self.send_adb_shell_command(cmd))
         return bonded_device_info
 
-    def remove_info_space(self, info):
-        return info.replace('\r', '').replace('\t', '').replace(' ', '').replace('\n', '')
-
-    def return_end_time(self, now_time, timeout=180):
-        timedelta = 1
-        end_time = now_time + timeout
-        return end_time
-
-    def get_current_time(self):
-        return time.time()
-
     def ping_network(self, times=5, timeout=300):
         # 每隔0.6秒ping一次，一共ping5次
         # ping - c 5 - i 0.6 qq.com
@@ -156,12 +147,9 @@ class Device:
         exp = self.remove_info_space("ping: unknown host %s" % "www.baidu.com")
         now_time = self.get_current_time()
         while True:
-            log.info(cmd)
             res = self.remove_info_space(self.send_adb_shell_command(cmd))
-            log.info(res)
             if exp not in res:
                 break
             if self.get_current_time() > self.return_end_time(now_time, timeout):
                 assert False, "@@@@超过5分钟无法上网,请检查网络"
             time.sleep(3)
-

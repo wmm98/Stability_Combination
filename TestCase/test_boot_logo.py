@@ -4,6 +4,7 @@ import time
 import pytest
 from Common.log import MyLog
 from Main.device import Device
+from Main.public import publicInterface
 from Common import image_analysis, camera_operate, keying, m_serial, adb_timer
 from Common.device_check import DeviceCheck
 import configparser
@@ -16,12 +17,12 @@ cnns = image_analysis.CNNsAnalysis()
 camera = camera_operate.Camera()
 key_ing = keying.KeyPhoto()
 t_ser = m_serial.SerialD()
-# configpar = configparser.ConfigParser()
-# configpar.read(conf.config_file_path)
+public_interface = publicInterface()
+
 bg_conf_file = configparser.ConfigParser()
-bg_conf_file.read(Config.bg_config_ini_path)
+public_interface.read_ini_file(bg_conf_file, Config.bg_config_ini_path)
 ui_conf_file = configparser.ConfigParser()
-ui_conf_file.read(Config.ui_config_ini_path)
+public_interface.read_ini_file(ui_conf_file, Config.ui_config_ini_path)
 
 
 # 检查adb在线
