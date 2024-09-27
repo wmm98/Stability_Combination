@@ -46,9 +46,11 @@ class PreviewPhotoGraph_MainWindow(config_path.UIConfigPath):
         layout_coordinate_config = QHBoxLayout()
         x_label = QLabel("X:")
         self.X_info = QLineEdit()
+        self.X_info.setDisabled(True)
         self.X_info.setMaximumWidth(50)
         y_label = QLabel("Y:")
         self.Y_info = QLineEdit()
+        self.Y_info.setDisabled(True)
         self.Y_info.setMaximumWidth(50)
         layout_coordinate_config.addWidget(x_label)
         layout_coordinate_config.addWidget(self.X_info)
@@ -131,6 +133,31 @@ class CameraStabilityDisplay(QtWidgets.QMainWindow, PreviewPhotoGraph_MainWindow
         if not self.is_front_and_rear_camera.isChecked() and not self.is_front_or_rear_camera.isChecked():
             self.get_message_box("请勾选摄像头信息！！！")
             return
+
+        if self.is_front_and_rear_camera.isChecked():
+            try:
+                self.x_value = float(self.X_info.text().strip())
+                self.y_value = float(self.Y_info.text().strip())
+            except Exception as e:
+                print(e)
+                self.get_message_box("坐标请填入数字！！！")
+                return
+
+        try:
+            case_test_times = int(self.test_times.currentText().strip())
+        except:
+            self.get_message_box("测试次数请填入整数！！！")
+            return
+        if self.is_front_and_rear_camera.isChecked():
+            self.ui_config.add_config_option(self.ui_config.section_ui_camera_check,
+                                             self.ui_config.option_front_and_rear, "1")
+        else:
+            self.ui_config.add_config_option(self.ui_config.section_ui_camera_check,
+                                             self.ui_config.option_front_and_rear, "0")
+        if self.is_front_and_rear_camera.isChecked():
+            self.ui_config.add_config_option(self.ui_config.section_ui_camera_check, self.ui_config.option_switch_x_value, self.X_info.text())
+            self.ui_config.add_config_option(self.ui_config.section_ui_camera_check, self.ui_config.option_switch_y_value, self.Y_info.text())
+        self.ui_config.add_config_option(self.ui_config.section_ui_camera_check, self.ui_config.option_camera_test_times, str(self.test_times.currentText()))
 
     def click_camera_change(self):
         if self.is_front_or_rear_camera.isChecked():

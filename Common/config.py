@@ -80,6 +80,13 @@ class Config:
     # 开关机检查
     section_ui_boot_check = "Boot-Check"
 
+    # 相机压测
+    section_ui_camera_check = "Camera-Check"
+    option_front_and_rear = "front_rear"
+    option_switch_x_value = "x_value"
+    option_switch_y_value = "y_value"
+    option_camera_test_times = "camera_test_times"
+
 
 
 
