@@ -16,7 +16,7 @@ class PreviewPhotoGraph_MainWindow(config_path.UIConfigPath):
 
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(600, 300)
+        MainWindow.resize(600, 800)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.verticalLayout_left = QtWidgets.QVBoxLayout(self.centralwidget)
 
@@ -69,7 +69,27 @@ class PreviewPhotoGraph_MainWindow(config_path.UIConfigPath):
         layout_getting_photo.addWidget(self.photograph_tips)
         self.verticalLayout_left.addLayout(layout_getting_photo)
 
+        self.verticalLayout_left.addWidget(QLabel())
 
+        layout_test_times_info = QHBoxLayout()
+        self.test_times_label = QLabel("用例压测次数设置")
+        self.test_times = QComboBox()
+        self.test_times.setEditable(True)
+        layout_test_times_info.addWidget(self.test_times_label)
+        layout_test_times_info.addWidget(self.test_times)
+        layout_test_times_info.addStretch(1)
+        self.verticalLayout_left.addLayout(layout_test_times_info)
+
+        self.submit_button = QtWidgets.QPushButton("保存配置")
+        self.verticalLayout_left.addWidget(self.submit_button)
+
+        self.verticalLayout_left.addWidget(QLabel())
+
+        # 显示预期截图和照片
+        self.verticalLayout_left.addWidget(QLabel("展示预览图和拍照保存图："))
+        self.image_edit = ScrollablePlainTextEdit()
+        self.document = self.image_edit.document()
+        self.verticalLayout_left.addWidget(self.image_edit)
 
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
@@ -102,8 +122,44 @@ class CameraStabilityDisplay(QtWidgets.QMainWindow, PreviewPhotoGraph_MainWindow
         self.submit_flag = False
 
     def intiui(self):
-        # 添加字段
-        pass
+        self.list_test_times_settings()
+        self.submit_button.clicked.connect(self.handle_submit)
+        self.is_front_and_rear_camera.clicked.connect(self.click_camera_change)
+        self.is_front_or_rear_camera.clicked.connect(self.click_camera_change)
+
+    def handle_submit(self):
+        if not self.is_front_and_rear_camera.isChecked() and not self.is_front_or_rear_camera.isChecked():
+            self.get_message_box("请勾选摄像头信息！！！")
+            return
+
+    def click_camera_change(self):
+        if self.is_front_or_rear_camera.isChecked():
+            self.X_info.clear()
+            self.X_info.setDisabled(True)
+            self.Y_info.clear()
+            self.Y_info.setDisabled(True)
+        else:
+            self.X_info.setEnabled(True)
+            self.Y_info.setEnabled(True)
+
+    def get_message_box(self, text):
+        QMessageBox.warning(self, "错误提示", text)
+
+    def list_test_times_settings(self):
+        times = [str(j * 50) for j in range(1, 500)]
+        self.test_times.addItems(times)
+
+
+class ScrollablePlainTextEdit(QTextEdit):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        # 连接 rangeChanged 信号到 slot_scroll_to_bottom 槽
+        self.verticalScrollBar().rangeChanged.connect(self.slot_scroll_to_bottom)
+
+    @pyqtSlot(int, int)
+    def slot_scroll_to_bottom(self, min, max):
+        # 设置滚动条到底部
+        self.verticalScrollBar().setValue(max)
 
 
 if __name__ == '__main__':
