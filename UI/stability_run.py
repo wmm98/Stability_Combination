@@ -486,12 +486,20 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
                 self.get_message_box("请勾选用例！！！")
                 return
 
+            # 相应用例转为英文标识
+            self.transfer_cases = []
+            for case in self.cases:
+                if "开关机检查基本功能" in case:
+                    self.transfer_cases.append("boot_check_stability")
+                if "前后摄像头拍照问题比对" in case:
+                    self.transfer_cases.append("front_rear_camera_stability")
+
             self.ui_config.add_config_option(self.ui_config.section_ui_to_background,
                                              self.ui_config.ui_option_device_name,
                                              self.edit_device_name.currentText())
             # 保存用例
             self.ui_config.add_config_option(self.ui_config.section_ui_to_background,
-                                             self.ui_config.ui_option_cases, ",".join(self.cases))
+                                             self.ui_config.ui_option_cases, ",".join(self.transfer_cases))
 
             # 检查完保存配置
             # self.save_config(self.config_file_path)

@@ -80,5 +80,6 @@ class ConfigP(UIConfigPath):
             self.config.write(configfile)
 
     def get_option_value(self, section, option):
-        self.config.read(self.ini_path, encoding="gbk")
+        self.config.read(self.ini_path)
+        # self.config.read(self.ini_path, encoding="gbk")
         return self.config.get(section, option)
