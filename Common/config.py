@@ -16,11 +16,11 @@ class Config:
     EMMC_path = os.path.join(pretesting_path, "EMMC")
 
     # 开机卡logo
-    camera_key_img_path = os.path.join(project_path, "Photo", "CameraPhoto", "Key")
-    camera_origin_img_path = os.path.join(project_path, "Photo", "CameraPhoto", "Take")
+    camera_key_img_path = os.path.join(project_path, "Photo", "BootLogo", "CameraPhoto", "Key")
+    camera_origin_img_path = os.path.join(project_path, "Photo", "BootLogo", "CameraPhoto", "Take")
 
-    logo_key_path = os.path.join(project_path, "Photo", "Logo", "Key")
-    logo_logo_path = os.path.join(project_path, "Photo", "Logo", "Logo")
+    logo_key_path = os.path.join(project_path, "Photo", "BootLogo", "Logo", "Key")
+    logo_logo_path = os.path.join(project_path, "Photo", "BootLogo", "Logo", "Logo")
     # debug_log_path = os.path.join(project_path, "Log", "Debug", "debug_log.txt")
     system_failed_log_path = os.path.join(project_path, "Log", "Logcat", "failed_logcat.txt")
     flag_file_path = os.path.join(project_path, "UI", "flag.txt")

@@ -128,8 +128,41 @@ class CameraStabilityDisplay(QtWidgets.QMainWindow, PreviewPhotoGraph_MainWindow
         self.submit_button.clicked.connect(self.handle_submit)
         self.is_front_and_rear_camera.clicked.connect(self.click_camera_change)
         self.is_front_or_rear_camera.clicked.connect(self.click_camera_change)
+        self.photograph_button.clicked.connect(self.preview_photograph_button_change)
 
     def handle_submit(self):
+        # if not self.is_front_and_rear_camera.isChecked() and not self.is_front_or_rear_camera.isChecked():
+        #     self.get_message_box("请勾选摄像头信息！！！")
+        #     return
+        #
+        # if self.is_front_and_rear_camera.isChecked():
+        #     try:
+        #         self.x_value = float(self.X_info.text().strip())
+        #         self.y_value = float(self.Y_info.text().strip())
+        #     except Exception as e:
+        #         print(e)
+        #         self.get_message_box("坐标请填入数字！！！")
+        #         return
+        try:
+            case_test_times = int(self.test_times.currentText().strip())
+        except:
+            self.get_message_box("测试次数请填入整数！！！")
+            return
+        # if self.is_front_and_rear_camera.isChecked():
+        #     self.ui_config.add_config_option(self.ui_config.section_ui_camera_check,
+        #                                      self.ui_config.option_front_and_rear, "1")
+        # else:
+        #     self.ui_config.add_config_option(self.ui_config.section_ui_camera_check,
+        #                                      self.ui_config.option_front_and_rear, "0")
+        # if self.is_front_and_rear_camera.isChecked():
+        #     self.ui_config.add_config_option(self.ui_config.section_ui_camera_check, self.ui_config.option_switch_x_value, self.X_info.text())
+        #     self.ui_config.add_config_option(self.ui_config.section_ui_camera_check, self.ui_config.option_switch_y_value, self.Y_info.text())
+        self.ui_config.add_config_option(self.ui_config.section_ui_camera_check, self.ui_config.option_camera_test_times, str(case_test_times))
+
+        self.submit_flag = True
+        self.get_message_box("相机压测用例保存成功")
+
+    def preview_photograph_button_change(self):
         if not self.is_front_and_rear_camera.isChecked() and not self.is_front_or_rear_camera.isChecked():
             self.get_message_box("请勾选摄像头信息！！！")
             return
@@ -143,24 +176,18 @@ class CameraStabilityDisplay(QtWidgets.QMainWindow, PreviewPhotoGraph_MainWindow
                 self.get_message_box("坐标请填入数字！！！")
                 return
 
-        try:
-            case_test_times = int(self.test_times.currentText().strip())
-        except:
-            self.get_message_box("测试次数请填入整数！！！")
-            return
         if self.is_front_and_rear_camera.isChecked():
             self.ui_config.add_config_option(self.ui_config.section_ui_camera_check,
                                              self.ui_config.option_front_and_rear, "1")
+
+            self.ui_config.add_config_option(self.ui_config.section_ui_camera_check,
+                                             self.ui_config.option_switch_x_value, self.X_info.text())
+            self.ui_config.add_config_option(self.ui_config.section_ui_camera_check,
+                                             self.ui_config.option_switch_y_value, self.Y_info.text())
+
         else:
             self.ui_config.add_config_option(self.ui_config.section_ui_camera_check,
                                              self.ui_config.option_front_and_rear, "0")
-        if self.is_front_and_rear_camera.isChecked():
-            self.ui_config.add_config_option(self.ui_config.section_ui_camera_check, self.ui_config.option_switch_x_value, self.X_info.text())
-            self.ui_config.add_config_option(self.ui_config.section_ui_camera_check, self.ui_config.option_switch_y_value, self.Y_info.text())
-        self.ui_config.add_config_option(self.ui_config.section_ui_camera_check, self.ui_config.option_camera_test_times, str(case_test_times))
-
-        self.submit_flag = True
-        self.get_message_box("相机压测用例保存成功")
 
     def click_camera_change(self):
         if self.is_front_or_rear_camera.isChecked():

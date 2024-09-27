@@ -187,7 +187,7 @@ class TestBootLogo:
                     # 拍照
                     time.sleep(60)
                     # time.sleep(interval[flag])
-                    origin_camera_path = os.path.join(conf.camera_origin_img_path, "Origin.png")
+                    origin_camera_path = os.path.join(conf.camera_origin_img_path, "Expect.png")
                     # 双屏情况
                     origin_camera2_path = os.path.join(conf.camera_origin_img_path, "Origin2.png")
                     if os.path.exists(origin_camera_path):

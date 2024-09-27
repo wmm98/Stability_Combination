@@ -6,7 +6,7 @@ class publicInterface:
         pass
 
     def read_ini_file(self, file_obj, file_path):
-        return file_obj.read(file_path, encoding="gbk")
+        return file_obj.read(file_path)
 
     def remove_info_space(self, info):
         return info.replace('\r', '').replace('\t', '').replace(' ', '').replace('\n', '')
