@@ -157,7 +157,10 @@ class CameraStabilityDisplay(QtWidgets.QMainWindow, PreviewPhotoGraph_MainWindow
         if self.is_front_and_rear_camera.isChecked():
             self.ui_config.add_config_option(self.ui_config.section_ui_camera_check, self.ui_config.option_switch_x_value, self.X_info.text())
             self.ui_config.add_config_option(self.ui_config.section_ui_camera_check, self.ui_config.option_switch_y_value, self.Y_info.text())
-        self.ui_config.add_config_option(self.ui_config.section_ui_camera_check, self.ui_config.option_camera_test_times, str(self.test_times.currentText()))
+        self.ui_config.add_config_option(self.ui_config.section_ui_camera_check, self.ui_config.option_camera_test_times, str(case_test_times))
+
+        self.submit_flag = True
+        self.get_message_box("相机压测用例保存成功")
 
     def click_camera_change(self):
         if self.is_front_or_rear_camera.isChecked():

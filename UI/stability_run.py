@@ -8,6 +8,7 @@ from tree_widget import Ui_MainWindow
 from reboot_logo_ui import LogoDisplay
 from ddr_emmc_ui import DDRDisplay
 from boot_check_ui import BootCheckDisplay
+from camera_preview_and_photograph import CameraStabilityDisplay
 import os
 import shutil
 from PyQt5.QtGui import QPixmap
@@ -115,6 +116,7 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
         self.logo_window = LogoDisplay()
         self.DDR_EMMC_window = DDRDisplay()
         self.lx_boot_check_window = BootCheckDisplay()
+        self.lx_preview_photograph_window = CameraStabilityDisplay()
         self.setupUi(self)
         self.AllTestCase = None
         self.intiui()
@@ -154,6 +156,7 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
         self.logo_window.submit_button.clicked.connect(self.display_boot_logo_cases_test_times)
         self.DDR_EMMC_window.submit_button.clicked.connect(self.display_ddr_emmc_cases_test_times)
         self.lx_boot_check_window.submit_button.clicked.connect(self.display_lx_boot_check_case_test_times)
+        self.lx_preview_photograph_window.submit_button.clicked.connect(self.display_lx_camera_compare_test_times)
         # 初始化图片cursor
         # self.cursor = QTextCursor(self.document)
 
@@ -264,6 +267,15 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
         self.item_L_G_STA_adapter_battery_button_unormal.setFlags(
             self.item_L_G_STA_adapter_battery_button_unormal.flags() | Qt.ItemIsSelectable | Qt.ItemIsUserCheckable | Qt.ItemIsEditable)
 
+    def display_lx_camera_compare_test_times(self):
+        time.sleep(1)
+        if self.lx_preview_photograph_window.submit_flag:
+            if self.item_L_X_STA_child_camera_compare.checkState(0) == 2:
+                times = self.ui_config.get_option_value(self.ui_config.section_ui_camera_check,
+                                                                   self.ui_config.option_camera_test_times)
+                self.item_L_X_STA_child_camera_compare.setText(1, times)
+                self.item_L_X_STA_child_camera_compare.setTextAlignment(1, Qt.AlignRight)  # 设置第二列文本右对齐
+
     def display_lx_boot_check_case_test_times(self):
         time.sleep(1)
         if self.lx_boot_check_window.submit_flag:
@@ -356,6 +368,11 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
             if item.checkState(0) == 2:
                 if not self.lx_boot_check_window.isVisible():
                     self.lx_boot_check_window.show()
+
+        if item == self.item_L_X_STA_child_camera_compare:
+            if item.checkState(0) == 2:
+                if not self.lx_preview_photograph_window.isVisible():
+                    self.lx_preview_photograph_window.show()
 
     def handlechanged(self, item, column):
         # 获取选中节点的子节点个数
