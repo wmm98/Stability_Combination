@@ -20,6 +20,16 @@ class PreviewPhotoGraph_MainWindow(config_path.UIConfigPath):
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.verticalLayout_left = QtWidgets.QVBoxLayout(self.centralwidget)
 
+        layout_device_info = QHBoxLayout()
+        self.device_label = QLabel("设备名称：")
+        self.device_name = QtWidgets.QComboBox()
+        layout_device_info.addWidget(self.device_label)
+        layout_device_info.addWidget(self.device_name)
+        layout_device_info.addStretch(1)
+        self.verticalLayout_left.addLayout(layout_device_info)
+
+        self.verticalLayout_left.addWidget(QLabel())
+
         camera_config_label = QLabel("摄像头配置信息：")
         self.verticalLayout_left.addWidget(camera_config_label)
         layout_camera_config_info = QHBoxLayout()
@@ -124,6 +134,7 @@ class CameraStabilityDisplay(QtWidgets.QMainWindow, PreviewPhotoGraph_MainWindow
         self.submit_flag = False
 
     def intiui(self):
+        self.list_devices_name()
         self.list_test_times_settings()
         self.submit_button.clicked.connect(self.handle_submit)
         self.is_front_and_rear_camera.clicked.connect(self.click_camera_change)
@@ -131,6 +142,10 @@ class CameraStabilityDisplay(QtWidgets.QMainWindow, PreviewPhotoGraph_MainWindow
         self.photograph_button.clicked.connect(self.preview_photograph_button_change)
 
     def handle_submit(self):
+        # if len(self.device_name.currentText()) == 0:
+        #     self.get_message_box("没检测到可用的设备，请重启界面！！！")
+        #     return
+
         # if not self.is_front_and_rear_camera.isChecked() and not self.is_front_or_rear_camera.isChecked():
         #     self.get_message_box("请勾选摄像头信息！！！")
         #     return
@@ -163,6 +178,10 @@ class CameraStabilityDisplay(QtWidgets.QMainWindow, PreviewPhotoGraph_MainWindow
         self.get_message_box("相机压测用例保存成功")
 
     def preview_photograph_button_change(self):
+        if len(self.device_name.currentText()) == 0:
+            self.get_message_box("没检测到可用的设备，请重启界面！！！")
+            return
+
         if not self.is_front_and_rear_camera.isChecked() and not self.is_front_or_rear_camera.isChecked():
             self.get_message_box("请勾选摄像头信息！！！")
             return
@@ -175,6 +194,8 @@ class CameraStabilityDisplay(QtWidgets.QMainWindow, PreviewPhotoGraph_MainWindow
                 print(e)
                 self.get_message_box("坐标请填入数字！！！")
                 return
+
+        self.ui_config.add_config_option(self.ui_config.section_ui_camera_check, self.ui_config.ui_option_device_name, self.device_name.currentText())
 
         if self.is_front_and_rear_camera.isChecked():
             self.ui_config.add_config_option(self.ui_config.section_ui_camera_check,
@@ -198,6 +219,11 @@ class CameraStabilityDisplay(QtWidgets.QMainWindow, PreviewPhotoGraph_MainWindow
         else:
             self.X_info.setEnabled(True)
             self.Y_info.setEnabled(True)
+
+    def list_devices_name(self):
+        devices = self.bg_config.get_option_value(self.bg_config.section_background_to_ui,
+                                                  self.bg_config.bg_option_devices_name).split(",")
+        self.device_name.addItems(devices)
 
     def get_message_box(self, text):
         QMessageBox.warning(self, "错误提示", text)
