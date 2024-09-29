@@ -2,10 +2,9 @@ import os
 
 
 class UIConfigPath:
-
     project_path = str(os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir)))
     # project_path = os.path.join(str(os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))), "Stability")
-    print(project_path)
+    # print(project_path)
     background_config_file_path = os.path.join(project_path, "UI", "background_config.ini")
     ui_config_file_path = os.path.join(project_path, "UI", "ui_config.ini")
     debug_log_path = os.path.join(project_path, "Log", "Debug", "log.log")
@@ -19,10 +18,22 @@ class UIConfigPath:
     mem_log_path = os.path.join(project_path, "UI", "mem_log.txt")
 
     # 卡logo压测
-    logo_take_path = os.path.join(project_path, "Photo", "Logo", "Logo", "Logo.png")
-    logo_key_path = os.path.join(project_path, "Photo", "Logo", "Key", "Key.png")
-    camera_key_path = os.path.join(project_path, "Photo", "CameraPhoto", "Key", "Key.png")
-    camera2_key_path = os.path.join(project_path, "Photo", "CameraPhoto", "Key", "Key2.png")
+    logo_take_path = os.path.join(project_path, "Photo", "BootLogo", "Logo", "Logo", "Logo.png")
+    logo_key_path = os.path.join(project_path, "Photo", "BootLogo", "Logo", "Key", "Key.png")
+    camera_key_path = os.path.join(project_path, "Photo", "BootLogo", "CameraPhoto", "Key", "Key.png")
+    camera2_key_path = os.path.join(project_path, "Photo", "BootLogo", "CameraPhoto", "Key", "Key2.png")
     # failed_logcat.txt
     adb_log_path = os.path.join(project_path, "Log", "Logcat", "failed_logcat.txt")
-    failed_image_key_path = os.path.join(project_path, "Photo", "CameraPhoto", "Key", "Failed.png")
+    failed_image_key_path = os.path.join(project_path, "Photo", "BootLogo", "CameraPhoto", "Key", "Failed.png")
+
+    # 摄像头压测
+    camera_stability_path = os.path.join(project_path, "Photo", "CameraStability")
+    camera_sta_exp_path = os.path.join(camera_stability_path, "Expect")
+    camera_sta_test_path = os.path.join(camera_stability_path, "Test")
+    # 预期
+    camera_sta_exp_front_path = os.path.join(camera_sta_exp_path, "Front")
+    camera_sta_exp_rear_path = os.path.join(camera_sta_exp_path, "Rear")
+
+    camera_sta_exp_front_photograph_path = os.path.join(camera_sta_exp_front_path, "Photograph")
+    camera_sta_exp_front_preview_path = os.path.join(camera_sta_exp_front_path, "PreView")
+
