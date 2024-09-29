@@ -49,15 +49,10 @@ class Photograph:
             # front and rear camera
             # 1 open camera
             self.open_camera()
+            time.sleep(2)
             if len(self.get_latest_img()) == 0:
                 self.open_camera()
-            # 2 adjust current is rea camera or not
-            if not self.is_first_camera():
-                self.click_switch_btn()
             time.sleep(1)
-            if not self.is_first_camera():
-                self.click_switch_btn()
-            # save rear camera preview and photograph
             # screenshot preview
             self.screen_shot(camera_sta_exp_rear_preview_path)
             time.sleep(1)
@@ -65,10 +60,10 @@ class Photograph:
                 self.screen_shot(camera_sta_exp_rear_preview_path)
             # clear img
             self.remove_img()
-            time.sleep(1)
+            time.sleep(3)
             if len(self.get_latest_img()) != 0:
                 self.remove_img()
-            # take photo
+            # # take photo
             self.take_photo()
             time.sleep(1)
             if len(self.get_latest_img()) == 0:
@@ -83,13 +78,13 @@ class Photograph:
             time.sleep(1)
             if len(self.get_latest_img()) != 0:
                 self.remove_img()
-
-            # switch front camera
-            self.click_switch_btn()
-            time.sleep(1)
-            if not self.is_second_camera():
-                self.click_switch_btn()
-
+            #
+            # # switch front camera
+            # self.click_switch_btn()
+            # time.sleep(1)
+            # if not self.is_second_camera():
+            #     self.click_switch_btn()
+            #
             # wait 2 sec
             time.sleep(2)
             # screenshot preview
@@ -103,13 +98,14 @@ class Photograph:
             if len(self.get_latest_img()) != 0:
                 self.remove_img()
             # take photo
+            time.sleep(2)
             self.take_photo()
             time.sleep(1)
             if len(self.get_latest_img()) == 0:
                 self.take_photo()
             self.pull_img(camera_sta_exp_front_photograph_path)
             time.sleep(1)
-            if not os.path.exists(camera_sta_exp_rear_photograph_path):
+            if not os.path.exists(camera_sta_exp_front_photograph_path):
                 self.pull_img(camera_sta_exp_front_photograph_path)
 
     def open_camera(self):
@@ -122,12 +118,13 @@ class Photograph:
         shell.invoke("adb -s %s exec-out screencap -p > %s" % (self.device_name, des_path))
 
     def remove_img(self):
-        shell.invoke("adb -s %s shell \"rm * /sdcard/DCIM/Camera/\"" % self.device_name)
+        shell.invoke("adb -s %s shell \"rm /sdcard/DCIM/Camera/*\"" % self.device_name)
 
     def click_switch_btn(self):
         x = ui_conf_file.get_option_value(ui_conf_file.section_ui_camera_check, ui_conf_file.option_switch_x_value)
         y = ui_conf_file.get_option_value(ui_conf_file.section_ui_camera_check, ui_conf_file.option_switch_y_value)
-        shell.invoke("adb -s %s shell \"input tab %s %s\"" % (self.device_name, x, y))
+        cmd = "adb -s %s shell \"input tab %s %s\"" % (self.device_name, x, y)
+        shell.invoke(cmd)
 
     def is_first_camera(self):
         if self.get_camera_id() == 1:
@@ -142,7 +139,7 @@ class Photograph:
             return False
 
     def get_camera_id(self):
-        camera_info = shell.invoke("adb -s %s shell \"dumpsys media.camera |grep Camera ID\"")
+        camera_info = shell.invoke("adb -s %s shell \"dumpsys media.camera |grep Camera ID\"" % self.device_name)
         clear_info = camera_info.replace('\r', '').replace('\t', '').replace(' ', '').replace('\n', '')
         if "CameraId:0".upper() in clear_info.upper():
             return 1
@@ -153,15 +150,18 @@ class Photograph:
             return 3
 
     def get_latest_img(self):
-        cmd = "adb -s %s shell \"ls /sdcard/DCIM/Camera\""
+        cmd = "adb -s %s shell \"ls /sdcard/DCIM/Camera\"" % self.device_name
         img_info = shell.invoke(cmd)
+        print("current img name is: %s" % img_info)
         if len(img_info) == 0:
             return ""
         else:
             return img_info.strip()
 
     def pull_img(self, des_path):
-        shell.invoke("adb -s %s pull /sdcard/DCIM/Camera/%s %s" % (self.device_name, self.get_latest_img(), des_path))
+        cmd = "adb -s %s pull /sdcard/DCIM/Camera/%s %s" % (self.device_name, self.get_latest_img(), des_path)
+        print(cmd)
+        shell.invoke(cmd)
 
 
 if __name__ == '__main__':
