@@ -18,7 +18,7 @@ class PreviewPhotoGraph_MainWindow(config_path.UIConfigPath):
 
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(600, 800)
+        MainWindow.resize(1000, 1000)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.verticalLayout_left = QtWidgets.QVBoxLayout(self.centralwidget)
 
@@ -102,6 +102,10 @@ class PreviewPhotoGraph_MainWindow(config_path.UIConfigPath):
         # 显示预期截图和照片
         self.verticalLayout_left.addWidget(QLabel("展示预览图和拍照保存图："))
         self.image_edit = ScrollablePlainTextEdit()
+        width = self.image_edit.viewport().width()
+        height = self.image_edit.viewport().height()
+        self.image_width = width / 2
+        self.image_height = height / 2
         self.document = self.image_edit.document()
         self.verticalLayout_left.addWidget(self.image_edit)
 
@@ -200,8 +204,26 @@ class CameraStabilityDisplay(QtWidgets.QMainWindow, PreviewPhotoGraph_MainWindow
         self.get_message_box("相机压测用例保存成功")
 
     def camera_finished_handle(self):
-        self.photograph_tips.setText("已经获取到预期参照图片！")
-        self.photograph_tips.setStyleSheet("color: red;")
+        if self.is_front_and_rear_camera.isChecked():
+            rear_pre_status = os.path.exists(self.camera_sta_exp_rear_preview_path)
+            rear_photo_status = os.path.exists(self.camera_sta_exp_rear_photograph_path)
+            front_pre_status = os.path.exists(self.camera_sta_exp_front_preview_path)
+            front_photo_status = os.path.exists(self.camera_sta_exp_front_photograph_path)
+            if rear_pre_status and rear_photo_status and front_pre_status and front_photo_status:
+                self.photograph_tips.setText("已经获取到预期参照图片！")
+                self.photograph_tips.setStyleSheet("color: red;")
+            else:
+                self.photograph_tips.setText("未获取到预期参照照片！！！")
+                self.photograph_tips.setStyleSheet("color: yellow;")
+        else:
+            default_pre_status = os.path.exists(self.camera_sta_exp_default_preview_path)
+            default_photo_status = os.path.exists(self.camera_sta_exp_default_photograph_path)
+            if default_photo_status and default_pre_status:
+                self.photograph_tips.setText("已经获取到预期参照图片！")
+                self.photograph_tips.setStyleSheet("color: red;")
+            else:
+                self.photograph_tips.setText("未获取到预期参照照片！！！")
+                self.photograph_tips.setStyleSheet("color: yellow;")
 
     def preview_photograph_button_change(self):
         if len(self.device_name.currentText()) == 0:
@@ -236,41 +258,118 @@ class CameraStabilityDisplay(QtWidgets.QMainWindow, PreviewPhotoGraph_MainWindow
             self.ui_config.add_config_option(self.ui_config.section_ui_camera_check,
                                              self.ui_config.option_front_and_rear, "0")
 
-        # 调起来进程， 获取预期照片
-        self.get_exp_imag_process.start(self.bat_camera_stability_path)
-        self.photograph_tips.setText("正在拍照保存，请等待...")
-        self.photograph_tips.setStyleSheet("color: green;")
+        # 删除预期之前的照片
+        try:
+            if self.is_front_and_rear_camera.isChecked():
+                if os.path.exists(self.camera_sta_exp_front_preview_path):
+                    os.remove(self.camera_sta_exp_front_preview_path)
+                if os.path.exists(self.camera_sta_exp_front_photograph_path):
+                    os.remove(self.camera_sta_exp_front_photograph_path)
+                if os.path.exists(self.camera_sta_exp_rear_photograph_path):
+                    os.remove(self.camera_sta_exp_rear_photograph_path)
+                if os.path.exists(self.camera_sta_exp_rear_preview_path):
+                    os.remove(self.camera_sta_exp_rear_preview_path)
+            else:
+                if os.path.exists(self.camera_sta_exp_default_preview_path):
+                    os.remove(self.camera_sta_exp_default_preview_path)
+                if os.path.exists(self.camera_sta_exp_default_photograph_path):
+                    os.remove(self.camera_sta_exp_default_photograph_path)
+        except Exception as e:
+            print(e)
 
-        self.file_timer = QTimer(self)
-        self.file_timer.timeout.connect(self.check_image_modification)
-        self.check_interval = 1000  # 定时器间隔，单位毫秒
+        # 调起来进程， 获取预期照片
+        try:
+            print("****************************")
+            print(self.bat_camera_stability_path)
+            self.get_exp_imag_process.start(self.bat_camera_stability_path)
+            self.photograph_tips.setText("正在拍照保存，请等待...")
+            self.photograph_tips.setStyleSheet("color: green;")
+            print("###################################")
+            self.document.clear()
+            self.file_timer = QTimer(self)
+            self.file_timer.timeout.connect(self.check_image_modification)
+            self.check_interval = 1000  # 定时器间隔，单位毫秒
+        except Exception as e:
+            print(e)
+
         self.file_timer.start(self.check_interval)
 
     def check_image_modification(self):
         """检查图片文件是否有修改"""
         # 检查双镜头
-        if self.is_front_and_rear_camera.isChecked():
-            # 后镜头
-            if os.path.exists(self.camera_sta_exp_front_preview_path):
-                current_mod_time = self.get_file_modification_time(self.camera_sta_exp_front_preview_path)
-                if current_mod_time != self.last_modify_time:
-                    self.last_modify_time = current_mod_time  # 更新为新的修改时间
-                    self.add_logo_image()
+        try:
+            if self.is_front_and_rear_camera.isChecked():
+                exp_front_preview = os.path.exists(self.camera_sta_exp_front_preview_path)
+                exp_front_photograph = os.path.exists(self.camera_sta_exp_front_photograph_path)
+                exp_rear_photograph = os.path.exists(self.camera_sta_exp_rear_photograph_path)
+                exp_rear_preview = os.path.exists(self.camera_sta_exp_rear_preview_path)
+                if exp_front_preview and exp_front_photograph and exp_rear_preview and exp_rear_photograph:
+                    # 前镜头
+                    exp_front_preview_current_mod_time = self.get_file_modification_time(self.camera_sta_exp_front_preview_path)
+                    if exp_front_preview_current_mod_time != self.exp_front_preview_last_modify_time:
+                        self.exp_front_preview_last_modify_time = exp_front_preview_current_mod_time  # 更新为新的修改时间
+                        self.add_logo_image(self.camera_sta_exp_front_preview_path)
+
+                    exp_front_photograph_mod_time = self.get_file_modification_time(self.camera_sta_exp_front_photograph_path)
+                    if exp_front_photograph_mod_time != self.exp_front_photograph_last_modify_time:
+                        self.exp_front_photograph_last_modify_time = exp_front_photograph_mod_time  # 更新为新的修改时间
+                        self.add_logo_image(self.camera_sta_exp_front_photograph_path)
+
+                    # 后镜头
+                    exp_rear_preview_current_mod_time = self.get_file_modification_time(self.camera_sta_exp_rear_preview_path)
+                    if exp_rear_preview_current_mod_time != self.exp_rear_preview_last_modify_time:
+                        self.exp_rear_preview_last_modify_time = exp_rear_preview_current_mod_time  # 更新为新的修改时间
+                        self.add_logo_image(self.camera_sta_exp_rear_preview_path)
+
+                    exp_rear_photograph_current_mod_time = self.get_file_modification_time(
+                        self.camera_sta_exp_rear_photograph_path)
+                    if exp_rear_photograph_current_mod_time != self.exp_rear_photograph_last_modify_time:
+                        self.exp_rear_photograph_last_modify_time = exp_rear_photograph_current_mod_time  # 更新为新的修改时间
+                        self.add_logo_image(self.camera_sta_exp_rear_photograph_path)
+            else:
+                # 预览截图
+                if os.path.exists(self.camera_sta_exp_default_preview_path):
+                    if os.path.exists(self.camera_sta_exp_default_photograph_path):
+                        preview_current_mod_time = self.get_file_modification_time(self.camera_sta_exp_default_preview_path)
+                        if preview_current_mod_time != self.exp_default_preview_last_modify_time:
+                            self.exp_default_preview_last_modify_time = preview_current_mod_time  # 更新为新的修改时间
+                            self.add_logo_image(self.camera_sta_exp_default_preview_path)
+
+                        photograph_current_mod_time = self.get_file_modification_time(
+                            self.camera_sta_exp_default_photograph_path)
+                        if photograph_current_mod_time != self.exp_default_photograph_last_modify_time:
+                            self.exp_default_photograph_last_modify_time = photograph_current_mod_time  # 更新为新的修改时间
+                            self.add_logo_image(self.camera_sta_exp_default_photograph_path)
+                        self.file_timer.stop()
+                # 拍照
+                # if os.path.exists(self.camera_sta_exp_default_photograph_path):
+                #     photograph_current_mod_time = self.get_file_modification_time(self.camera_sta_exp_default_photograph_path)
+                #     if photograph_current_mod_time != self.exp_default_photograph_last_modify_time:
+                #         self.exp_default_photograph_last_modify_time = photograph_current_mod_time  # 更新为新的修改时间
+                #         self.add_logo_image(self.camera_sta_exp_default_photograph_path)
+        except Exception as e:
+            print(e)
+
+    def get_file_modification_time(self, file_path):
+        """获取文件的最后修改时间"""
+        file_info = QFileInfo(file_path)
+        last_modify = file_info.lastModified()
+        return last_modify
 
     def add_logo_image(self, img_path):
         # self.cursor = QTextCursor(self.document)
         # 将图片路径转为 QUrl
         # 创建 QTextImageFormat 对象
-        self.image_edit.clear()
+        # self.image_edit.clear()
         image_format = QTextImageFormat()
 
-        if self.double_screen.isChecked():
-            image2_url = QUrl.fromLocalFile(img_path)
-            self.document.addResource(QTextDocument.ImageResource, image2_url, image2_url)
-            image_format.setName(image2_url.toString())
-            image_format.setWidth(self.image_width)
-            image_format.setHeight(self.image_height)
-            self.cursor.insertImage(image_format)
+        # if self.double_screen.isChecked():
+        #     image2_url = QUrl.fromLocalFile(img_path)
+        #     self.document.addResource(QTextDocument.ImageResource, image2_url, image2_url)
+        #     image_format.setName(image2_url.toString())
+        #     image_format.setWidth(self.image_width)
+        #     image_format.setHeight(self.image_height)
+        #     self.cursor.insertImage(image_format)
 
         image_url = QUrl.fromLocalFile(img_path)
         # 添加图片资源到 QTextDocument
@@ -280,9 +379,9 @@ class CameraStabilityDisplay(QtWidgets.QMainWindow, PreviewPhotoGraph_MainWindow
         # 设置图片的大小
         image_format.setWidth(self.image_width)
         image_format.setHeight(self.image_height)
-
-        # 插入图片到 QTextDocument
-        self.image_edit.insertPlainText("\n")
+        #
+        # # 插入图片到 QTextDocument
+        # self.image_edit.insertPlainText("\n")
         self.cursor.insertImage(image_format)
         # self.image_edit.insertPlainText("\n")
 

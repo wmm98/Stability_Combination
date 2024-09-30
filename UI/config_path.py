@@ -41,7 +41,7 @@ class UIConfigPath:
     camera_sta_exp_rear_photograph_path = os.path.join(camera_sta_exp_rear_path, "Photograph", "exp_rear_photograph.jpg")
     camera_sta_exp_rear_preview_path = os.path.join(camera_sta_exp_rear_path, "PreView", "exp_rear_preview.png")
     camera_sta_exp_default_photograph_path = os.path.join(camera_sta_exp_default_path, "Photograph", "exp_default_photograph.jpg")
-    camera_sta_exp_default_preview_path = os.path.join(camera_sta_exp_rear_path, "PreView", "exp_default_preview.png")
+    camera_sta_exp_default_preview_path = os.path.join(camera_sta_exp_default_path, "PreView", "exp_default_preview.png")
     # 测试前后镜头默认镜头
     camera_sta_test_front_path = os.path.join(camera_sta_test_path, "Front")
     camera_sta_test_rear_path = os.path.join(camera_sta_test_path, "Rear")

@@ -215,3 +215,4 @@ if __name__ == '__main__':
     photo = Photograph()
     # photo.get_camera_id()
     photo.save_img()
+    print("end.")
