@@ -60,6 +60,11 @@ class Photograph:
             if self.get_camera_id() == 3:
                 self.open_camera()
             time.sleep(1)
+
+            # switch front camera
+            if not self.is_first_camera():
+                self.click_switch_btn()
+            time.sleep(3)
             # screenshot preview
             self.screen_shot(camera_sta_exp_rear_preview_path)
             time.sleep(1)
@@ -72,7 +77,7 @@ class Photograph:
                 self.remove_img()
             # # take photo
             self.take_photo()
-            time.sleep(1)
+            time.sleep(3)
 
             if len(self.get_latest_img()) == 0:
                 self.take_photo()
@@ -94,7 +99,7 @@ class Photograph:
                 self.click_switch_btn()
             #
             # wait 2 sec
-            time.sleep(2)
+            time.sleep(3)
             # screenshot preview
             self.screen_shot(camera_sta_exp_front_preview_path)
             time.sleep(1)
@@ -106,10 +111,11 @@ class Photograph:
             if len(self.get_latest_img()) != 0:
                 self.remove_img()
             # take photo
-            time.sleep(2)
+            time.sleep(3)
             self.take_photo()
             time.sleep(1)
             if len(self.get_latest_img()) == 0:
+                time.sleep(3)
                 self.take_photo()
             self.pull_img(camera_sta_exp_front_photograph_path)
             time.sleep(1)

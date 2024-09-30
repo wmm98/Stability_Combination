@@ -18,7 +18,7 @@ class PreviewPhotoGraph_MainWindow(config_path.UIConfigPath):
 
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(1000, 1000)
+        MainWindow.resize(800, 800)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.verticalLayout_left = QtWidgets.QVBoxLayout(self.centralwidget)
 
