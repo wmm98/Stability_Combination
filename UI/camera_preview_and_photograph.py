@@ -6,6 +6,8 @@ import configfile
 import config_path
 from PyQt5.QtCore import QTimer, QProcess, Qt
 from PyQt5.QtWidgets import *
+from PyQt5.QtGui import QTextDocument, QTextCursor, QTextImageFormat
+from PyQt5.QtCore import QUrl, QFileInfo
 
 conf_path = config_path.UIConfigPath()
 
@@ -124,7 +126,20 @@ class CameraStabilityDisplay(QtWidgets.QMainWindow, PreviewPhotoGraph_MainWindow
     def __init__(self):
         super(CameraStabilityDisplay, self).__init__()
         self.last_position = 0
-        self.last_modify_time = 0
+        self.exp_front_preview_last_modify_time = 0
+        self.exp_front_photograph_last_modify_time = 0
+        self.exp_rear_preview_last_modify_time = 0
+        self.exp_rear_photograph_last_modify_time = 0
+        self.exp_default_preview_last_modify_time = 0
+        self.exp_default_photograph_last_modify_time = 0
+
+        self.test_front_preview_last_modify_time = 0
+        self.test_front_photograph_last_modify_time = 0
+        self.test_rear_preview_last_modify_time = 0
+        self.test_rear_photograph_last_modify_time = 0
+        self.test_default_preview_last_modify_time = 0
+        self.test_default_photograph_last_modify_time = 0
+
         self.bg_config = configfile.ConfigP(self.background_config_file_path)
         self.ui_config = configfile.ConfigP(self.ui_config_file_path)
         # 初始化子界面
@@ -134,12 +149,19 @@ class CameraStabilityDisplay(QtWidgets.QMainWindow, PreviewPhotoGraph_MainWindow
         self.submit_flag = False
 
     def intiui(self):
+        # 初始化进程
+        self.get_exp_imag_process = QProcess()
+
         self.list_devices_name()
         self.list_test_times_settings()
         self.submit_button.clicked.connect(self.handle_submit)
         self.is_front_and_rear_camera.clicked.connect(self.click_camera_change)
         self.is_front_or_rear_camera.clicked.connect(self.click_camera_change)
         self.photograph_button.clicked.connect(self.preview_photograph_button_change)
+        self.get_exp_imag_process.finished.connect(self.camera_finished_handle)
+
+        # 初始化图片cursor
+        self.cursor = QTextCursor(self.document)
 
     def handle_submit(self):
         # if len(self.device_name.currentText()) == 0:
@@ -177,6 +199,10 @@ class CameraStabilityDisplay(QtWidgets.QMainWindow, PreviewPhotoGraph_MainWindow
         self.submit_flag = True
         self.get_message_box("相机压测用例保存成功")
 
+    def camera_finished_handle(self):
+        self.photograph_tips.setText("已经获取到预期参照图片！")
+        self.photograph_tips.setStyleSheet("color: red;")
+
     def preview_photograph_button_change(self):
         if len(self.device_name.currentText()) == 0:
             self.get_message_box("没检测到可用的设备，请重启界面！！！")
@@ -209,6 +235,56 @@ class CameraStabilityDisplay(QtWidgets.QMainWindow, PreviewPhotoGraph_MainWindow
         else:
             self.ui_config.add_config_option(self.ui_config.section_ui_camera_check,
                                              self.ui_config.option_front_and_rear, "0")
+
+        # 调起来进程， 获取预期照片
+        self.get_exp_imag_process.start(self.bat_camera_stability_path)
+        self.photograph_tips.setText("正在拍照保存，请等待...")
+        self.photograph_tips.setStyleSheet("color: green;")
+
+        self.file_timer = QTimer(self)
+        self.file_timer.timeout.connect(self.check_image_modification)
+        self.check_interval = 1000  # 定时器间隔，单位毫秒
+        self.file_timer.start(self.check_interval)
+
+    def check_image_modification(self):
+        """检查图片文件是否有修改"""
+        # 检查双镜头
+        if self.is_front_and_rear_camera.isChecked():
+            # 后镜头
+            if os.path.exists(self.camera_sta_exp_front_preview_path):
+                current_mod_time = self.get_file_modification_time(self.camera_sta_exp_front_preview_path)
+                if current_mod_time != self.last_modify_time:
+                    self.last_modify_time = current_mod_time  # 更新为新的修改时间
+                    self.add_logo_image()
+
+    def add_logo_image(self, img_path):
+        # self.cursor = QTextCursor(self.document)
+        # 将图片路径转为 QUrl
+        # 创建 QTextImageFormat 对象
+        self.image_edit.clear()
+        image_format = QTextImageFormat()
+
+        if self.double_screen.isChecked():
+            image2_url = QUrl.fromLocalFile(img_path)
+            self.document.addResource(QTextDocument.ImageResource, image2_url, image2_url)
+            image_format.setName(image2_url.toString())
+            image_format.setWidth(self.image_width)
+            image_format.setHeight(self.image_height)
+            self.cursor.insertImage(image_format)
+
+        image_url = QUrl.fromLocalFile(img_path)
+        # 添加图片资源到 QTextDocument
+        self.document.addResource(QTextDocument.ImageResource, image_url, image_url)
+        # 设置图片格式的 ID
+        image_format.setName(image_url.toString())
+        # 设置图片的大小
+        image_format.setWidth(self.image_width)
+        image_format.setHeight(self.image_height)
+
+        # 插入图片到 QTextDocument
+        self.image_edit.insertPlainText("\n")
+        self.cursor.insertImage(image_format)
+        # self.image_edit.insertPlainText("\n")
 
     def click_camera_change(self):
         if self.is_front_or_rear_camera.isChecked():

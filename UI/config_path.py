@@ -27,22 +27,30 @@ class UIConfigPath:
     failed_image_key_path = os.path.join(project_path, "Photo", "BootLogo", "CameraPhoto", "Key", "Failed.png")
 
     # 摄像头压测
+    bat_camera_stability_path = os.path.join(project_path, "UI", "bat_pre_camera.bat")
+
     camera_stability_path = os.path.join(project_path, "Photo", "CameraStability")
     camera_sta_exp_path = os.path.join(camera_stability_path, "Expect")
     camera_sta_test_path = os.path.join(camera_stability_path, "Test")
-    # 预期前、后镜头
+    # 预期前、后镜头默认镜头
     camera_sta_exp_front_path = os.path.join(camera_sta_exp_path, "Front")
     camera_sta_exp_rear_path = os.path.join(camera_sta_exp_path, "Rear")
+    camera_sta_exp_default_path = os.path.join(camera_sta_exp_path, "Default")
     camera_sta_exp_front_photograph_path = os.path.join(camera_sta_exp_front_path, "Photograph", "exp_front_photograph.jpg")
     camera_sta_exp_front_preview_path = os.path.join(camera_sta_exp_front_path, "PreView", "exp_front_preview.png")
     camera_sta_exp_rear_photograph_path = os.path.join(camera_sta_exp_rear_path, "Photograph", "exp_rear_photograph.jpg")
     camera_sta_exp_rear_preview_path = os.path.join(camera_sta_exp_rear_path, "PreView", "exp_rear_preview.png")
-    # 测试前后镜头
+    camera_sta_exp_default_photograph_path = os.path.join(camera_sta_exp_default_path, "Photograph", "exp_default_photograph.jpg")
+    camera_sta_exp_default_preview_path = os.path.join(camera_sta_exp_rear_path, "PreView", "exp_default_preview.png")
+    # 测试前后镜头默认镜头
     camera_sta_test_front_path = os.path.join(camera_sta_test_path, "Front")
     camera_sta_test_rear_path = os.path.join(camera_sta_test_path, "Rear")
+    camera_sta_test_default_path = os.path.join(camera_sta_test_path, "Default")
     camera_sta_test_front_photograph_path = os.path.join(camera_sta_test_front_path, "Photograph", "test_front_photograph.jpg")
     camera_sta_test_front_preview_path = os.path.join(camera_sta_test_front_path, "PreView", "test_front_preview.png")
     camera_sta_test_rear_photograph_path = os.path.join(camera_sta_test_rear_path, "Photograph", "test_rear_photograph.jpg")
     camera_sta_test_rear_preview_path = os.path.join(camera_sta_test_rear_path, "PreView", "test_rear_preview.png")
+    camera_sta_test_default_photograph_path = os.path.join(camera_sta_test_default_path, "Photograph", "test_default_photograph.jpg")
+    camera_sta_test_default_preview_path = os.path.join(camera_sta_test_default_path, "PreView", "test_default_preview.png")
 
 
