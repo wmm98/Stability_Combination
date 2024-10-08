@@ -24,26 +24,32 @@ camera_sta_exp_front_photograph_path = os.path.join(camera_sta_exp_front_path, "
 camera_sta_exp_front_preview_path = os.path.join(camera_sta_exp_front_path, "PreView", "exp_front_preview.png")
 camera_sta_exp_rear_photograph_path = os.path.join(camera_sta_exp_rear_path, "Photograph", "exp_rear_photograph.jpg")
 camera_sta_exp_rear_preview_path = os.path.join(camera_sta_exp_rear_path, "PreView", "exp_rear_preview.png")
-camera_sta_exp_default_photograph_path = os.path.join(camera_sta_exp_default_path, "Photograph", "exp_default_photograph.jpg")
+camera_sta_exp_default_photograph_path = os.path.join(camera_sta_exp_default_path, "Photograph",
+                                                      "exp_default_photograph.jpg")
 camera_sta_exp_default_preview_path = os.path.join(camera_sta_exp_default_path, "PreView", "exp_default_preview.png")
 # test
 camera_sta_test_front_path = os.path.join(camera_sta_test_path, "Front")
 camera_sta_test_rear_path = os.path.join(camera_sta_test_path, "Rear")
 camera_sta_test_default_path = os.path.join(camera_sta_test_path, "Default")
-camera_sta_test_front_photograph_path = os.path.join(camera_sta_test_front_path, "Photograph", "test_front_photograph.jpg")
+camera_sta_test_front_photograph_path = os.path.join(camera_sta_test_front_path, "Photograph",
+                                                     "test_front_photograph.jpg")
 camera_sta_test_front_preview_path = os.path.join(camera_sta_test_front_path, "PreView", "test_front_preview.png")
 camera_sta_test_rear_photograph_path = os.path.join(camera_sta_test_rear_path, "Photograph", "test_rear_photograph.jpg")
 camera_sta_test_rear_preview_path = os.path.join(camera_sta_test_rear_path, "PreView", "test_rear_preview.png")
-camera_sta_test_default_photograph_path = os.path.join(camera_sta_test_default_path, "Photograph", "test_default_photograph.jpg")
+camera_sta_test_default_photograph_path = os.path.join(camera_sta_test_default_path, "Photograph",
+                                                       "test_default_photograph.jpg")
 camera_sta_test_default_preview_path = os.path.join(camera_sta_test_default_path, "PreView", "test_default_preview.png")
 
 
 class Photograph:
     def __init__(self):
-        self.device_name = ui_conf_file.get_option_value(ui_conf_file.section_ui_camera_check, ui_conf_file.ui_option_device_name)
+        self.camera_package_name = ""
+        self.device_name = ui_conf_file.get_option_value(ui_conf_file.section_ui_camera_check,
+                                                         ui_conf_file.ui_option_device_name)
 
     def save_img(self):
-        is_double = ui_conf_file.get_option_value(ui_conf_file.section_ui_camera_check, ui_conf_file.option_front_and_rear)
+        is_double = ui_conf_file.get_option_value(ui_conf_file.section_ui_camera_check,
+                                                  ui_conf_file.option_front_and_rear)
         if int(is_double):
             # clear img in device
             self.remove_img()
@@ -56,6 +62,8 @@ class Photograph:
             time.sleep(1)
             self.open_camera()
             time.sleep(2)
+            # click center clear other button
+
             self.get_camera_id()
             if self.get_camera_id() == 3:
                 self.open_camera()
@@ -216,9 +224,38 @@ class Photograph:
         cmd = "adb -s %s pull /sdcard/DCIM/Camera/%s %s" % (self.device_name, self.get_latest_img(), des_path)
         shell.invoke(cmd)
 
+    def get_camera_package_name(self):
+        # cmd = "dumpsys activity activities | grep mCurrentFocus"
+        cmd = "adb -s %s shell \"dumpsys activity activities | grep mCurrentFocus\"" % self.device_name
+        res = shell.invoke(cmd)
+        package_name = res.split(" ")[-1].split("/")[0]
+        self.camera_package_name = package_name
+        # print(package_name)
+        # return package_name
+
+    def force_stop_app(self):
+        # cmd = "am force-stop  org.codeaurora.snapcam"
+        cmd = "adb -s %s shell \"am force-stop %s\"" % (self.device_name, self.camera_package_name)
+        shell.invoke(cmd)
+
+    def clear_app(self):
+        cmd = "adb -s %s shell \"pm clear %s\"" % (self.device_name, self.camera_package_name)
+        shell.invoke(cmd)
+
+    def get_screen_center_position(self):
+        cmd = "adb -s %s shell \"wm size\"" % self.device_name
+        res = shell.invoke(cmd)
+        info = res.split(" ")[-1].split("x")
+        width = info[0]
+        length = info[1].replace("\n", "").replace("\r", "").replace("\t", "")
+        center_position = [int(width) / 2, int(length) / 2]
+        return center_position
+
 
 if __name__ == '__main__':
     photo = Photograph()
     # photo.get_camera_id()
-    photo.save_img()
+    # photo.save_img()
+    # photo.get_camera_package_name()
+    print(photo.get_screen_center_position())
     print("end.")
