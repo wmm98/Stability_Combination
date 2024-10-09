@@ -11,5 +11,5 @@ class KeyPhoto:
 
 if __name__ == '__main__':
     ph = KeyPhoto()
-    ph.save_key_photo("0.png", "0_new.png")
-    ph.save_key_photo("1.png", "1_new.png")
+    ph.save_key_photo("test.png", "test_new.png")
+    # ph.save_key_photo("1.png", "1_new.png")

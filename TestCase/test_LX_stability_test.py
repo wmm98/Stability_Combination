@@ -752,9 +752,13 @@ class TestLXStability:
     @allure.title("前后摄像头拍照问题对比")
     def test_lx_front_rear_camera_test(self):
         log.info("************前后摄像头拍照问题对比用例开始*******")
+        # 删除已存在的logcat文件
+        # if os.path.exists(Config.logcat_path):
+        #     os.remove(Config.camera_sta_test_log_path)
+        self.device.logcat(Config.camera_sta_test_log_path)
         total_times = self.ui_conf_file.get(Config.section_ui_camera_check,  Config.option_camera_test_times)
         times = 1
-        while times < int(total_times):
+        while times <= int(total_times):
             times += 1
             is_double = self.ui_conf_file.get(Config.section_ui_camera_check, Config.option_front_and_rear)
             # 测试前删除已存在的照片
@@ -775,6 +779,7 @@ class TestLXStability:
 
             is_double = self.ui_conf_file.get(Config.section_ui_camera_check, Config.option_front_and_rear)
             if int(is_double):
+
                 # get x, y position for switch btn
                 x = self.ui_conf_file.get(Config.section_ui_camera_check, Config.option_switch_x_value)
                 y = self.ui_conf_file.get(Config.section_ui_camera_check, Config.option_switch_y_value)
@@ -792,22 +797,23 @@ class TestLXStability:
                 if self.device.get_camera_id() == 3:
                     self.device.open_camera()
                 time.sleep(1)
-
+                log.info("打开相机")
                 # switch front camera
                 if not self.device.is_first_camera():
                     self.device.click_btn(x, y)
-
                 # get camera app package name
                 self.device.get_camera_package_name()
                 # click center clear other button
                 pos = self.device.get_screen_center_position()
                 self.device.click_btn(str(pos[0]), str(pos[1]))
                 time.sleep(3)
+                log.info("当前为后镜头")
                 # screenshot preview
                 self.device.screen_shot(Config.camera_sta_test_rear_preview_path)
                 time.sleep(1)
                 if not os.path.exists(Config.camera_sta_test_rear_preview_path):
                     self.device.screen_shot(Config.camera_sta_test_rear_preview_path)
+                log.info("后镜头预览界面截图完成")
                 # clear img
                 self.device.remove_img()
                 time.sleep(3)
@@ -819,6 +825,7 @@ class TestLXStability:
 
                 if len(self.device.get_latest_img()) == 0:
                     self.device.take_photo()
+                    time.sleep(3)
                 self.device.pull_img(Config.camera_sta_test_rear_photograph_path)
                 time.sleep(1)
                 if not os.path.exists(Config.camera_sta_test_rear_photograph_path):
@@ -850,10 +857,10 @@ class TestLXStability:
                 # take photo
                 time.sleep(3)
                 self.device.take_photo()
-                time.sleep(1)
+                time.sleep(3)
                 if len(self.device.get_latest_img()) == 0:
-                    time.sleep(3)
                     self.device.take_photo()
+                    time.sleep(3)
                 self.device.pull_img(Config.camera_sta_test_front_photograph_path)
                 time.sleep(1)
                 if not os.path.exists(Config.camera_sta_test_front_photograph_path):
@@ -862,29 +869,29 @@ class TestLXStability:
                 # 对比前镜头
                 front_preview_score = cnns.generateScore(Config.camera_sta_test_front_preview_path, Config.camera_sta_exp_front_preview_path)
                 log.info("前镜头预览画面预期和测试截图相似度分数为：%s" % str(front_preview_score))
-                if front_preview_score < 75:
+                if front_preview_score < 90:
                     log.error("前镜头预览画面预期和测试截图差异过大，请检查！！！")
                     time.sleep(3)
-                    break
+                    raise
                 front_photograph_score = cnns.generateScore(Config.camera_sta_test_front_photograph_path, Config.camera_sta_exp_front_photograph_path)
                 log.info("前镜头拍照预期和测试拍照相似度分数为：%s" % str(front_photograph_score))
-                if front_photograph_score < 75:
+                if front_photograph_score < 90:
                     log.error("前镜头拍照预期和测试拍照差异过大，请检查！！！")
                     time.sleep(3)
-                    break
+                    raise
                 # 对比后镜头
                 rear_preview_score = cnns.generateScore(Config.camera_sta_test_rear_preview_path, Config.camera_sta_exp_rear_preview_path)
                 log.info("后镜头预览画面预期和测试截图相似度分数为：%s" % str(rear_preview_score))
-                if rear_preview_score < 75:
+                if rear_preview_score < 90:
                     log.error("后镜头预览画面预期和测试截图差异过大，请检查！！！")
                     time.sleep(3)
-                    break
+                    raise
                 rear_photograph_score = cnns.generateScore(Config.camera_sta_test_rear_photograph_path, Config.camera_sta_exp_rear_photograph_path)
                 log.info("后镜头拍照预期和测试截图相似度分数为：%s" % str(rear_photograph_score))
-                if rear_photograph_score < 75:
+                if rear_photograph_score < 90:
                     log.error("后镜头拍照预期和测试拍照差异过大，请检查！！！")
                     time.sleep(3)
-                    break
+                    raise
             else:
                 # 测试前删除已存在的照片
                 if os.path.exists(Config.camera_sta_test_default_preview_path):
@@ -922,15 +929,27 @@ class TestLXStability:
                     self.device.remove_img()
                 # # take photo
                 self.device.take_photo()
-                time.sleep(2)
+                time.sleep(3)
                 if len(self.device.get_latest_img()) == 0:
                     self.device.take_photo()
+                    time.sleep(3)
                 self.device.pull_img(Config.camera_sta_test_default_photograph_path)
                 time.sleep(1)
                 if not os.path.exists(Config.camera_sta_test_default_photograph_path):
                     self.device.pull_img(Config.camera_sta_test_default_photograph_path)
-
                 # 对比照片
+                default_preview_score = cnns.generateScore(Config.camera_sta_test_default_preview_path, Config.camera_sta_exp_default_preview_path)
+                log.info("镜头预览画面预期和测试截图相似度分数为：%s" % str(default_preview_score))
+                if default_preview_score < 90:
+                    log.error("镜头预览画面预期和测试截图差异过大，请检查！！！")
+                    time.sleep(3)
+                    raise
+                default_photograph_score = cnns.generateScore(Config.camera_sta_test_default_photograph_path, Config.camera_sta_exp_default_photograph_path)
+                log.info("镜头拍照预期和测试拍照相似度分数为：%s" % str(default_photograph_score))
+                if default_photograph_score < 90:
+                    log.error("镜头拍照预期和测试拍照差异过大，请检查！！！")
+                    time.sleep(3)
+                    raise
 
             # close and clear data to camera
             self.device.force_stop_app()

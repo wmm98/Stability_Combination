@@ -114,4 +114,4 @@ class Analysis:
 
 if __name__ == '__main__':
     cnn = CNNsAnalysis()
-    print(cnn.generateScore("0_new.png", "1_new.png"))
+    print(cnn.generateScore("test.png", "test_new.png"))

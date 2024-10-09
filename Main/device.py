@@ -11,6 +11,7 @@ shell = Shell()
 class Device(publicInterface):
     def __init__(self, device):
         self.device_name = device
+        self.camera_package_name = ""
 
     def restart_adb(self):
         shell.invoke("adb kill-server")
@@ -154,3 +155,83 @@ class Device(publicInterface):
             if self.get_current_time() > self.return_end_time(now_time, timeout):
                 return False
             time.sleep(3)
+
+    def open_camera(self):
+        shell.invoke("adb -s %s shell \"am start -a android.media.action.STILL_IMAGE_CAMERA\"" % self.device_name)
+
+    def take_photo(self):
+        shell.invoke("adb -s %s shell \"input keyevent 27\"" % self.device_name)
+
+    def screen_shot(self, des_path):
+        shell.invoke("adb -s %s exec-out screencap -p > %s" % (self.device_name, des_path))
+
+    def remove_img(self):
+        shell.invoke("adb -s %s shell \"rm -rf /sdcard/DCIM/Camera/*\"" % self.device_name)
+
+    def click_btn(self, x, y):
+        cmd = "adb -s %s shell \"input tap %s %s\"" % (self.device_name, x, y)
+        shell.invoke(cmd)
+
+    def is_first_camera(self):
+        if self.get_camera_id() == 1:
+            return True
+        else:
+            return False
+
+    def is_second_camera(self):
+        if self.get_camera_id() == 2:
+            return True
+        else:
+            return False
+
+    def get_camera_id(self):
+        cmd = "adb -s %s shell \"dumpsys media.camera |grep \"\"Camera ID\"\"" % self.device_name
+        camera_info = shell.invoke(cmd)
+        clear_info = camera_info.replace('\r', '').replace('\t', '').replace(' ', '').replace('\n', '')
+        if "CameraId:0".upper() in clear_info.upper():
+            return 1
+        elif "CameraId:1".upper() in clear_info.upper() or "CameraId:2".upper() in clear_info.upper():
+            return 2
+        else:
+            # no open camera
+            return 3
+
+    def get_latest_img(self):
+        cmd = "adb -s %s shell \"ls /sdcard/DCIM/Camera\"" % self.device_name
+        img_info = shell.invoke(cmd)
+        if len(img_info) == 0:
+            return ""
+        else:
+            return img_info.strip()
+
+    def pull_img(self, des_path):
+        cmd = "adb -s %s pull /sdcard/DCIM/Camera/%s %s" % (self.device_name, self.get_latest_img(), des_path)
+        shell.invoke(cmd)
+
+    def get_camera_package_name(self):
+        # cmd = "dumpsys activity activities | grep mCurrentFocus"
+        cmd = "adb -s %s shell \"dumpsys activity activities | grep mCurrentFocus\"" % self.device_name
+        res = shell.invoke(cmd)
+        package_name = res.split(" ")[-1].split("/")[0]
+        self.camera_package_name = package_name
+
+    def force_stop_app(self):
+        # cmd = "am force-stop  org.codeaurora.snapcam"
+        cmd = "adb -s %s shell \"am force-stop %s\"" % (self.device_name, self.camera_package_name)
+        shell.invoke(cmd)
+
+    def clear_app(self):
+        cmd = "adb -s %s shell \"pm clear %s\"" % (self.device_name, self.camera_package_name)
+        shell.invoke(cmd)
+
+    def get_screen_center_position(self):
+        cmd = "adb -s %s shell \"wm size\"" % self.device_name
+        res = shell.invoke(cmd)
+        info = res.split(" ")[-1].split("x")
+        width = info[0]
+        length = info[1].replace("\n", "").replace("\r", "").replace("\t", "")
+        center_position = [int(width) / 2, int(length) / 2]
+        return center_position
+
+    def logcat(self, log_path):
+        shell.invoke("adb -s %s logcat > %s" % (self.device_name, log_path))

@@ -508,7 +508,7 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
             for case in self.cases:
                 if "开关机检查基本功能" in case:
                     self.transfer_cases.append("boot_check_stability")
-                if "前后摄像头拍照问题比对" in case:
+                if "前后摄像头拍照问题对比" in case:
                     self.transfer_cases.append("front_rear_camera_stability")
 
             self.ui_config.add_config_option(self.ui_config.section_ui_to_background,

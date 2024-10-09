@@ -7,6 +7,7 @@ class Config:
     html_report_path = os.path.join(project_path, "Report", "html")
     environment_properties_path = os.path.join(project_path, "Report", "environment.properties")
     debug_log_path = os.path.join(project_path, "Log", "Debug", "log.log")
+    logcat_path = os.path.join(project_path, "Log", "Logcat")
 
     # EMMC, DDR压测
     pretesting_path = os.path.join(project_path, "PreTesting")
@@ -33,24 +34,28 @@ class Config:
     camera_stability_path = os.path.join(project_path, "Photo", "CameraStability")
     camera_sta_exp_path = os.path.join(camera_stability_path, "Expect")
     camera_sta_test_path = os.path.join(camera_stability_path, "Test")
+    camera_sta_exp_default_path = os.path.join(camera_sta_exp_path, "Default")
     # 预期前、后镜头
     camera_sta_exp_front_path = os.path.join(camera_sta_exp_path, "Front")
     camera_sta_exp_rear_path = os.path.join(camera_sta_exp_path, "Rear")
-    camera_sta_exp_front_photograph_path = os.path.join(camera_sta_exp_front_path, "Photograph",
-                                                        "exp_front_photograph.jpg")
+    camera_sta_exp_front_photograph_path = os.path.join(camera_sta_exp_front_path, "Photograph", "exp_front_photograph.jpg")
     camera_sta_exp_front_preview_path = os.path.join(camera_sta_exp_front_path, "PreView", "exp_front_preview.png")
-    camera_sta_exp_rear_photograph_path = os.path.join(camera_sta_exp_rear_path, "Photograph",
-                                                       "exp_rear_photograph.jpg")
+    camera_sta_exp_rear_photograph_path = os.path.join(camera_sta_exp_rear_path, "Photograph", "exp_rear_photograph.jpg")
     camera_sta_exp_rear_preview_path = os.path.join(camera_sta_exp_rear_path, "PreView", "exp_rear_preview.png")
+    camera_sta_exp_default_photograph_path = os.path.join(camera_sta_exp_default_path, "Photograph", "exp_default_photograph.jpg")
+    camera_sta_exp_default_preview_path = os.path.join(camera_sta_exp_default_path, "PreView", "exp_default_preview.png")
     # 测试前后镜头
     camera_sta_test_front_path = os.path.join(camera_sta_test_path, "Front")
     camera_sta_test_rear_path = os.path.join(camera_sta_test_path, "Rear")
-    camera_sta_test_front_photograph_path = os.path.join(camera_sta_test_front_path, "Photograph",
-                                                         "test_front_photograph.jpg")
+    camera_sta_test_default_path = os.path.join(camera_sta_test_path, "Default")
+    camera_sta_test_front_photograph_path = os.path.join(camera_sta_test_front_path, "Photograph", "test_front_photograph.jpg")
     camera_sta_test_front_preview_path = os.path.join(camera_sta_test_front_path, "PreView", "test_front_preview.png")
-    camera_sta_test_rear_photograph_path = os.path.join(camera_sta_test_rear_path, "Photograph",
-                                                        "test_rear_photograph.jpg")
+    camera_sta_test_rear_photograph_path = os.path.join(camera_sta_test_rear_path, "Photograph", "test_rear_photograph.jpg")
     camera_sta_test_rear_preview_path = os.path.join(camera_sta_test_rear_path, "PreView", "test_rear_preview.png")
+    camera_sta_test_default_photograph_path = os.path.join(camera_sta_test_default_path, "Photograph", "test_default_photograph.jpg")
+    camera_sta_test_default_preview_path = os.path.join(camera_sta_test_default_path, "PreView", "test_default_preview.png")
+    # camera_preview_photograph.txt
+    camera_sta_test_log_path = os.path.join(logcat_path, "camera_preview_photograph.txt")
 
     section_ui_to_background = "UI-Background"
     section_background_to_ui = "Background-UI"
