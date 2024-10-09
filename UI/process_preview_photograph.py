@@ -48,9 +48,13 @@ class Photograph:
                                                          ui_conf_file.ui_option_device_name)
 
     def save_img(self):
+
         is_double = ui_conf_file.get_option_value(ui_conf_file.section_ui_camera_check,
                                                   ui_conf_file.option_front_and_rear)
         if int(is_double):
+            # get x, y position for switch btn
+            x = ui_conf_file.get_option_value(ui_conf_file.section_ui_camera_check, ui_conf_file.option_switch_x_value)
+            y = ui_conf_file.get_option_value(ui_conf_file.section_ui_camera_check, ui_conf_file.option_switch_y_value)
             # clear img in device
             self.remove_img()
             time.sleep(1)
@@ -62,7 +66,11 @@ class Photograph:
             time.sleep(1)
             self.open_camera()
             time.sleep(2)
+            # get camera app package name
+            self.get_camera_package_name()
             # click center clear other button
+            pos = self.get_screen_center_position()
+            self.click_btn(str(pos[0]), str(pos[1]))
 
             self.get_camera_id()
             if self.get_camera_id() == 3:
@@ -71,7 +79,7 @@ class Photograph:
 
             # switch front camera
             if not self.is_first_camera():
-                self.click_switch_btn()
+                self.click_btn(x, y)
             time.sleep(3)
             # screenshot preview
             self.screen_shot(camera_sta_exp_rear_preview_path)
@@ -101,10 +109,10 @@ class Photograph:
                 self.remove_img()
             #
             # switch front camera
-            self.click_switch_btn()
+            self.click_btn(x, y)
             time.sleep(2)
             if self.is_first_camera():
-                self.click_switch_btn()
+                self.click_btn(x, y)
             #
             # wait 2 sec
             time.sleep(3)
@@ -163,11 +171,15 @@ class Photograph:
             if not os.path.exists(camera_sta_exp_default_photograph_path):
                 self.pull_img(camera_sta_exp_default_photograph_path)
 
-            # clear img
+        # close and clear data to camera
+        self.force_stop_app()
+        self.clear_app()
+
+        # clear img
+        self.remove_img()
+        time.sleep(1)
+        if len(self.get_latest_img()) != 0:
             self.remove_img()
-            time.sleep(1)
-            if len(self.get_latest_img()) != 0:
-                self.remove_img()
 
     def open_camera(self):
         shell.invoke("adb -s %s shell \"am start -a android.media.action.STILL_IMAGE_CAMERA\"" % self.device_name)
@@ -181,9 +193,7 @@ class Photograph:
     def remove_img(self):
         shell.invoke("adb -s %s shell \"rm -rf /sdcard/DCIM/Camera/*\"" % self.device_name)
 
-    def click_switch_btn(self):
-        x = ui_conf_file.get_option_value(ui_conf_file.section_ui_camera_check, ui_conf_file.option_switch_x_value)
-        y = ui_conf_file.get_option_value(ui_conf_file.section_ui_camera_check, ui_conf_file.option_switch_y_value)
+    def click_btn(self, x, y):
         cmd = "adb -s %s shell \"input tap %s %s\"" % (self.device_name, x, y)
         shell.invoke(cmd)
 
@@ -230,8 +240,6 @@ class Photograph:
         res = shell.invoke(cmd)
         package_name = res.split(" ")[-1].split("/")[0]
         self.camera_package_name = package_name
-        # print(package_name)
-        # return package_name
 
     def force_stop_app(self):
         # cmd = "am force-stop  org.codeaurora.snapcam"
@@ -254,8 +262,8 @@ class Photograph:
 
 if __name__ == '__main__':
     photo = Photograph()
-    # photo.get_camera_id()
-    # photo.save_img()
+    photo.get_camera_id()
+    photo.save_img()
     # photo.get_camera_package_name()
-    print(photo.get_screen_center_position())
+    # print(photo.get_screen_center_position())
     print("end.")

@@ -214,7 +214,7 @@ class CameraStabilityDisplay(QtWidgets.QMainWindow, PreviewPhotoGraph_MainWindow
                 self.photograph_tips.setStyleSheet("color: red;")
             else:
                 self.photograph_tips.setText("未获取到预期参照照片！！！")
-                self.photograph_tips.setStyleSheet("color: yellow;")
+                self.photograph_tips.setStyleSheet("color: gray;")
         else:
             default_pre_status = os.path.exists(self.camera_sta_exp_default_preview_path)
             default_photo_status = os.path.exists(self.camera_sta_exp_default_photograph_path)
@@ -223,7 +223,7 @@ class CameraStabilityDisplay(QtWidgets.QMainWindow, PreviewPhotoGraph_MainWindow
                 self.photograph_tips.setStyleSheet("color: red;")
             else:
                 self.photograph_tips.setText("未获取到预期参照照片！！！")
-                self.photograph_tips.setStyleSheet("color: yellow;")
+                self.photograph_tips.setStyleSheet("color: gray;")
 
     def preview_photograph_button_change(self):
         if len(self.device_name.currentText()) == 0:
@@ -279,12 +279,10 @@ class CameraStabilityDisplay(QtWidgets.QMainWindow, PreviewPhotoGraph_MainWindow
 
         # 调起来进程， 获取预期照片
         try:
-            print("****************************")
             print(self.bat_camera_stability_path)
             self.get_exp_imag_process.start(self.bat_camera_stability_path)
             self.photograph_tips.setText("正在拍照保存，请等待...")
             self.photograph_tips.setStyleSheet("color: green;")
-            print("###################################")
             self.document.clear()
             self.file_timer = QTimer(self)
             self.file_timer.timeout.connect(self.check_image_modification)
@@ -422,7 +420,6 @@ class ScrollablePlainTextEdit(QTextEdit):
 
 if __name__ == '__main__':
     import sys
-
     app = QtWidgets.QApplication(sys.argv)
     myshow = CameraStabilityDisplay()
     myshow.show()
