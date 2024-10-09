@@ -66,12 +66,6 @@ class Photograph:
             time.sleep(1)
             self.open_camera()
             time.sleep(2)
-            # get camera app package name
-            self.get_camera_package_name()
-            # click center clear other button
-            pos = self.get_screen_center_position()
-            self.click_btn(str(pos[0]), str(pos[1]))
-
             self.get_camera_id()
             if self.get_camera_id() == 3:
                 self.open_camera()
@@ -80,6 +74,12 @@ class Photograph:
             # switch front camera
             if not self.is_first_camera():
                 self.click_btn(x, y)
+
+            # get camera app package name
+            self.get_camera_package_name()
+            # click center clear other button
+            pos = self.get_screen_center_position()
+            self.click_btn(str(pos[0]), str(pos[1]))
             time.sleep(3)
             # screenshot preview
             self.screen_shot(camera_sta_exp_rear_preview_path)
@@ -113,7 +113,6 @@ class Photograph:
             time.sleep(2)
             if self.is_first_camera():
                 self.click_btn(x, y)
-            #
             # wait 2 sec
             time.sleep(3)
             # screenshot preview
@@ -150,7 +149,13 @@ class Photograph:
             self.get_camera_id()
             if self.get_camera_id() == 3:
                 self.open_camera()
-            time.sleep(1)
+
+            # get camera app package name
+            self.get_camera_package_name()
+            # click center clear other button
+            pos = self.get_screen_center_position()
+            self.click_btn(str(pos[0]), str(pos[1]))
+            time.sleep(3)
             # screenshot preview
             self.screen_shot(camera_sta_exp_default_preview_path)
             time.sleep(1)
