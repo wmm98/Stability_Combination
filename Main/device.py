@@ -49,7 +49,7 @@ class Device(publicInterface):
         self.send_adb_standalone_command("pull %s %s" % (source, destination))
 
     def rm_file(self, file_path):
-        self.send_adb_shell_command("touch %s" % file_path)
+        self.send_adb_shell_command("rm %s" % file_path)
 
     def mkdir_directory(self, directory_path):
         self.send_adb_standalone_command("mkdir %s" % directory_path)
@@ -242,4 +242,14 @@ class Device(publicInterface):
         return process_id
 
     def kill_process(self, process_id):
-        self.send_adb_shell_command("\"kill %s\"" % process_id)
+        self.send_adb_shell_command("\"kill -9 %s\"" % process_id)
+
+
+if __name__ == '__main__':
+    dev = Device("d")
+    dev.logcat_thread("/sdcard/camera2.txt")
+    process_id = dev.get_current_logcat_process_id()
+    print(process_id)
+    dev.kill_process(process_id)
+    print("====")
+    print(dev.get_current_logcat_process_id())
