@@ -832,6 +832,14 @@ class TestLXStability:
                 if len(self.device.get_latest_img()) == 0:
                     self.device.take_photo()
                     time.sleep(3)
+
+                if len(self.device.get_latest_img()) == 0:
+                    log.info("拍照失败，请检查！！！")
+                    time.sleep(3)
+                    self.device.kill_process(logcat_process_id)
+                    self.device.adb_pull_file(log_path, os.path.dirname(Config.camera_sta_test_log_path))
+                    raise
+
                 log.info("后镜头拍照完成")
                 self.device.pull_img(Config.camera_sta_test_rear_photograph_path)
                 time.sleep(1)
@@ -870,6 +878,14 @@ class TestLXStability:
                 if len(self.device.get_latest_img()) == 0:
                     self.device.take_photo()
                     time.sleep(3)
+
+                if len(self.device.get_latest_img()) == 0:
+                    log.info("拍照失败，请检查！！！")
+                    time.sleep(3)
+                    self.device.kill_process(logcat_process_id)
+                    self.device.adb_pull_file(log_path, os.path.dirname(Config.camera_sta_test_log_path))
+                    raise
+
                 log.info("前镜头拍照完成")
                 self.device.pull_img(Config.camera_sta_test_front_photograph_path)
                 time.sleep(1)
@@ -958,12 +974,21 @@ class TestLXStability:
                 time.sleep(3)
                 if len(self.device.get_latest_img()) != 0:
                     self.device.remove_img()
+                    time.sleep(1)
                 # # take photo
                 self.device.take_photo()
                 time.sleep(3)
                 if len(self.device.get_latest_img()) == 0:
                     self.device.take_photo()
                     time.sleep(3)
+
+                if len(self.device.get_latest_img()) == 0:
+                    log.info("拍照失败，请检查！！！")
+                    time.sleep(3)
+                    self.device.kill_process(logcat_process_id)
+                    self.device.adb_pull_file(log_path, os.path.dirname(Config.camera_sta_test_log_path))
+                    raise
+
                 log.info("拍照完成")
                 self.device.pull_img(Config.camera_sta_test_default_photograph_path)
                 time.sleep(1)
@@ -992,6 +1017,9 @@ class TestLXStability:
             # close and clear data to camera
             self.device.force_stop_app()
             self.device.clear_app()
+            if self.device.get_camera_id() != 3:
+                self.device.force_stop_app()
+                self.device.clear_app()
             log.info("关闭相机")
             # clear img
             self.device.remove_img()
