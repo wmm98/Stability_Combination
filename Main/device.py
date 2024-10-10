@@ -233,5 +233,13 @@ class Device(publicInterface):
         center_position = [int(width) / 2, int(length) / 2]
         return center_position
 
-    def logcat(self, log_path):
-        shell.invoke("adb -s %s logcat > %s" % (self.device_name, log_path))
+    def logcat_thread(self, log_path):
+        # sdcard/camera.txt
+        self.send_adb_shell_command(" \"setsid logcat > %s &\"" % log_path)
+
+    def get_current_logcat_process_id(self):
+        process_id = self.send_adb_shell_command("\"ps -A | grep logcat | awk '{print $2}'\"")
+        return process_id
+
+    def kill_process(self, process_id):
+        self.send_adb_shell_command("\"kill %s\"" % process_id)

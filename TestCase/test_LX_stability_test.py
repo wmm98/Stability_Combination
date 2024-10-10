@@ -753,8 +753,8 @@ class TestLXStability:
     def test_lx_front_rear_camera_test(self):
         log.info("************前后摄像头拍照问题对比用例开始*******")
         # 删除已存在的logcat文件
-        # if os.path.exists(Config.logcat_path):
-        #     os.remove(Config.camera_sta_test_log_path)
+        if os.path.exists(Config.camera_sta_test_log_path):
+            os.remove(Config.camera_sta_test_log_path)
         self.device.logcat(Config.camera_sta_test_log_path)
         total_times = self.ui_conf_file.get(Config.section_ui_camera_check,  Config.option_camera_test_times)
         times = 1
