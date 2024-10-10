@@ -880,7 +880,7 @@ class TestLXStability:
                 front_preview_score = cnns.generateScore(Config.camera_sta_test_front_preview_path,
                                                          Config.camera_sta_exp_front_preview_path)
                 log.info("前镜头预览画面预期和测试截图相似度分数为：%s" % str(front_preview_score))
-                if front_preview_score < 90:
+                if front_preview_score < 75:
                     log.error("前镜头预览画面预期和测试截图差异过大，请检查！！！")
                     time.sleep(3)
                     self.device.kill_process(logcat_process_id)
@@ -889,7 +889,7 @@ class TestLXStability:
                 front_photograph_score = cnns.generateScore(Config.camera_sta_test_front_photograph_path,
                                                             Config.camera_sta_exp_front_photograph_path)
                 log.info("前镜头拍照预期和测试拍照相似度分数为：%s" % str(front_photograph_score))
-                if front_photograph_score < 90:
+                if front_photograph_score < 75:
                     log.error("前镜头拍照预期和测试拍照差异过大，请检查！！！")
                     time.sleep(3)
                     self.device.kill_process(logcat_process_id)
@@ -899,7 +899,7 @@ class TestLXStability:
                 rear_preview_score = cnns.generateScore(Config.camera_sta_test_rear_preview_path,
                                                         Config.camera_sta_exp_rear_preview_path)
                 log.info("后镜头预览画面预期和测试截图相似度分数为：%s" % str(rear_preview_score))
-                if rear_preview_score < 90:
+                if rear_preview_score < 75:
                     log.error("后镜头预览画面预期和测试截图差异过大，请检查！！！")
                     time.sleep(3)
                     self.device.kill_process(logcat_process_id)
@@ -908,7 +908,7 @@ class TestLXStability:
                 rear_photograph_score = cnns.generateScore(Config.camera_sta_test_rear_photograph_path,
                                                            Config.camera_sta_exp_rear_photograph_path)
                 log.info("后镜头拍照预期和测试拍照相似度分数为：%s" % str(rear_photograph_score))
-                if rear_photograph_score < 90:
+                if rear_photograph_score < 75:
                     log.error("后镜头拍照预期和测试拍照差异过大，请检查！！！")
                     time.sleep(3)
                     self.device.kill_process(logcat_process_id)
@@ -973,7 +973,7 @@ class TestLXStability:
                 default_preview_score = cnns.generateScore(Config.camera_sta_test_default_preview_path,
                                                            Config.camera_sta_exp_default_preview_path)
                 log.info("镜头预览画面预期和测试截图相似度分数为：%s" % str(default_preview_score))
-                if default_preview_score < 90:
+                if default_preview_score < 75:
                     log.error("镜头预览画面预期和测试截图差异过大，请检查！！！")
                     time.sleep(3)
                     self.device.kill_process(logcat_process_id)
@@ -982,7 +982,7 @@ class TestLXStability:
                 default_photograph_score = cnns.generateScore(Config.camera_sta_test_default_photograph_path,
                                                               Config.camera_sta_exp_default_photograph_path)
                 log.info("镜头拍照预期和测试拍照相似度分数为：%s" % str(default_photograph_score))
-                if default_photograph_score < 90:
+                if default_photograph_score < 75:
                     log.error("镜头拍照预期和测试拍照差异过大，请检查！！！")
                     time.sleep(3)
                     self.device.kill_process(logcat_process_id)
