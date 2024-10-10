@@ -198,12 +198,14 @@ class CameraStabilityDisplay(QtWidgets.QMainWindow, PreviewPhotoGraph_MainWindow
         # if self.is_front_and_rear_camera.isChecked():
         #     self.ui_config.add_config_option(self.ui_config.section_ui_camera_check, self.ui_config.option_switch_x_value, self.X_info.text())
         #     self.ui_config.add_config_option(self.ui_config.section_ui_camera_check, self.ui_config.option_switch_y_value, self.Y_info.text())
-        self.ui_config.add_config_option(self.ui_config.section_ui_camera_check, self.ui_config.option_camera_test_times, str(case_test_times))
+        self.ui_config.add_config_option(self.ui_config.section_ui_camera_check,
+                                         self.ui_config.option_camera_test_times, str(case_test_times))
 
         self.submit_flag = True
         self.get_message_box("相机压测用例保存成功")
 
     def camera_finished_handle(self):
+        self.file_timer.stop()
         if self.is_front_and_rear_camera.isChecked():
             rear_pre_status = os.path.exists(self.camera_sta_exp_rear_preview_path)
             rear_photo_status = os.path.exists(self.camera_sta_exp_rear_photograph_path)
@@ -243,7 +245,8 @@ class CameraStabilityDisplay(QtWidgets.QMainWindow, PreviewPhotoGraph_MainWindow
                 self.get_message_box("坐标请填入数字！！！")
                 return
 
-        self.ui_config.add_config_option(self.ui_config.section_ui_camera_check, self.ui_config.ui_option_device_name, self.device_name.currentText())
+        self.ui_config.add_config_option(self.ui_config.section_ui_camera_check, self.ui_config.ui_option_device_name,
+                                         self.device_name.currentText())
 
         if self.is_front_and_rear_camera.isChecked():
             self.ui_config.add_config_option(self.ui_config.section_ui_camera_check,
@@ -286,7 +289,8 @@ class CameraStabilityDisplay(QtWidgets.QMainWindow, PreviewPhotoGraph_MainWindow
             self.document.clear()
             self.file_timer = QTimer(self)
             self.file_timer.timeout.connect(self.check_image_modification)
-            self.check_interval = 1000  # 定时器间隔，单位毫秒
+            # self.file_timer.setInterval(2000)
+            self.check_interval = 2000  # 定时器间隔，单位毫秒
         except Exception as e:
             print(e)
 
@@ -303,18 +307,21 @@ class CameraStabilityDisplay(QtWidgets.QMainWindow, PreviewPhotoGraph_MainWindow
                 exp_rear_preview = os.path.exists(self.camera_sta_exp_rear_preview_path)
                 if exp_front_preview and exp_front_photograph and exp_rear_preview and exp_rear_photograph:
                     # 前镜头
-                    exp_front_preview_current_mod_time = self.get_file_modification_time(self.camera_sta_exp_front_preview_path)
+                    exp_front_preview_current_mod_time = self.get_file_modification_time(
+                        self.camera_sta_exp_front_preview_path)
                     if exp_front_preview_current_mod_time != self.exp_front_preview_last_modify_time:
                         self.exp_front_preview_last_modify_time = exp_front_preview_current_mod_time  # 更新为新的修改时间
                         self.add_logo_image(self.camera_sta_exp_front_preview_path)
 
-                    exp_front_photograph_mod_time = self.get_file_modification_time(self.camera_sta_exp_front_photograph_path)
+                    exp_front_photograph_mod_time = self.get_file_modification_time(
+                        self.camera_sta_exp_front_photograph_path)
                     if exp_front_photograph_mod_time != self.exp_front_photograph_last_modify_time:
                         self.exp_front_photograph_last_modify_time = exp_front_photograph_mod_time  # 更新为新的修改时间
                         self.add_logo_image(self.camera_sta_exp_front_photograph_path)
 
                     # 后镜头
-                    exp_rear_preview_current_mod_time = self.get_file_modification_time(self.camera_sta_exp_rear_preview_path)
+                    exp_rear_preview_current_mod_time = self.get_file_modification_time(
+                        self.camera_sta_exp_rear_preview_path)
                     if exp_rear_preview_current_mod_time != self.exp_rear_preview_last_modify_time:
                         self.exp_rear_preview_last_modify_time = exp_rear_preview_current_mod_time  # 更新为新的修改时间
                         self.add_logo_image(self.camera_sta_exp_rear_preview_path)
@@ -328,7 +335,8 @@ class CameraStabilityDisplay(QtWidgets.QMainWindow, PreviewPhotoGraph_MainWindow
                 # 预览截图
                 if os.path.exists(self.camera_sta_exp_default_preview_path):
                     if os.path.exists(self.camera_sta_exp_default_photograph_path):
-                        preview_current_mod_time = self.get_file_modification_time(self.camera_sta_exp_default_preview_path)
+                        preview_current_mod_time = self.get_file_modification_time(
+                            self.camera_sta_exp_default_preview_path)
                         if preview_current_mod_time != self.exp_default_preview_last_modify_time:
                             self.exp_default_preview_last_modify_time = preview_current_mod_time  # 更新为新的修改时间
                             self.add_logo_image(self.camera_sta_exp_default_preview_path)
@@ -338,13 +346,12 @@ class CameraStabilityDisplay(QtWidgets.QMainWindow, PreviewPhotoGraph_MainWindow
                         if photograph_current_mod_time != self.exp_default_photograph_last_modify_time:
                             self.exp_default_photograph_last_modify_time = photograph_current_mod_time  # 更新为新的修改时间
                             self.add_logo_image(self.camera_sta_exp_default_photograph_path)
-                        self.file_timer.stop()
-                # 拍照
-                # if os.path.exists(self.camera_sta_exp_default_photograph_path):
-                #     photograph_current_mod_time = self.get_file_modification_time(self.camera_sta_exp_default_photograph_path)
-                #     if photograph_current_mod_time != self.exp_default_photograph_last_modify_time:
-                #         self.exp_default_photograph_last_modify_time = photograph_current_mod_time  # 更新为新的修改时间
-                #         self.add_logo_image(self.camera_sta_exp_default_photograph_path)
+            # 拍照
+            # if os.path.exists(self.camera_sta_exp_default_photograph_path):
+            #     photograph_current_mod_time = self.get_file_modification_time(self.camera_sta_exp_default_photograph_path)
+            #     if photograph_current_mod_time != self.exp_default_photograph_last_modify_time:
+            #         self.exp_default_photograph_last_modify_time = photograph_current_mod_time  # 更新为新的修改时间
+            #         self.add_logo_image(self.camera_sta_exp_default_photograph_path)
         except Exception as e:
             print(e)
 
@@ -420,6 +427,7 @@ class ScrollablePlainTextEdit(QTextEdit):
 
 if __name__ == '__main__':
     import sys
+
     app = QtWidgets.QApplication(sys.argv)
     myshow = CameraStabilityDisplay()
     myshow.show()

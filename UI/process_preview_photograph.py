@@ -51,6 +51,22 @@ class Photograph:
 
         is_double = ui_conf_file.get_option_value(ui_conf_file.section_ui_camera_check,
                                                   ui_conf_file.option_front_and_rear)
+
+        if int(is_double):
+            if os.path.exists(camera_sta_exp_front_preview_path):
+                os.remove(camera_sta_exp_front_preview_path)
+            if os.path.exists(camera_sta_exp_front_photograph_path):
+                os.remove(camera_sta_exp_front_photograph_path)
+            if os.path.exists(camera_sta_exp_rear_photograph_path):
+                os.remove(camera_sta_exp_rear_photograph_path)
+            if os.path.exists(camera_sta_exp_rear_preview_path):
+                os.remove(camera_sta_exp_rear_preview_path)
+        else:
+            if os.path.exists(camera_sta_exp_default_preview_path):
+                os.remove(camera_sta_exp_default_preview_path)
+            if os.path.exists(camera_sta_exp_default_photograph_path):
+                os.remove(camera_sta_test_default_photograph_path)
+
         if int(is_double):
             # get x, y position for switch btn
             x = ui_conf_file.get_option_value(ui_conf_file.section_ui_camera_check, ui_conf_file.option_switch_x_value)
@@ -60,20 +76,28 @@ class Photograph:
             time.sleep(1)
             if len(self.get_latest_img()) != 0:
                 self.remove_img()
+            time.sleep(1)
+            if len(self.get_latest_img()) != 0:
+                self.remove_img()
 
             # front and rear camera
             # 1 open camera
             time.sleep(1)
             self.open_camera()
-            time.sleep(2)
-            self.get_camera_id()
+            time.sleep(3)
             if self.get_camera_id() == 3:
                 self.open_camera()
-            time.sleep(1)
-
+                time.sleep(3)
+            if self.get_camera_id() == 3:
+                raise
             # switch front camera
             if not self.is_first_camera():
                 self.click_btn(x, y)
+                time.sleep(2)
+
+            if not self.is_first_camera():
+                self.click_btn(x, y)
+                time.sleep(3)
 
             # get camera app package name
             self.get_camera_package_name()
@@ -83,12 +107,16 @@ class Photograph:
             time.sleep(3)
             # screenshot preview
             self.screen_shot(camera_sta_exp_rear_preview_path)
-            time.sleep(1)
+            time.sleep(4)
             if not os.path.exists(camera_sta_exp_rear_preview_path):
+                self.click_btn(str(pos[0]), str(pos[1]))
+                time.sleep(3)
                 self.screen_shot(camera_sta_exp_rear_preview_path)
             # clear img
             self.remove_img()
             time.sleep(3)
+            if len(self.get_latest_img()) != 0:
+                self.remove_img()
             if len(self.get_latest_img()) != 0:
                 self.remove_img()
             # # take photo
@@ -97,8 +125,9 @@ class Photograph:
 
             if len(self.get_latest_img()) == 0:
                 self.take_photo()
+                time.sleep(3)
             self.pull_img(camera_sta_exp_rear_photograph_path)
-            time.sleep(1)
+            time.sleep(2)
             if not os.path.exists(camera_sta_exp_rear_photograph_path):
                 self.pull_img(camera_sta_exp_rear_photograph_path)
 
@@ -107,12 +136,20 @@ class Photograph:
             time.sleep(1)
             if len(self.get_latest_img()) != 0:
                 self.remove_img()
-            #
+                time.sleep(1)
+
+            if len(self.get_latest_img()) != 0:
+                self.remove_img()
+
             # switch front camera
             self.click_btn(x, y)
             time.sleep(2)
             if self.is_first_camera():
                 self.click_btn(x, y)
+                time.sleep(3)
+            if self.is_first_camera():
+                self.click_btn(x, y)
+
             # wait 2 sec
             time.sleep(3)
             # screenshot preview
@@ -125,15 +162,27 @@ class Photograph:
             time.sleep(1)
             if len(self.get_latest_img()) != 0:
                 self.remove_img()
+                time.sleep(1)
+
+            if len(self.get_latest_img()) != 0:
+                self.remove_img()
+                time.sleep(1)
+
             # take photo
-            time.sleep(3)
+            time.sleep(1)
             self.take_photo()
-            time.sleep(1)
+            time.sleep(3)
             if len(self.get_latest_img()) == 0:
-                time.sleep(3)
                 self.take_photo()
+                time.sleep(3)
+
+            if len(self.get_latest_img()) == 0:
+                self.take_photo()
+                time.sleep(3)
+                raise
+
             self.pull_img(camera_sta_exp_front_photograph_path)
-            time.sleep(1)
+            time.sleep(2)
             if not os.path.exists(camera_sta_exp_front_photograph_path):
                 self.pull_img(camera_sta_exp_front_photograph_path)
         else:
@@ -141,44 +190,119 @@ class Photograph:
             time.sleep(1)
             if len(self.get_latest_img()) != 0:
                 self.remove_img()
+                time.sleep(1)
+
+            if len(self.get_latest_img()) != 0:
+                self.remove_img()
+                time.sleep(1)
 
             # 1 open camera
             time.sleep(1)
             self.open_camera()
-            time.sleep(2)
-            self.get_camera_id()
+            time.sleep(3)
             if self.get_camera_id() == 3:
                 self.open_camera()
+                time.sleep(3)
+
+            if self.get_camera_id() == 3:
+                raise
 
             # get camera app package name
             self.get_camera_package_name()
             # click center clear other button
             pos = self.get_screen_center_position()
             self.click_btn(str(pos[0]), str(pos[1]))
-            time.sleep(3)
+            # time.sleep(3)
+            # # screenshot preview
+            # self.screen_shot(camera_sta_exp_default_preview_path)
+            # time.sleep(2)
+            # if len(self.get_latest_img()) == 0:
+            #     print("Eeeeeeeeeeeee")
+            #     self.screen_shot(camera_sta_exp_default_preview_path)
+            #     time.sleep(1)
+            # if not os.path.exists(camera_sta_exp_default_preview_path):
+            #     self.screen_shot(camera_sta_exp_default_preview_path)
+            #     time.sleep(1)
+            #
+            # if len(self.get_latest_img()) == 0:
+            #     print("22222222222222222222222")
+            #     raise
+            #
+            # # clear img
+            # self.remove_img()
+            # time.sleep(3)
+            # if len(self.get_latest_img()) != 0:
+            #     self.remove_img()
+            #     time.sleep(1)
+            #
+            # if len(self.get_latest_img()) != 0:
+            #     self.remove_img()
+            #     time.sleep(1)
+            #
+            # # # take photo
+            # self.take_photo()
+            # time.sleep(3)
+            # if len(self.get_latest_img()) == 0:
+            #     self.take_photo()
+            #     time.sleep(3)
+            #
+            # if len(self.get_latest_img()) == 0:
+            #     self.take_photo()
+            #     time.sleep(3)
+            #
+            # if len(self.get_latest_img()) == 0:
+            #     print("3333333333333333333333")
+            #     raise
+            #
+            # self.pull_img(camera_sta_exp_default_photograph_path)
+            # time.sleep(2)
+            # if not os.path.exists(camera_sta_exp_default_photograph_path):
+            #     self.pull_img(camera_sta_exp_default_photograph_path)
+
             # screenshot preview
+
             self.screen_shot(camera_sta_exp_default_preview_path)
             time.sleep(1)
             if not os.path.exists(camera_sta_exp_default_preview_path):
                 self.screen_shot(camera_sta_exp_default_preview_path)
             # clear img
             self.remove_img()
-            time.sleep(3)
+            time.sleep(1)
             if len(self.get_latest_img()) != 0:
                 self.remove_img()
-            # # take photo
+                time.sleep(1)
+
+            if len(self.get_latest_img()) != 0:
+                self.remove_img()
+                time.sleep(1)
+
+            # take photo
+            time.sleep(1)
             self.take_photo()
-            time.sleep(2)
+            time.sleep(3)
             if len(self.get_latest_img()) == 0:
                 self.take_photo()
+                time.sleep(3)
+
+            if len(self.get_latest_img()) == 0:
+                self.take_photo()
+                time.sleep(3)
+
+            if len(self.get_latest_img()) == 0:
+                raise
+
             self.pull_img(camera_sta_exp_default_photograph_path)
-            time.sleep(1)
+            time.sleep(3)
             if not os.path.exists(camera_sta_exp_default_photograph_path):
                 self.pull_img(camera_sta_exp_default_photograph_path)
 
         # close and clear data to camera
         self.force_stop_app()
         self.clear_app()
+
+        if self.get_camera_id() != 3:
+            self.force_stop_app()
+            self.clear_app()
 
         # clear img
         self.remove_img()
