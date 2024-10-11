@@ -92,7 +92,6 @@ class TestStabilityCombination:
         log.info("捕捉设备log")
         # 获取后台logcat进程id
         logcat_process_id = self.device.get_current_logcat_process_id()
-        log.info("当前的logcat id 为%s" % logcat_process_id)
 
         # 给以太网， 4G下电，清理环境
         if self.device.eth0_is_enable():
