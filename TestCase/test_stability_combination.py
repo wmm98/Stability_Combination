@@ -168,3 +168,96 @@ class TestStabilityCombination:
         self.device.adb_pull_file(log_path, os.path.dirname(Config.wifi_btn_sta_test_log_path))
         log.info("****************开关wifi压测结束******************")
 
+    @allure.feature("mt-mobile_btn_stability")
+    @allure.title("4G开关压测")
+    def test_wifi_btn_stability_test(self):
+        log.info("****************开关4G压测开始******************")
+        test_times = int(self.ui_conf_file.get(Config.section_mobile_check, Config.option_mobile_btn_test_times))
+        # 删除已存在的logcat文件
+        if os.path.exists(Config.mobile_btn_sta_test_log_path):
+            os.remove(Config.mobile_btn_sta_test_log_path)
+        # 后台启动捕捉log
+        log_path = os.path.join("/sdcard/%s" % os.path.basename(Config.mobile_btn_sta_test_log_path))  # log名称
+        self.device.rm_file(log_path)  # 清除已存在的
+        self.device.touch_file(log_path)
+        self.device.logcat_thread(log_path)
+
+        log.info("捕捉设备log")
+        # 获取后台logcat进程id
+        logcat_process_id = self.device.get_current_logcat_process_id()
+
+        # 给以太网， 4G下电，清理环境
+        if self.device.eth0_is_enable():
+            self.device.disable_eth0_btn()
+            time.sleep(2)
+        if self.device.eth0_is_enable():
+            self.device.disable_eth0_btn()
+            time.sleep(2)
+        if self.device.eth0_is_enable():
+            log.error("以太网无法下电，请检查！！！")
+            time.sleep(3)
+            self.device.kill_process(logcat_process_id)
+            self.device.adb_pull_file(log_path, os.path.dirname(Config.mobile_btn_sta_test_log_path))
+            raise
+
+        if self.device.wifi_is_enable():
+            self.device.disable_wifi_btn()
+            time.sleep(2)
+        if self.device.wifi_is_enable():
+            self.device.disable_wifi_btn()
+            time.sleep(2)
+        if self.device.wifi_is_enable():
+            log.error("wifi下电，请检查！！！")
+            time.sleep(3)
+            self.device.kill_process(logcat_process_id)
+            self.device.adb_pull_file(log_path, os.path.dirname(Config.mobile_btn_sta_test_log_path))
+            raise
+
+        times = 0
+        while times < test_times:
+            times += 1
+            self.device.disable_mobile_btn()
+            time.sleep(2)
+            if self.device.mobile_is_enable():
+                self.device.disable_mobile_btn()
+                time.sleep(2)
+            if self.device.mobile_is_enable():
+                log.error("移动流量按钮无法下电，请检查！！！")
+                time.sleep(3)
+                self.device.kill_process(logcat_process_id)
+                self.device.adb_pull_file(log_path, os.path.dirname(Config.mobile_btn_sta_test_log_path))
+                raise
+            log.info("wifi下电")
+            if not self.device.is_no_network():
+                log.error("移动流量下电后还可上网请检查！！！")
+                time.sleep(3)
+                self.device.kill_process(logcat_process_id)
+                self.device.adb_pull_file(log_path, os.path.dirname(Config.mobile_btn_sta_test_log_path))
+                raise
+
+            self.device.enable_mobile_btn()
+            time.sleep(2)
+            if not self.device.mobile_is_enable():
+                self.device.enable_mobile_btn()
+                time.sleep(2)
+            if not self.device.mobile_is_enable():
+                log.error("移动流量按钮无法上电，请检查！！！")
+                time.sleep(3)
+                self.device.kill_process(logcat_process_id)
+                self.device.adb_pull_file(log_path, os.path.dirname(Config.mobile_btn_sta_test_log_path))
+                raise
+            log.info("移动流量上电")
+            if not self.device.ping_network():
+                log.error("移动流量上电后5分钟内无法上网！！！")
+                time.sleep(3)
+                self.device.kill_process(logcat_process_id)
+                self.device.adb_pull_file(log_path, os.path.dirname(Config.mobile_btn_sta_test_log_path))
+                raise
+
+            log.info("***********4G开关压测完成%d次" % times)
+            time.sleep(3)
+
+        self.device.kill_process(logcat_process_id)
+        self.device.adb_pull_file(log_path, os.path.dirname(Config.mobile_btn_sta_test_log_path))
+        log.info("****************开关4G压测结束******************")
+
