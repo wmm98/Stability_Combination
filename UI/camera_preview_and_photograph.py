@@ -262,98 +262,81 @@ class CameraStabilityDisplay(QtWidgets.QMainWindow, PreviewPhotoGraph_MainWindow
                                              self.ui_config.option_front_and_rear, "0")
 
         # 删除预期之前的照片
-        try:
-            if self.is_front_and_rear_camera.isChecked():
-                if os.path.exists(self.camera_sta_exp_front_preview_path):
-                    os.remove(self.camera_sta_exp_front_preview_path)
-                if os.path.exists(self.camera_sta_exp_front_photograph_path):
-                    os.remove(self.camera_sta_exp_front_photograph_path)
-                if os.path.exists(self.camera_sta_exp_rear_photograph_path):
-                    os.remove(self.camera_sta_exp_rear_photograph_path)
-                if os.path.exists(self.camera_sta_exp_rear_preview_path):
-                    os.remove(self.camera_sta_exp_rear_preview_path)
-            else:
-                if os.path.exists(self.camera_sta_exp_default_preview_path):
-                    os.remove(self.camera_sta_exp_default_preview_path)
-                if os.path.exists(self.camera_sta_exp_default_photograph_path):
-                    os.remove(self.camera_sta_exp_default_photograph_path)
-        except Exception as e:
-            print(e)
+        if self.is_front_and_rear_camera.isChecked():
+            if os.path.exists(self.camera_sta_exp_front_preview_path):
+                os.remove(self.camera_sta_exp_front_preview_path)
+            if os.path.exists(self.camera_sta_exp_front_photograph_path):
+                os.remove(self.camera_sta_exp_front_photograph_path)
+            if os.path.exists(self.camera_sta_exp_rear_photograph_path):
+                os.remove(self.camera_sta_exp_rear_photograph_path)
+            if os.path.exists(self.camera_sta_exp_rear_preview_path):
+                os.remove(self.camera_sta_exp_rear_preview_path)
+        else:
+            if os.path.exists(self.camera_sta_exp_default_preview_path):
+                os.remove(self.camera_sta_exp_default_preview_path)
+            if os.path.exists(self.camera_sta_exp_default_photograph_path):
+                os.remove(self.camera_sta_exp_default_photograph_path)
 
         # 调起来进程， 获取预期照片
-        try:
-            print(self.bat_camera_stability_path)
-            self.get_exp_imag_process.start(self.bat_camera_stability_path)
-            self.photograph_tips.setText("正在拍照保存，请等待...")
-            self.photograph_tips.setStyleSheet("color: green;")
-            self.document.clear()
-            self.file_timer = QTimer(self)
-            self.file_timer.timeout.connect(self.check_image_modification)
-            # self.file_timer.setInterval(2000)
-            self.check_interval = 2000  # 定时器间隔，单位毫秒
-        except Exception as e:
-            print(e)
+        self.get_exp_imag_process.start(self.bat_camera_stability_path)
+        self.photograph_tips.setText("正在拍照保存，请等待...")
+        self.photograph_tips.setStyleSheet("color: green;")
+        self.document.clear()
+        self.file_timer = QTimer(self)
+        self.file_timer.timeout.connect(self.check_image_modification)
+        self.check_interval = 2000  # 定时器间隔，单位毫秒
 
         self.file_timer.start(self.check_interval)
 
     def check_image_modification(self):
         """检查图片文件是否有修改"""
         # 检查双镜头
-        try:
-            if self.is_front_and_rear_camera.isChecked():
-                exp_front_preview = os.path.exists(self.camera_sta_exp_front_preview_path)
-                exp_front_photograph = os.path.exists(self.camera_sta_exp_front_photograph_path)
-                exp_rear_photograph = os.path.exists(self.camera_sta_exp_rear_photograph_path)
-                exp_rear_preview = os.path.exists(self.camera_sta_exp_rear_preview_path)
-                if exp_front_preview and exp_front_photograph and exp_rear_preview and exp_rear_photograph:
-                    # 前镜头
-                    exp_front_preview_current_mod_time = self.get_file_modification_time(
-                        self.camera_sta_exp_front_preview_path)
-                    if exp_front_preview_current_mod_time != self.exp_front_preview_last_modify_time:
-                        self.exp_front_preview_last_modify_time = exp_front_preview_current_mod_time  # 更新为新的修改时间
-                        self.add_logo_image(self.camera_sta_exp_front_preview_path)
 
-                    exp_front_photograph_mod_time = self.get_file_modification_time(
-                        self.camera_sta_exp_front_photograph_path)
-                    if exp_front_photograph_mod_time != self.exp_front_photograph_last_modify_time:
-                        self.exp_front_photograph_last_modify_time = exp_front_photograph_mod_time  # 更新为新的修改时间
-                        self.add_logo_image(self.camera_sta_exp_front_photograph_path)
+        if self.is_front_and_rear_camera.isChecked():
+            exp_front_preview = os.path.exists(self.camera_sta_exp_front_preview_path)
+            exp_front_photograph = os.path.exists(self.camera_sta_exp_front_photograph_path)
+            exp_rear_photograph = os.path.exists(self.camera_sta_exp_rear_photograph_path)
+            exp_rear_preview = os.path.exists(self.camera_sta_exp_rear_preview_path)
+            if exp_front_preview and exp_front_photograph and exp_rear_preview and exp_rear_photograph:
+                # 前镜头
+                exp_front_preview_current_mod_time = self.get_file_modification_time(
+                    self.camera_sta_exp_front_preview_path)
+                if exp_front_preview_current_mod_time != self.exp_front_preview_last_modify_time:
+                    self.exp_front_preview_last_modify_time = exp_front_preview_current_mod_time  # 更新为新的修改时间
+                    self.add_logo_image(self.camera_sta_exp_front_preview_path)
 
-                    # 后镜头
-                    exp_rear_preview_current_mod_time = self.get_file_modification_time(
-                        self.camera_sta_exp_rear_preview_path)
-                    if exp_rear_preview_current_mod_time != self.exp_rear_preview_last_modify_time:
-                        self.exp_rear_preview_last_modify_time = exp_rear_preview_current_mod_time  # 更新为新的修改时间
-                        self.add_logo_image(self.camera_sta_exp_rear_preview_path)
+                exp_front_photograph_mod_time = self.get_file_modification_time(
+                    self.camera_sta_exp_front_photograph_path)
+                if exp_front_photograph_mod_time != self.exp_front_photograph_last_modify_time:
+                    self.exp_front_photograph_last_modify_time = exp_front_photograph_mod_time  # 更新为新的修改时间
+                    self.add_logo_image(self.camera_sta_exp_front_photograph_path)
 
-                    exp_rear_photograph_current_mod_time = self.get_file_modification_time(
-                        self.camera_sta_exp_rear_photograph_path)
-                    if exp_rear_photograph_current_mod_time != self.exp_rear_photograph_last_modify_time:
-                        self.exp_rear_photograph_last_modify_time = exp_rear_photograph_current_mod_time  # 更新为新的修改时间
-                        self.add_logo_image(self.camera_sta_exp_rear_photograph_path)
-            else:
-                # 预览截图
-                if os.path.exists(self.camera_sta_exp_default_preview_path):
-                    if os.path.exists(self.camera_sta_exp_default_photograph_path):
-                        preview_current_mod_time = self.get_file_modification_time(
-                            self.camera_sta_exp_default_preview_path)
-                        if preview_current_mod_time != self.exp_default_preview_last_modify_time:
-                            self.exp_default_preview_last_modify_time = preview_current_mod_time  # 更新为新的修改时间
-                            self.add_logo_image(self.camera_sta_exp_default_preview_path)
+                # 后镜头
+                exp_rear_preview_current_mod_time = self.get_file_modification_time(self.camera_sta_exp_rear_preview_path)
+                if exp_rear_preview_current_mod_time != self.exp_rear_preview_last_modify_time:
+                    self.exp_rear_preview_last_modify_time = exp_rear_preview_current_mod_time  # 更新为新的修改时间
+                    self.add_logo_image(self.camera_sta_exp_rear_preview_path)
 
-                        photograph_current_mod_time = self.get_file_modification_time(
-                            self.camera_sta_exp_default_photograph_path)
-                        if photograph_current_mod_time != self.exp_default_photograph_last_modify_time:
-                            self.exp_default_photograph_last_modify_time = photograph_current_mod_time  # 更新为新的修改时间
-                            self.add_logo_image(self.camera_sta_exp_default_photograph_path)
-            # 拍照
-            # if os.path.exists(self.camera_sta_exp_default_photograph_path):
-            #     photograph_current_mod_time = self.get_file_modification_time(self.camera_sta_exp_default_photograph_path)
-            #     if photograph_current_mod_time != self.exp_default_photograph_last_modify_time:
-            #         self.exp_default_photograph_last_modify_time = photograph_current_mod_time  # 更新为新的修改时间
-            #         self.add_logo_image(self.camera_sta_exp_default_photograph_path)
-        except Exception as e:
-            print(e)
+                exp_rear_photograph_current_mod_time = self.get_file_modification_time(
+                    self.camera_sta_exp_rear_photograph_path)
+                if exp_rear_photograph_current_mod_time != self.exp_rear_photograph_last_modify_time:
+                    self.exp_rear_photograph_last_modify_time = exp_rear_photograph_current_mod_time  # 更新为新的修改时间
+                    self.add_logo_image(self.camera_sta_exp_rear_photograph_path)
+        else:
+            # 预览截图
+            if os.path.exists(self.camera_sta_exp_default_preview_path):
+                if os.path.exists(self.camera_sta_exp_default_photograph_path):
+                    preview_current_mod_time = self.get_file_modification_time(
+                        self.camera_sta_exp_default_preview_path)
+                    if preview_current_mod_time != self.exp_default_preview_last_modify_time:
+                        self.exp_default_preview_last_modify_time = preview_current_mod_time  # 更新为新的修改时间
+                        self.add_logo_image(self.camera_sta_exp_default_preview_path)
+
+                    photograph_current_mod_time = self.get_file_modification_time(
+                        self.camera_sta_exp_default_photograph_path)
+                    if photograph_current_mod_time != self.exp_default_photograph_last_modify_time:
+                        self.exp_default_photograph_last_modify_time = photograph_current_mod_time  # 更新为新的修改时间
+                        self.add_logo_image(self.camera_sta_exp_default_photograph_path)
 
     def get_file_modification_time(self, file_path):
         """获取文件的最后修改时间"""

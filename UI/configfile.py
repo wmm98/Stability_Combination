@@ -64,6 +64,14 @@ class ConfigP(UIConfigPath):
     option_switch_y_value = "y_value"
     option_camera_test_times = "camera_test_times"
 
+    # wifi开关压测
+    section_wifi_check = "WIFI-Check"
+    option_wifi_btn_test_times = "wifi_btn_test_times"
+
+    # 4G开关压测
+    section_mobile_check = "Mobile-Check"
+    option_mobile_btn_test_times = "mobile_btn_test_times"
+
     def __init__(self, ini_path):
         self.ini_path = ini_path
         self.config = configparser.ConfigParser()

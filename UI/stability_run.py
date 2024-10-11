@@ -9,6 +9,8 @@ from reboot_logo_ui import LogoDisplay
 from ddr_emmc_ui import DDRDisplay
 from boot_check_ui import BootCheckDisplay
 from camera_preview_and_photograph import CameraStabilityDisplay
+from wifi_btn_stability_ui import WifiBtnCheckDisplay
+from mobile_btn_stability_ui import MobileBtnCheckDisplay
 import os
 import shutil
 from PyQt5.QtGui import QPixmap
@@ -117,6 +119,8 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
         self.DDR_EMMC_window = DDRDisplay()
         self.lx_boot_check_window = BootCheckDisplay()
         self.lx_preview_photograph_window = CameraStabilityDisplay()
+        self.mt_wifi_btn_check_window = WifiBtnCheckDisplay()
+        self.mt_mobile_btn_check_window = MobileBtnCheckDisplay()
         self.setupUi(self)
         self.AllTestCase = None
         self.intiui()
@@ -157,6 +161,8 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
         self.DDR_EMMC_window.submit_button.clicked.connect(self.display_ddr_emmc_cases_test_times)
         self.lx_boot_check_window.submit_button.clicked.connect(self.display_lx_boot_check_case_test_times)
         self.lx_preview_photograph_window.submit_button.clicked.connect(self.display_lx_camera_compare_test_times)
+        self.mt_wifi_btn_check_window.submit_button.clicked.connect(self.display_wifi_btn_check_test_times)
+        self.mt_mobile_btn_check_window.submit_button.clicked.connect(self.display_mobile_btn_check_test_times)
         # 初始化图片cursor
         # self.cursor = QTextCursor(self.document)
 
@@ -267,12 +273,49 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
         self.item_L_G_STA_adapter_battery_button_unormal.setFlags(
             self.item_L_G_STA_adapter_battery_button_unormal.flags() | Qt.ItemIsSelectable | Qt.ItemIsUserCheckable | Qt.ItemIsEditable)
 
+        # 其他维护压测
+        self.item_M_T_STA = QTreeWidgetItem(self.item_sta_root)
+        self.item_M_T_STA.setText(0, "其他维护压测")
+        self.item_M_T_STA.setCheckState(0, Qt.Unchecked)
+        self.item_M_T_STA.setFlags(self.item_M_T_STA.flags() | Qt.ItemIsSelectable)
+
+        self.item_M_T_STA_wifi_btn = QTreeWidgetItem(self.item_M_T_STA)
+        self.item_M_T_STA_wifi_btn.setText(0, "开关wifi检测网络压测")
+        self.item_M_T_STA_wifi_btn.setCheckState(0, Qt.Unchecked)
+        self.item_M_T_STA_wifi_btn.setText(1, "")
+        self.item_M_T_STA_wifi_btn.setText(2, "次")
+        self.item_M_T_STA_wifi_btn.setFlags(
+            self.item_M_T_STA_wifi_btn.flags() | Qt.ItemIsSelectable | Qt.ItemIsUserCheckable | Qt.ItemIsEditable)
+
+        self.item_M_T_STA_mobile_btn = QTreeWidgetItem(self.item_M_T_STA)
+        self.item_M_T_STA_mobile_btn.setText(0, "开关4G检测网络压测")
+        self.item_M_T_STA_mobile_btn.setCheckState(0, Qt.Unchecked)
+        self.item_M_T_STA_mobile_btn.setText(1, "")
+        self.item_M_T_STA_mobile_btn.setText(2, "次")
+        self.item_M_T_STA_mobile_btn.setFlags(
+            self.item_M_T_STA_mobile_btn.flags() | Qt.ItemIsSelectable | Qt.ItemIsUserCheckable | Qt.ItemIsEditable)
+
+    def display_mobile_btn_check_test_times(self):
+        time.sleep(1)
+        if self.mt_mobile_btn_check_window.submit_flag:
+            if self.item_M_T_STA_mobile_btn.checkState(0) == 2:
+                times = self.ui_config.get_option_value(self.ui_config.section_mobile_check, self.ui_config.option_mobile_btn_test_times)
+                self.item_M_T_STA_mobile_btn.setText(1, times)
+                self.item_M_T_STA_mobile_btn.setTextAlignment(1, Qt.AlignRight)  # 设置第二列文本右对齐
+
+    def display_wifi_btn_check_test_times(self):
+        time.sleep(1)
+        if self.mt_wifi_btn_check_window.submit_flag:
+            if self.item_M_T_STA_wifi_btn.checkState(0) == 2:
+                times = self.ui_config.get_option_value(self.ui_config.section_wifi_check, self.ui_config.option_wifi_btn_test_times)
+                self.item_M_T_STA_wifi_btn.setText(1, times)
+                self.item_M_T_STA_wifi_btn.setTextAlignment(1, Qt.AlignRight)  # 设置第二列文本右对齐
+
     def display_lx_camera_compare_test_times(self):
         time.sleep(1)
         if self.lx_preview_photograph_window.submit_flag:
             if self.item_L_X_STA_child_camera_compare.checkState(0) == 2:
-                times = self.ui_config.get_option_value(self.ui_config.section_ui_camera_check,
-                                                                   self.ui_config.option_camera_test_times)
+                times = self.ui_config.get_option_value(self.ui_config.section_ui_camera_check, self.ui_config.option_camera_test_times)
                 self.item_L_X_STA_child_camera_compare.setText(1, times)
                 self.item_L_X_STA_child_camera_compare.setTextAlignment(1, Qt.AlignRight)  # 设置第二列文本右对齐
 
@@ -373,6 +416,16 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
             if item.checkState(0) == 2:
                 if not self.lx_preview_photograph_window.isVisible():
                     self.lx_preview_photograph_window.show()
+
+        if item == self.item_M_T_STA_wifi_btn:
+            if item.checkState(0) == 2:
+                if not self.mt_wifi_btn_check_window.isVisible():
+                    self.mt_wifi_btn_check_window.show()
+
+        if item == self.item_M_T_STA_mobile_btn:
+            if item.checkState(0) == 2:
+                if not self.mt_mobile_btn_check_window.isVisible():
+                    self.mt_mobile_btn_check_window.show()
 
     def handlechanged(self, item, column):
         # 获取选中节点的子节点个数

@@ -6,7 +6,7 @@ from configfile import ConfigP
 import config_path
 
 
-class Wifi_Btn_Check_MainWindow(config_path.UIConfigPath):
+class Mobile_Btn_Check_MainWindow(config_path.UIConfigPath):
 
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
@@ -57,12 +57,12 @@ class Wifi_Btn_Check_MainWindow(config_path.UIConfigPath):
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "WIFI开关压测配置界面"))
+        MainWindow.setWindowTitle(_translate("MainWindow", "4G开关压测配置界面"))
 
 
-class WifiBtnCheckDisplay(QtWidgets.QMainWindow, Wifi_Btn_Check_MainWindow):
+class MobileBtnCheckDisplay(QtWidgets.QMainWindow, Mobile_Btn_Check_MainWindow):
     def __init__(self):
-        super(WifiBtnCheckDisplay, self).__init__()
+        super(MobileBtnCheckDisplay, self).__init__()
         self.setupUi(self)
         self.intiui()
         self.submit_flag = False
@@ -82,15 +82,15 @@ class WifiBtnCheckDisplay(QtWidgets.QMainWindow, Wifi_Btn_Check_MainWindow):
         # 检查完保存配置
         self.save_config()
         self.submit_flag = True
-        self.get_message_box("wifi开关压测用例配置保存成功")
+        self.get_message_box("4G开关压测用例配置保存成功")
 
     def save_config(self):
         config = ConfigP(self.ui_config_file_path)
-        section = config.section_wifi_check
+        section = config.section_mobile_check
         config.add_config_section(section)
 
         # 保存用例压测次数设置
-        config.add_config_option(section, config.option_wifi_btn_test_times, self.test_times.currentText())
+        config.add_config_option(section, config.option_mobile_btn_test_times, self.test_times.currentText())
 
     def list_case_test_cases(self):
         self.test_times.addItems([str(i * 50) for i in range(1, 101)])
@@ -98,6 +98,6 @@ class WifiBtnCheckDisplay(QtWidgets.QMainWindow, Wifi_Btn_Check_MainWindow):
 
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
-    logo_show = WifiBtnCheckDisplay()
+    logo_show = MobileBtnCheckDisplay()
     logo_show.show()
     app.exec_()
