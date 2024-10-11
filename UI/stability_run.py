@@ -587,6 +587,12 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
                     self.transfer_cases.append("boot_check_stability")
                 if "前后摄像头拍照问题对比" in case:
                     self.transfer_cases.append("front_rear_camera_stability")
+                if "开关wifi检测网络压测" in case:
+                    self.transfer_cases.append("mt-wifi_btn_stability")
+                if "开关4G检测网络压测" in case:
+                    self.transfer_cases.append("mt-mobile_btn_stability")
+                if "开关以太网ping包压测" in case:
+                    self.transfer_cases.append("mt-eth_btn_stability")
 
             self.ui_config.add_config_option(self.ui_config.section_ui_to_background,
                                              self.ui_config.ui_option_device_name,

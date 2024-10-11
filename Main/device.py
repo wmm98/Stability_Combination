@@ -37,7 +37,8 @@ class Device(publicInterface):
 
     # Send adb standalone command Send adb shell command
     def send_adb_shell_command(self, cmd):
-        return shell.invoke("adb -s %s shell %s" % (self.device_name, cmd))
+        cmd = "adb -s %s shell %s" % (self.device_name, cmd)
+        return shell.invoke(cmd)
 
     def send_adb_standalone_command(self, cmd):
         return shell.invoke("adb -s %s %s" % (self.device_name, cmd))
@@ -50,6 +51,9 @@ class Device(publicInterface):
 
     def rm_file(self, file_path):
         self.send_adb_shell_command("rm %s" % file_path)
+
+    def touch_file(self, file_path):
+        self.send_adb_shell_command("touch %s" % file_path)
 
     def mkdir_directory(self, directory_path):
         self.send_adb_standalone_command("mkdir %s" % directory_path)
@@ -156,6 +160,18 @@ class Device(publicInterface):
                 return False
             time.sleep(3)
 
+    def is_no_network(self, times=5, timeout=60):
+        cmd = " ping -c %s %s" % (times, "www.baidu.com")
+        exp = self.remove_info_space("ping: unknown host %s" % "www.baidu.com")
+        now_time = self.get_current_time()
+        while True:
+            res = self.remove_info_space(self.send_adb_shell_command(cmd))
+            if exp in res or len(res) == 0:
+                return True
+            if self.get_current_time() > self.return_end_time(now_time, timeout):
+                return False
+            time.sleep(3)
+
     def open_camera(self):
         shell.invoke("adb -s %s shell \"am start -a android.media.action.STILL_IMAGE_CAMERA\"" % self.device_name)
 
@@ -235,7 +251,7 @@ class Device(publicInterface):
 
     def logcat_thread(self, log_path):
         # sdcard/camera.txt
-        self.send_adb_shell_command(" \"setsid logcat > %s &\"" % log_path)
+        self.send_adb_shell_command("\"setsid logcat > %s &\"" % log_path)
 
     def get_current_logcat_process_id(self):
         process_id = self.send_adb_shell_command("\"ps -A | grep logcat | awk '{print $2}'\"")

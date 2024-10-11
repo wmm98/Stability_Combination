@@ -85,6 +85,7 @@ class TestLXStability:
         is_mobile = self.ui_conf_file.get(Config.section_ui_boot_check, Config.option_mobile_test)
         is_bt = self.ui_conf_file.get(Config.section_ui_boot_check, Config.option_bt_test)
         is_nfc = self.ui_conf_file.get(Config.section_ui_boot_check, Config.option_nfc_test)
+        # usb后续完善
         is_usb = self.ui_conf_file.get(Config.section_ui_boot_check, Config.option_usb_test)
 
         # 测试前先检查所有的按钮开关
@@ -1028,5 +1029,6 @@ class TestLXStability:
                 self.device.remove_img()
             log.info("******相机压测完成%d次*****" % (times - 1))
 
-        # self.device.adb_pull_file(log_path, os.path.dirname(Config.camera_sta_test_log_path))
+        self.device.kill_process(logcat_process_id)
+        self.device.adb_pull_file(log_path, os.path.dirname(Config.camera_sta_test_log_path))
         log.info("************前后摄像头拍照问题对比用例结束*******")

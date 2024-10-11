@@ -57,6 +57,11 @@ class Config:
     # camera_preview_photograph.txt
     camera_sta_test_log_path = os.path.join(logcat_path, "camera_preview_photograph.txt")
 
+    # wifi,mobile, eth0  btn failed log path
+    wifi_btn_sta_test_log_path = os.path.join(logcat_path, "wifi_btn_stability_test.txt")
+    mobile_btn_sta_test_log_path = os.path.join(logcat_path, "mobile_btn_stability_test.txt")
+    eth_btn_sta_test_log_path = os.path.join(logcat_path, "eth_btn_stability_test.txt")
+
     section_ui_to_background = "UI-Background"
     section_background_to_ui = "Background-UI"
     # EMMC, DDR
@@ -114,6 +119,18 @@ class Config:
     option_switch_x_value = "x_value"
     option_switch_y_value = "y_value"
     option_camera_test_times = "camera_test_times"
+
+    # wifi开关压测
+    section_wifi_check = "WIFI-Check"
+    option_wifi_btn_test_times = "wifi_btn_test_times"
+
+    # 4G开关压测
+    section_mobile_check = "Mobile-Check"
+    option_mobile_btn_test_times = "mobile_btn_test_times"
+
+    # 以太网
+    section_eth_check = "Eth-check"
+    option_eth_btn_test_times = "wth_btn_test_times"
 
 
 
