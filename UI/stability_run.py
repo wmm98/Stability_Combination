@@ -11,6 +11,7 @@ from boot_check_ui import BootCheckDisplay
 from camera_preview_and_photograph import CameraStabilityDisplay
 from wifi_btn_stability_ui import WifiBtnCheckDisplay
 from mobile_btn_stability_ui import MobileBtnCheckDisplay
+from eth_btn_stability_ui import EthBtnCheckDisplay
 import os
 import shutil
 from PyQt5.QtGui import QPixmap
@@ -121,6 +122,7 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
         self.lx_preview_photograph_window = CameraStabilityDisplay()
         self.mt_wifi_btn_check_window = WifiBtnCheckDisplay()
         self.mt_mobile_btn_check_window = MobileBtnCheckDisplay()
+        self.mt_eth_btn_check_window = EthBtnCheckDisplay()
         self.setupUi(self)
         self.AllTestCase = None
         self.intiui()
@@ -163,6 +165,7 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
         self.lx_preview_photograph_window.submit_button.clicked.connect(self.display_lx_camera_compare_test_times)
         self.mt_wifi_btn_check_window.submit_button.clicked.connect(self.display_wifi_btn_check_test_times)
         self.mt_mobile_btn_check_window.submit_button.clicked.connect(self.display_mobile_btn_check_test_times)
+        self.mt_eth_btn_check_window.submit_button.clicked.connect(self.display_eth_btn_check_test_times)
         # 初始化图片cursor
         # self.cursor = QTextCursor(self.document)
 
@@ -295,6 +298,22 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
         self.item_M_T_STA_mobile_btn.setFlags(
             self.item_M_T_STA_mobile_btn.flags() | Qt.ItemIsSelectable | Qt.ItemIsUserCheckable | Qt.ItemIsEditable)
 
+        self.item_M_T_STA_eth_btn = QTreeWidgetItem(self.item_M_T_STA)
+        self.item_M_T_STA_eth_btn.setText(0, "开关以太网ping包压测")
+        self.item_M_T_STA_eth_btn.setCheckState(0, Qt.Unchecked)
+        self.item_M_T_STA_eth_btn.setText(1, "")
+        self.item_M_T_STA_eth_btn.setText(2, "次")
+        self.item_M_T_STA_eth_btn.setFlags(
+            self.item_M_T_STA_eth_btn.flags() | Qt.ItemIsSelectable | Qt.ItemIsUserCheckable | Qt.ItemIsEditable)
+
+    def display_eth_btn_check_test_times(self):
+        time.sleep(1)
+        if self.mt_eth_btn_check_window.submit_flag:
+            if self.item_M_T_STA_eth_btn.checkState(0) == 2:
+                times = self.ui_config.get_option_value(self.ui_config.section_eth_check, self.ui_config.option_eth_btn_test_times)
+                self.item_M_T_STA_eth_btn.setText(1, times)
+                self.item_M_T_STA_eth_btn.setTextAlignment(1, Qt.AlignRight)  # 设置第二列文本右对齐
+
     def display_mobile_btn_check_test_times(self):
         time.sleep(1)
         if self.mt_mobile_btn_check_window.submit_flag:
@@ -426,6 +445,11 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
             if item.checkState(0) == 2:
                 if not self.mt_mobile_btn_check_window.isVisible():
                     self.mt_mobile_btn_check_window.show()
+
+        if item == self.item_M_T_STA_eth_btn:
+            if item.checkState(0) == 2:
+                if not self.mt_eth_btn_check_window.isVisible():
+                    self.mt_eth_btn_check_window.show()
 
     def handlechanged(self, item, column):
         # 获取选中节点的子节点个数

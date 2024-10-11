@@ -72,6 +72,10 @@ class ConfigP(UIConfigPath):
     section_mobile_check = "Mobile-Check"
     option_mobile_btn_test_times = "mobile_btn_test_times"
 
+    # 以太网
+    section_eth_check = "Eth-check"
+    option_eth_btn_test_times = "wth_btn_test_times"
+
     def __init__(self, ini_path):
         self.ini_path = ini_path
         self.config = configparser.ConfigParser()
