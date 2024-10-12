@@ -29,6 +29,8 @@ class TestStabilityCombination:
     @allure.title("DDR-EMMC压力测试")
     def test_stability_combination_all(self):
         log.info("********测试开始*********")
+        # 删除相关log文件夹
+        self.device.send_adb_shell_command(" rm -rf /data/stress_test_log")
         # try:
         # 1.推送memtester的相关
         # root设备

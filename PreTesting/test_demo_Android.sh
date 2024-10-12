@@ -84,8 +84,8 @@ stressapptest_duration_sec=$stressapptest_duration
 if [ "$is_stress_app_test" = "yes" ]; then
 	echo "stressapptest测试开始"
 	if [ "$new_free_value" -le 1750 ]; then
-		echo $(date +"%Y-%m-%d %H:%M:%S") >> /data/stress_test_log/stresstestlog/strssapptest.log &
-		/data/stressapptest -s "$stressapptest_duration_sec" -M "$new_free_value" >> /data/stress_test_log/stresstestlog/strssapptest.log &
+		echo $(date +"%Y-%m-%d %H:%M:%S") >> /data/stress_test_log/stresstestlog/strssapptest.log 
+		/data/stressapptest -s "$stressapptest_duration_sec" -M "$new_free_value" >> /data/stress_test_log/stresstestlog/strssapptest.log 
 	else
 		remainder=`expr $mem_free_value % 1800`
 		quotient=`expr $mem_free_value / 1800`
@@ -98,8 +98,8 @@ if [ "$is_stress_app_test" = "yes" ]; then
 		  ((count++))
 		  sleep 0.1
 		done
-		echo $(date +"%Y-%m-%d %H:%M:%S") >> /data/stress_test_log/stresstestlog/strssapptest_$count.log &
-		/data/stressapptest -s "$stressapptest_duration_sec" -M $remainder >> /data/stress_test_log/stresstestlog/strssapptest_$count.log &
+		echo $(date +"%Y-%m-%d %H:%M:%S") >> /data/stress_test_log/stresstestlog/strssapptest_$count.log 
+		/data/stressapptest -s "$stressapptest_duration_sec" -M $remainder >> /data/stress_test_log/stresstestlog/strssapptest_$count.log 
     fi
 	echo "stressapptest测试结束"
 fi
@@ -140,9 +140,9 @@ if [ "$is_stress_app_switch" = "yes" ]; then
 			  sleep 0.1
 			done
 			
-			echo "*****************$t_times*************************" >> /data/stress_test_log/stresstestlog/strssapptest_cut_1.log &
-			echo $(date +"%Y-%m-%d %H:%M:%S") >> /data/stress_test_log/stresstestlog/strssapptest_cut_1.log &
-			/data/stressapptest -s 10 -M $remainder >> /data/stress_test_log/stresstestlog/strssapptest_cut_1.log &
+			echo "*****************$t_times*************************" >> /data/stress_test_log/stresstestlog/strssapptest_cut_1.log 
+			echo $(date +"%Y-%m-%d %H:%M:%S") >> /data/stress_test_log/stresstestlog/strssapptest_cut_1.log 
+			/data/stressapptest -s 10 -M $remainder >> /data/stress_test_log/stresstestlog/strssapptest_cut_1.log 
 			# 等待所有后台任务完成
 			wait
 			((t_times++))

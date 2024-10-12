@@ -38,6 +38,7 @@ class Device(publicInterface):
     # Send adb standalone command Send adb shell command
     def send_adb_shell_command(self, cmd):
         cmd = "adb -s %s shell %s" % (self.device_name, cmd)
+        log.info(cmd)
         return shell.invoke(cmd)
 
     def send_adb_standalone_command(self, cmd):
