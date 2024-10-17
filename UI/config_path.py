@@ -52,5 +52,8 @@ class UIConfigPath:
     camera_sta_test_rear_preview_path = os.path.join(camera_sta_test_rear_path, "PreView", "test_rear_preview.png")
     camera_sta_test_default_photograph_path = os.path.join(camera_sta_test_default_path, "Photograph", "test_default_photograph.jpg")
     camera_sta_test_default_preview_path = os.path.join(camera_sta_test_default_path, "PreView", "test_default_preview.png")
-
+    # U盘拔插压测
+    bat_query_flash_path = os.path.join(project_path, "UI", "bat_query_flash.bat")
+    process_usb_flash_path = os.path.join(project_path, "UI", "process_usb_flash_path.py")
+    usb_recognize_log_path = os.path.join(project_path, "UI", "usb_recognize_log.txt")
 

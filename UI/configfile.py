@@ -76,6 +76,14 @@ class ConfigP(UIConfigPath):
     section_eth_check = "Eth-check"
     option_eth_btn_test_times = "wth_btn_test_times"
 
+    # U盘识别压测
+    section_usb_recognize = "USB-recognition"
+    # ui_option_root_steps 同EMMC, DDR
+    ui_option_usb_path = "usb_flash_path"
+    ui_option_usb_config_line = "com_line"
+    ui_option_usb_com = "com"
+    option_usb_recognition_test_times = "usb_recognition_test_duration"
+
     def __init__(self, ini_path):
         self.ini_path = ini_path
         self.config = configparser.ConfigParser()

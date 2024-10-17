@@ -68,6 +68,19 @@ class Ui_MainWindow(config_path.UIConfigPath):
         self.stop_process_button.setDisabled(True)
         self.verticalLayout_left.addWidget(self.stop_process_button)
 
+        self.verticalLayout_left.addWidget(QtWidgets.QLabel())
+
+        # 提示
+        self.tips_title = QtWidgets.QLabel("温馨提示：")
+        self.tips_label1 = QtWidgets.QLabel("1、USB拔插识别 手持设备压测脱机前需要需要用wifi adb进行配置查询操作.")
+        self.tips_label2 = QtWidgets.QLabel("2、不涉及硬开关机、网络操作的用例可选择wifi adb进行测试.")
+        self.tips_title.setStyleSheet("color: blue;")
+        self.tips_label1.setStyleSheet("color: blue;")
+        self.tips_label2.setStyleSheet("color: blue;")
+        self.verticalLayout_left.addWidget(self.tips_title)
+        self.verticalLayout_left.addWidget(self.tips_label1)
+        self.verticalLayout_left.addWidget(self.tips_label2)
+
         # 添加左边部分
         # 右侧部件
         right_widget = QWidget()

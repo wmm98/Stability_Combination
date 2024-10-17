@@ -263,3 +263,7 @@ class TestStabilityCombination:
         self.device.adb_pull_file(log_path, os.path.dirname(Config.mobile_btn_sta_test_log_path))
         log.info("****************开关4G压测结束******************")
 
+    @allure.feature("USB-recognition-stability")
+    @allure.title("U盘拔插识别")
+    def test_usb_recognition_stability_test(self):
+        pass
