@@ -86,6 +86,11 @@ class ConfigP(UIConfigPath):
     option_usb_flash_name = "usb_flash_name"
     option_usb_flash_base_name = "usb_flash_base_name"
 
+    # U盘/TF卡读取速率
+    section_storage_stability = "Storage_Stability"
+    ui_option_storage_path = "storage_flash_path"
+    option_storage_test_times = "storage_stability_test_times"
+
     def __init__(self, ini_path):
         self.ini_path = ini_path
         self.config = configparser.ConfigParser()
