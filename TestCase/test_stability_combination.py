@@ -6,8 +6,10 @@ import configparser
 from Common.log import MyLog
 from Main.device import Device
 from Common.config import Config
+from Common import m_serial
 
 log = MyLog()
+t_ser = m_serial.SerialD()
 
 
 class TestStabilityCombination:
@@ -266,4 +268,53 @@ class TestStabilityCombination:
     @allure.feature("USB-recognition-stability")
     @allure.title("U盘拔插识别")
     def test_usb_recognition_stability_test(self):
-        pass
+        log.info("****************U盘拔插识别用例开始***********************")
+
+        # 后台启动捕捉log
+        log_path = os.path.join("/sdcard/usb_flash_recognize_logcat.txt")  # log名称
+        self.device.rm_file(log_path)  # 清除已存在的
+        self.device.touch_file(log_path)
+        self.device.logcat_thread(log_path)
+
+        # 删除相关log文件夹
+        self.device.send_adb_shell_command("rm -rf /data/debug.txt")
+        # 推送shell脚本
+        if self.ui_conf_file.get(Config.section_usb_recognize, Config.ui_option_system_type) == "Android":
+            demo_name = os.path.basename(Config.USB_recognition_demo_path)
+            self.device.adb_push_file(Config.USB_recognition_demo_path, "/data")
+            self.device.send_adb_shell_command("chmod 777 /data/%s" % demo_name)
+            self.device.adb_push_file(Config.ui_config_ini_path, "/data")
+            self.device.send_adb_shell_command("\"setsid /data/%s > /data/test_demo.log 2>&1 &\"" % demo_name)
+
+        time.sleep(10)
+        if "debug.txt" in self.device.send_adb_shell_command("ls /data"):
+            log.info("可脱机测试....")
+            # 继电器
+            com_port = self.ui_conf_file.get(Config.section_usb_recognize, Config.ui_option_usb_com)
+            com_line = int(
+                self.ui_conf_file.get(Config.section_usb_recognize, Config.ui_option_usb_config_line).split("_")[1])
+            test_times = int(
+                self.ui_conf_file.get(Config.section_usb_recognize, Config.option_usb_recognition_test_times))
+            flag = 0
+
+            try:
+                t_ser.loginSer(com_port)
+            except Exception as e:
+                log.error("串口已经被占用， 请检查！！！")
+                log.error(str(e))
+                raise
+
+            while flag < test_times:
+                flag += 1
+                # 上下电
+                t_ser.open_relay(com_line)
+                log.info("模拟U盘断开")
+                time.sleep(3)
+                t_ser.close_relay(com_line)
+                log.info("模拟U盘插入")
+                log.info("********U盘拔插%d次******" % flag)
+                time.sleep(10)
+        else:
+            log.info(".sh脚本没跑起来，请检查！！！")
+
+        log.info("****************U盘拔插识别用例结束***********************")

@@ -83,6 +83,8 @@ class ConfigP(UIConfigPath):
     ui_option_usb_config_line = "com_line"
     ui_option_usb_com = "com"
     option_usb_recognition_test_times = "usb_recognition_test_duration"
+    option_usb_flash_name = "usb_flash_name"
+    option_usb_flash_base_name = "usb_flash_base_name"
 
     def __init__(self, ini_path):
         self.ini_path = ini_path

@@ -16,6 +16,10 @@ class Config:
     DDR_stressapptest_switch_path = os.path.join(pretesting_path, "DDR", "stressapptest_switch")
     EMMC_path = os.path.join(pretesting_path, "EMMC")
 
+    # U盘压测
+    USB_flash_path = os.path.join(pretesting_path, "USBFlash")
+    USB_recognition_demo_path = os.path.join(USB_flash_path, "test_demo_usb_recognition.sh")
+
     # 开机卡logo
     camera_key_img_path = os.path.join(project_path, "Photo", "BootLogo", "CameraPhoto", "Key")
     camera_origin_img_path = os.path.join(project_path, "Photo", "BootLogo", "CameraPhoto", "Take")
@@ -144,7 +148,8 @@ class Config:
     ui_option_usb_config_line = "com_line"
     ui_option_usb_com = "com"
     option_usb_recognition_test_times = "usb_recognition_test_duration"
-
+    option_usb_flash_name = "usb_flash_name"
+    option_usb_flash_base_name = "usb_flash_base_name"
 
 
 

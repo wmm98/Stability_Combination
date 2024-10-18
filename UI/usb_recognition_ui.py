@@ -245,13 +245,17 @@ class USBFlashTestDisplay(QtWidgets.QMainWindow, USB_Flash_MainWindow):
         config.add_config_section(section)
 
         config.add_config_option(section, config.ui_option_usb_path, self.usb_flash_path.text().strip())
+        flash_name = os.path.dirname(self.usb_flash_path.text().strip())
+        base_dir = os.path.basename(self.usb_flash_path.text().strip())
+        config.add_config_option(section, config.option_usb_flash_name, flash_name)
+        config.add_config_option(section, config.option_usb_flash_base_name, base_dir)
         config.add_config_option(section, config.ui_option_usb_com, self.test_COM.currentText())
 
-        if self.test_COM.currentText() == "1路":
+        if self.COM_config.currentText() == "1路":
             config.add_config_option(section, config.ui_option_usb_config_line, "relay_1")
-        elif self.test_COM.currentText() == "2路":
+        elif self.COM_config.currentText() == "2路":
             config.add_config_option(section, config.ui_option_usb_config_line, "relay_2")
-        elif self.test_COM.currentText() == "3路":
+        elif self.COM_config.currentText() == "3路":
             config.add_config_option(section, config.ui_option_usb_config_line, "relay_3")
         else:
             config.add_config_option(section, config.ui_option_usb_config_line, "relay_4")
