@@ -260,8 +260,6 @@ class USBFlashTestDisplay(QtWidgets.QMainWindow, USB_Flash_MainWindow):
         else:
             config.add_config_option(section, config.ui_option_usb_config_line, "relay_4")
 
-        # self.double_check_root()
-
         # 保存用例压测次数设置
         config.add_config_option(section, config.option_usb_recognition_test_times, self.test_times.currentText())
         # 保存测试点配置信息

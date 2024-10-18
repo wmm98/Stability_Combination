@@ -318,3 +318,10 @@ class TestStabilityCombination:
             log.info(".sh脚本没跑起来，请检查！！！")
 
         log.info("****************U盘拔插识别用例结束***********************")
+
+    @allure.feature("USB-Read-Write-stability")
+    @allure.title("U盘读取大数据压测")
+    def test_usb_read_and_write_big_data_test(self):
+       pass
+
+
