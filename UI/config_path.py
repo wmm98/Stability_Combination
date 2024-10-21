@@ -56,4 +56,7 @@ class UIConfigPath:
     bat_query_flash_path = os.path.join(project_path, "UI", "bat_query_flash.bat")
     process_usb_flash_path = os.path.join(project_path, "UI", "process_usb_flash_path.py")
     usb_recognize_log_path = os.path.join(project_path, "UI", "usb_recognize_log.txt")
-
+    # U盘TF卡速率
+    bat_query_storage_path = os.path.join(project_path, "UI", "bat_query_storage.bat")
+    process_storage_flash_path = os.path.join(project_path, "UI", "process_storage_path.py")
+    storage_query_log_path = os.path.join(project_path, "UI", "storage_query_log.txt")

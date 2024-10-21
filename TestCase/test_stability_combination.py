@@ -266,12 +266,12 @@ class TestStabilityCombination:
         log.info("****************开关4G压测结束******************")
 
     @allure.feature("USB-recognition-stability")
-    @allure.title("U盘拔插识别")
+    @allure.title("U盘拔插识别压测")
     def test_usb_recognition_stability_test(self):
         log.info("****************U盘拔插识别用例开始***********************")
 
         # 后台启动捕捉log
-        log_path = os.path.join("/sdcard/usb_flash_recognize_logcat.txt")  # log名称
+        log_path = os.path.join("/sdcard/usb_flash_recognize_logcat.log")  # log名称
         self.device.rm_file(log_path)  # 清除已存在的
         self.device.touch_file(log_path)
         self.device.logcat_thread(log_path)
@@ -320,8 +320,32 @@ class TestStabilityCombination:
         log.info("****************U盘拔插识别用例结束***********************")
 
     @allure.feature("USB-Read-Write-stability")
-    @allure.title("U盘读取大数据压测")
+    @allure.title("U盘/TF卡读取大数据压测")
     def test_usb_read_and_write_big_data_test(self):
-       pass
+        log.info("****************U盘/TF卡读取大数据压测用例开始***********************")
+
+        # 后台启动捕捉log
+        log_path = os.path.join("/sdcard/storage_read_write_speech_logcat.log")  # log名称
+        self.device.rm_file(log_path)  # 清除已存在的
+        self.device.touch_file(log_path)
+        self.device.logcat_thread(log_path)
+
+        # 删除相关log文件夹
+        self.device.send_adb_shell_command("rm -rf /data/debug.txt")
+        # 推送shell脚本
+        if self.ui_conf_file.get(Config.section_storage_stability, Config.ui_option_system_type) == "Android":
+            demo_name = os.path.basename(Config.storage_speed_path)
+            self.device.adb_push_file(Config.storage_speed_path, "/data")
+            self.device.send_adb_shell_command("chmod 777 /data/%s" % demo_name)
+            self.device.adb_push_file(Config.ui_config_ini_path, "/data")
+            self.device.send_adb_shell_command("\"setsid /data/%s > /data/test_demo.log 2>&1 &\"" % demo_name)
+
+        time.sleep(10)
+        if "debug.txt" in self.device.send_adb_shell_command("ls /data"):
+            log.info("可脱机测试....")
+        else:
+            log.info(".sh脚本没跑起来，请检查！！！")
+
+        log.info("****************U盘拔插识别用例结束***********************")
 
 

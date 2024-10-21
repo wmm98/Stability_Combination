@@ -15,27 +15,29 @@ get_cfg_value()
     fi
 }
 
-
 # 设置源文件和目标路径
-source_file="/sdcard/usb_read_logcat.txt"  # 替换为您的源文件路径
-log_file="/sdcard/usb_read_speed_log.txt"  # 设置日志文件路径
+#source_file="/sdcard/usb_read_logcat.txt"  # 替换为您的源文件路径
+log_file="/sdcard/storage_read_write_speed_result_log.txt"  # 设置日志文件路径
 
 #!/bin/bash
 
 # 挂载点路径，假设 U 盘挂载在 /mnt/usb_drive
-
+#usb_mount_point=/mnt/media_rw/39FA-17E8
 usb_mount_point=`get_cfg_value storage_flash_path`  # 替换为您的 U 盘挂载点
 times=`get_cfg_value storage_stability_test_times`
 
 # 日志文件路径
-LOG_FILE="/sdcard/usb_speed_test.log"
+LOG_FILE="/sdcard/storage_read_write_speed_result_log.txt"
 
 # 创建一个临时测试文件名
 TEST_FILE="$usb_mount_point/test_aaa"
 
+echo "debug" > "/data/debug.txt"
+
 # 清空日志文件
 > $LOG_FILE
 
+count=0
 while [ $count -le $times ]
 	do
 
@@ -54,3 +56,5 @@ while [ $count -le $times ]
 	    ((count++))
 	done
 		
+		
+

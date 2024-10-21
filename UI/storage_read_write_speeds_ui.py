@@ -149,7 +149,7 @@ class StorageTestDisplay(QtWidgets.QMainWindow, Storage_MainWindow):
         self.device_name.addItems(devices)
 
     def query_usb_flash_finished_handle(self):
-        with open(conf_path.usb_recognize_log_path, "r") as f:
+        with open(conf_path.storage_query_log_path, "r") as f:
             text = f.read()
         if len(text) != 0:
             self.text_edit.insertPlainText(text)
@@ -164,7 +164,7 @@ class StorageTestDisplay(QtWidgets.QMainWindow, Storage_MainWindow):
                                          self.system_type.currentText())
         self.ui_config.add_config_option(self.ui_config.section_ui_to_background, self.ui_config.ui_option_device_name,
                                          self.device_name.currentText())
-        self.usb_recognize_process.start(conf_path.bat_query_flash_path)
+        self.usb_recognize_process.start(conf_path.bat_query_storage_path)
 
     def double_check_root(self):
         # adb shell setprop persist.debuggable 1,adb reboot
@@ -201,7 +201,7 @@ class StorageTestDisplay(QtWidgets.QMainWindow, Storage_MainWindow):
             return
 
         if len(self.usb_flash_path.text()) == 0:
-            self.get_message_box("请填入U盘挂载的路径！！！")
+            self.get_message_box("请填入U盘/TF卡挂载的路径！！！")
             return
 
         if len(self.test_times.currentText()) == 0:

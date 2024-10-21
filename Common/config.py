@@ -19,6 +19,8 @@ class Config:
     # U盘压测
     USB_flash_path = os.path.join(pretesting_path, "USBFlash")
     USB_recognition_demo_path = os.path.join(USB_flash_path, "test_demo_usb_recognition.sh")
+    storage_speed_path = os.path.join(USB_flash_path, "test_demo_usb_read_write_speed.sh")
+
 
     # 开机卡logo
     camera_key_img_path = os.path.join(project_path, "Photo", "BootLogo", "CameraPhoto", "Key")
@@ -70,6 +72,10 @@ class Config:
     bat_query_flash_path = os.path.join(project_path, "UI", "bat_query_flash.bat")
     process_usb_flash_path = os.path.join(project_path, "UI", "process_usb_flash_path.py")
     usb_recognize_log_path = os.path.join(project_path, "UI", "usb_recognize_log.txt")
+
+    bat_query_storage_path = os.path.join(project_path, "UI", "bat_query_storage.bat")
+    process_storage_flash_path = os.path.join(project_path, "UI", "process_storage_path.py")
+    storage_query_log_path = os.path.join(project_path, "UI", "storage_query_log.txt")
 
     section_ui_to_background = "UI-Background"
     section_background_to_ui = "Background-UI"
@@ -150,6 +156,11 @@ class Config:
     option_usb_recognition_test_times = "usb_recognition_test_duration"
     option_usb_flash_name = "usb_flash_name"
     option_usb_flash_base_name = "usb_flash_base_name"
+
+    # U盘/TF卡读取速率
+    section_storage_stability = "Storage_Stability"
+    ui_option_storage_path = "storage_flash_path"
+    option_storage_test_times = "storage_stability_test_times"
 
 
 
