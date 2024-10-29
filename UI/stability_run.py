@@ -14,6 +14,7 @@ from mobile_btn_stability_ui import MobileBtnCheckDisplay
 from eth_btn_stability_ui import EthBtnCheckDisplay
 from usb_recognition_ui import USBFlashTestDisplay
 from storage_read_write_speeds_ui import StorageTestDisplay
+from factory_reset_ui import FactoryResetDisplay
 import os
 import shutil
 from PyQt5.QtGui import QPixmap
@@ -127,6 +128,7 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
         self.mt_eth_btn_check_window = EthBtnCheckDisplay()
         self.usb_recognition_window = USBFlashTestDisplay()
         self.storage_read_write_speed_window = StorageTestDisplay()
+        self.factory_reset_window = FactoryResetDisplay()
         self.setupUi(self)
         self.AllTestCase = None
         self.intiui()
@@ -172,6 +174,7 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
         self.mt_eth_btn_check_window.submit_button.clicked.connect(self.display_eth_btn_check_test_times)
         self.usb_recognition_window.submit_button.clicked.connect(self.display_usb_recognize_test_times)
         self.storage_read_write_speed_window.submit_button.clicked.connect(self.display_storage_write_read_speed_test_times)
+        self.factory_reset_window.submit_button.clicked.connect(self.display_factory_reset_test_times)
         # 初始化图片cursor
         # self.cursor = QTextCursor(self.document)
 
@@ -327,6 +330,22 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
         self.item_M_T_STA_storage_speed.setText(2, "次")
         self.item_M_T_STA_storage_speed.setFlags(
             self.item_M_T_STA_storage_speed.flags() | Qt.ItemIsSelectable | Qt.ItemIsUserCheckable | Qt.ItemIsEditable)
+
+        self.item_M_T_STA_factory_reset = QTreeWidgetItem(self.item_M_T_STA)
+        self.item_M_T_STA_factory_reset.setText(0, "恢复出厂设置检查压测")
+        self.item_M_T_STA_factory_reset.setCheckState(0, Qt.Unchecked)
+        self.item_M_T_STA_factory_reset.setText(1, "")
+        self.item_M_T_STA_factory_reset.setText(2, "次")
+        self.item_M_T_STA_factory_reset.setFlags(
+            self.item_M_T_STA_factory_reset.flags() | Qt.ItemIsSelectable | Qt.ItemIsUserCheckable | Qt.ItemIsEditable)
+
+    def display_factory_reset_test_times(self):
+        time.sleep(1)
+        if self.factory_reset_window.submit_flag:
+            if self.item_M_T_STA_factory_reset.checkState(0) == 2:
+                times = self.ui_config.get_option_value(self.ui_config.section_factory_reset_stability, self.ui_config.option_factory_reset_test_times)
+                self.item_M_T_STA_factory_reset.setText(1, times)
+                self.item_M_T_STA_factory_reset.setTextAlignment(1, Qt.AlignRight)  # 设置第二列文本右对齐
 
     def display_storage_write_read_speed_test_times(self):
         time.sleep(1)
@@ -498,6 +517,11 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
             if item.checkState(0) == 2:
                 if not self.storage_read_write_speed_window.isVisible():
                     self.storage_read_write_speed_window.show()
+
+        if item == self.item_M_T_STA_factory_reset:
+            if item.checkState(0) == 2:
+                if not self.factory_reset_window.isVisible():
+                    self.factory_reset_window.show()
 
     def handlechanged(self, item, column):
         # 获取选中节点的子节点个数

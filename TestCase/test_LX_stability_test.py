@@ -213,7 +213,7 @@ class TestLXStability:
 
             log.info("移动流量数据上电成功")
 
-        # U盘， 后续开发适配
+        # U盘， 后续开发适配, sdcard数据检查后续开发
 
         # 1、关机开机检测卡logo，是否进入recovery模式等部分处理
         device_check = DeviceCheck(

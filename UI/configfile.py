@@ -91,6 +91,10 @@ class ConfigP(UIConfigPath):
     ui_option_storage_path = "storage_flash_path"
     option_storage_test_times = "storage_stability_test_times"
 
+    # 恢复出厂设置压测用例配置
+    section_factory_reset_stability = "Factory_Reset"
+    option_factory_reset_test_times = "reset_test_times"
+
     def __init__(self, ini_path):
         self.ini_path = ini_path
         self.config = configparser.ConfigParser()
