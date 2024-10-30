@@ -2,6 +2,7 @@ from Common.config import Config
 from Common.log import MyLog
 from Common.process_shell import Shell
 from Main.public import publicInterface
+from androguard.core.bytecodes.apk import APK
 import time
 
 log = MyLog()
@@ -43,6 +44,15 @@ class Device(publicInterface):
 
     def send_adb_standalone_command(self, cmd):
         return shell.invoke("adb -s %s %s" % (self.device_name, cmd))
+
+    def install_app(self, apk_path):
+        self.send_adb_standalone_command("install -r %s" % apk_path)
+
+    def external_app_installed_list(self):
+        return self.send_adb_shell_command("pm list package -3")
+
+    def app_is_installed(self, package_name):
+        return True if package_name in self.external_app_installed_list() else False
 
     def adb_push_file(self, source, destination):
         self.send_adb_standalone_command("push %s %s" % (source, destination))
@@ -260,6 +270,17 @@ class Device(publicInterface):
 
     def kill_process(self, process_id):
         self.send_adb_shell_command("\"kill -9 %s\"" % process_id)
+
+    def load_apk_package(self, path):
+        apk = APK(path)
+        return apk
+
+    def get_apk_package_name(self, apk_file_path):
+        try:
+            return self.load_apk_package(apk_file_path).get_package()
+        except Exception as e:
+            log.error("获取apk包名出错")
+            log.error(str(e))
 
 
 if __name__ == '__main__':

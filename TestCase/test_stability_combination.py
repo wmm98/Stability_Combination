@@ -348,4 +348,111 @@ class TestStabilityCombination:
 
         log.info("****************U盘拔插识别用例结束***********************")
 
+    @allure.feature("Factory-Reset-stability")
+    @allure.title("恢复出厂设置检查压测")
+    def test_factory_reset_stability_test(self):
+        log.info("***************恢复出厂设置检查压测开始***************")
+        test_times = int(
+            self.ui_conf_file.get(Config.section_factory_reset_stability, Config.option_factory_reset_test_times))
+        # 获取所有需要测试模块
+        is_wifi_test = int(self.ui_conf_file.get(Config.section_factory_reset_stability, Config.option_wifi_test))
+        is_eth_test = int(self.ui_conf_file.get(Config.section_factory_reset_stability, Config.option_eth_test))
+        is_mobile_test = int(self.ui_conf_file.get(Config.section_factory_reset_stability, Config.option_mobile_test))
+        is_bt_test = int(self.ui_conf_file.get(Config.section_factory_reset_stability, Config.option_bt_test))
+        is_nfc_test = int(self.ui_conf_file.get(Config.section_factory_reset_stability, Config.option_nfc_test))
 
+        apk_path = os.path.join(Config.factory_reset_pak_path, "Bus_Recharge_System.apk")
+        app_package_name = self.device.get_apk_package_name(apk_path)
+        txt_file_path = "sdcard/factory_reset.txt"
+
+        if not os.path.exists(apk_path):
+            log.error("不存在apk：%s" % apk_path)
+            time.sleep(3)
+            raise
+
+        # 恢复出厂设置获取模块初始状态
+        self.device.send_adb_shell_command("am broadcast -a android.intent.action.MASTER_CLEAR")
+        time.sleep(10)
+        if self.device.device_is_online():
+            log.error("恢复出厂设置指令下达失败！！！")
+            time.sleep(3)
+            raise Exception
+
+        now_time = time.time()
+        while True:
+            if self.device.device_is_online():
+                break
+            if time.time() > now_time + 300:
+                log.info("超过5分钟ADB没起来，恢复出厂设置失败")
+                raise Exception
+        log.info("开机成功，ADB起来")
+
+        wifi_init_status = self.device.wifi_is_enable() if int(is_wifi_test) else None
+        bt_init_status = self.device.bt_is_enable() if int(is_bt_test) else None
+        mobile_init_status = self.device.mobile_is_enable() if int(is_mobile_test) else None
+        nfc_init_status = self.device.nfc_is_enable() if int(is_nfc_test) else None
+        eth_init_status = self.device.eth0_is_enable() if int(is_eth_test) else None
+
+        times = 0
+        while times < int(test_times):
+            # 安装app:
+            self.device.install_app(apk_path)
+            time.sleep(1)
+            if not self.device.app_is_installed(app_package_name):
+                self.device.install_app(apk_path)
+            time.sleep(1)
+            if not self.device.app_is_installed(app_package_name):
+                log.error("无法安装app:%s，请检查！！！" % apk_path)
+
+            # 文件
+            self.device.touch_file(txt_file_path)
+
+            if int(is_wifi_test):
+                if not self.device.wifi_is_enable():
+                    self.device.enable_wifi_btn()
+                time.sleep(1)
+                if not self.device.wifi_is_enable():
+                    self.device.enable_wifi_btn()
+
+            if int(is_mobile_test):
+                if not self.device.mobile_is_enable():
+                    self.device.enable_mobile_btn()
+                time.sleep(1)
+                if not self.device.mobile_is_enable():
+                    self.device.enable_mobile_btn()
+
+            if int(is_bt_test):
+                if not self.device.bt_is_enable():
+                    self.device.enable_bt_btn()
+                time.sleep(1)
+                if not self.device.bt_is_enable():
+                    self.device.enable_bt_btn()
+
+            if int(is_nfc_test):
+                if not self.device.nfc_is_enable():
+                    self.device.enable_nfc_btn()
+                time.sleep(1)
+                if not self.device.nfc_is_enable():
+                    self.device.enable_nfc_btn()
+
+            # 恢复出厂设置
+            self.device.send_adb_shell_command("am broadcast -a android.intent.action.MASTER_CLEAR")
+            time.sleep(10)
+            if self.device.device_is_online():
+                log.error("恢复出厂设置指令下达失败！！！")
+                time.sleep(3)
+                raise Exception
+
+            now_time = time.time()
+            while True:
+                if self.device.device_is_online():
+                    break
+                if time.time() > now_time + 300:
+                    log.info("超过5分钟ADB没起来，恢复出厂设置失败")
+                    raise Exception
+            log.info("开机成功，ADB起来")
+
+            # 安装app
+
+            time.sleep(1)
+        log.info("***************恢复出厂设置检查压测结束***************")

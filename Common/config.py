@@ -9,6 +9,9 @@ class Config:
     debug_log_path = os.path.join(project_path, "Log", "Debug", "log.log")
     logcat_path = os.path.join(project_path, "Log", "Logcat")
 
+    # 辅助测试apk路径
+    factory_reset_pak_path = os.path.join(project_path, "APK", "FactoryReset")
+
     # EMMC, DDR压测
     pretesting_path = os.path.join(project_path, "PreTesting")
     DDR_memtester_path = os.path.join(pretesting_path, "DDR", "memtester")

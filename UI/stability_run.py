@@ -671,6 +671,8 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
                     self.transfer_cases.append("USB-recognition-stability")
                 if "U盘/TF卡读写速率压测" in case:
                     self.transfer_cases.append("USB-Read-Write-stability")
+                if "恢复出厂设置检查压测" in case:
+                    self.transfer_cases.append("Factory-Reset-stability")
 
             self.ui_config.add_config_option(self.ui_config.section_ui_to_background,
                                              self.ui_config.ui_option_device_name,

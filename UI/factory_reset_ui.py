@@ -132,6 +132,15 @@ class FactoryResetDisplay(QtWidgets.QMainWindow, Factory_Reset_MainWindow):
         QMessageBox.warning(self, "错误提示", text)
 
     def handle_submit(self):
+
+        if not self.is_wifi_test.isChecked() and not self.is_bt_test.isChecked() and not self.is_eth_test.isChecked() and not self.is_mobile_test.isChecked() and not self.is_nfc_test.isChecked():
+            self.get_message_box("请勾选配置！！！")
+            return
+
+        if len(self.test_times.currentText()) == 0:
+            self.get_message_box("请填入用例次数配置！！！")
+            return
+
         # 检查完保存配置
         self.save_config()
         self.submit_flag = True
