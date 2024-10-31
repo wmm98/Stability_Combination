@@ -31,7 +31,7 @@ class Device(publicInterface):
 
     def device_boot(self):
         boot_res = shell.invoke("adb -s %s shell getprop sys.boot_completed" % self.device_name)
-        return boot_res
+        return True if "1" in boot_res else False
 
     def adb_btn_open(self):
         shell.invoke("adb -s %s shell setprop persist.telpo.debug.mode 1" % self.device_name)

@@ -371,7 +371,8 @@ class TestStabilityCombination:
             raise
 
         # 恢复出厂设置获取模块初始状态
-        self.device.send_adb_shell_command("am broadcast -a android.intent.action.MASTER_CLEAR")
+        log.info("压测前先恢复出厂设置，检查各模块的初始状态")
+        self.device.send_adb_shell_command("\"am broadcast -a android.intent.action.MASTER_CLEAR\"")
         time.sleep(10)
         if self.device.device_is_online():
             log.error("恢复出厂设置指令下达失败！！！")
@@ -383,15 +384,44 @@ class TestStabilityCombination:
             if self.device.device_is_online():
                 break
             if time.time() > now_time + 300:
-                log.info("超过5分钟ADB没起来，恢复出厂设置失败")
+                log.error("超过5分钟ADB没起来，恢复出厂设置失败")
                 raise Exception
-        log.info("开机成功，ADB起来")
+        log.info("恢复出厂完成")
 
-        wifi_init_status = self.device.wifi_is_enable() if int(is_wifi_test) else None
-        bt_init_status = self.device.bt_is_enable() if int(is_bt_test) else None
-        mobile_init_status = self.device.mobile_is_enable() if int(is_mobile_test) else None
-        nfc_init_status = self.device.nfc_is_enable() if int(is_nfc_test) else None
-        eth_init_status = self.device.eth0_is_enable() if int(is_eth_test) else None
+        if int(is_wifi_test):
+            wifi_init_status = self.device.wifi_is_enable()
+            if wifi_init_status:
+                log.info("WIFI的初始为上电状态")
+            else:
+                log.info("WIFI的初始为下电状态")
+
+        if int(is_bt_test):
+            bt_init_status = self.device.bt_is_enable()
+            if bt_init_status:
+                log.info("蓝牙的初始为上电状态")
+            else:
+                log.info("蓝牙的初始为下电状态")
+
+        if int(is_mobile_test):
+            mobile_init_status = self.device.mobile_is_enable()
+            if mobile_init_status:
+                log.info("移动数据的初始为上电状态")
+            else:
+                log.info("移动数据的初始为下电状态")
+
+        if int(is_nfc_test):
+            nfc_init_status = self.device.nfc_is_enable()
+            if nfc_init_status:
+                log.info("NFC的初始为上电状态")
+            else:
+                log.info("NFC的初始为下电状态")
+
+        if int(is_eth_test):
+            eth_init_status = self.device.eth0_is_enable()
+            if eth_init_status:
+                log.info("以太网的初始为上电状态")
+            else:
+                log.info("以太网的初始为下电状态")
 
         times = 0
         while times < int(test_times):
@@ -400,40 +430,50 @@ class TestStabilityCombination:
             time.sleep(1)
             if not self.device.app_is_installed(app_package_name):
                 self.device.install_app(apk_path)
-            time.sleep(1)
+            time.sleep(3)
+            log.info("安装app 成功")
+
             if not self.device.app_is_installed(app_package_name):
                 log.error("无法安装app:%s，请检查！！！" % apk_path)
+                raise
 
-            # 文件
+            # 创建文件
             self.device.touch_file(txt_file_path)
 
             if int(is_wifi_test):
                 if not self.device.wifi_is_enable():
                     self.device.enable_wifi_btn()
-                time.sleep(1)
+                time.sleep(3)
                 if not self.device.wifi_is_enable():
                     self.device.enable_wifi_btn()
 
             if int(is_mobile_test):
                 if not self.device.mobile_is_enable():
                     self.device.enable_mobile_btn()
-                time.sleep(1)
+                time.sleep(3)
                 if not self.device.mobile_is_enable():
                     self.device.enable_mobile_btn()
 
             if int(is_bt_test):
                 if not self.device.bt_is_enable():
                     self.device.enable_bt_btn()
-                time.sleep(1)
+                time.sleep(3)
                 if not self.device.bt_is_enable():
                     self.device.enable_bt_btn()
 
             if int(is_nfc_test):
                 if not self.device.nfc_is_enable():
                     self.device.enable_nfc_btn()
-                time.sleep(1)
+                time.sleep(3)
                 if not self.device.nfc_is_enable():
                     self.device.enable_nfc_btn()
+
+            if int(is_eth_test):
+                if not self.device.eth0_is_enable():
+                    self.device.enable_eth0_btn()
+                time.sleep(3)
+                if not self.device.eth0_is_enable():
+                    self.device.enable_eth0_btn()
 
             # 恢复出厂设置
             self.device.send_adb_shell_command("am broadcast -a android.intent.action.MASTER_CLEAR")
@@ -448,9 +488,18 @@ class TestStabilityCombination:
                 if self.device.device_is_online():
                     break
                 if time.time() > now_time + 300:
-                    log.info("超过5分钟ADB没起来，恢复出厂设置失败")
+                    log.error("超过5分钟ADB没起来，恢复出厂设置失败")
                     raise Exception
             log.info("开机成功，ADB起来")
+
+            now_time1 = time.time()
+            while True:
+                if self.device.device_boot():
+                    break
+                if time.time() > now_time1 + 120:
+                    log.error("超过2分钟设备没完全重启，请检查！！！")
+                    raise Exception
+            log.info("设备完全开机")
 
             # 检查恢复出厂设置之后基本功能检查
             if self.device.app_is_installed(app_package_name):
@@ -467,12 +516,63 @@ class TestStabilityCombination:
             if int(is_wifi_test):
                 if self.device.wifi_is_enable() != wifi_init_status:
                     if self.device.wifi_is_enable():
-                        log.error("恢复出厂设置设置后之后wifi的的状态为：wifi使能, 与初始状态不一致，请假查！！！")
+                        log.error("恢复出厂设置设置后之后wifi的的状态为：wifi上电状态, 与初始状态不一致，请检查！！！")
                     else:
-                        log.error("恢复出厂设置设置后之后wifi的的状态为：wifi使能, 与初始状态不一致，请假查！！！")
-                    time.sleep(30)
+                        log.error("恢复出厂设置设置后之后wifi的的状态为：wifi状态, 与初始状态不一致，请检查！！！")
+                    time.sleep(3)
                     raise Exception
+                else:
+                    if self.device.wifi_is_enable():
+                        log.info("WIFI当前为上电状态，与初始状态一致")
+                    else:
+                        log.info("WIFI当前状态为下电状态，与初始状态一致")
 
+            # mobile test
+            if int(is_mobile_test):
+                if self.device.mobile_is_enable() != mobile_init_status:
+                    if self.device.mobile_is_enable():
+                        log.error("恢复出厂设置设置后之后移动数据当前为上电状态, 与初始状态不一致，请检查！！！")
+                    else:
+                        log.error("恢复出厂设置设置后之后移动数据当前为下电状态, 与初始状态不一致，请检查！！！")
+                    time.sleep(3)
+                    raise Exception
+                else:
+                    if self.device.mobile_is_enable():
+                        log.info("移动数据当前为上电状态，与初始状态一致")
+                    else:
+                        log.info("移动数据当前状态为下电状态，与初始状态一致")
+
+            # eth test
+            if int(is_eth_test):
+                if self.device.eth0_is_enable() != eth_init_status:
+                    if self.device.eth0_is_enable():
+                        log.error("恢复出厂设置设置后之后以太网当前为上电状态, 与初始状态不一致，请检查！！！")
+                    else:
+                        log.error("恢复出厂设置设置后之后以太网当前为下电状态, 与初始状态不一致，请检查！！！")
+                    time.sleep(3)
+                    raise Exception
+                else:
+                    if self.device.eth0_is_enable():
+                        log.info("以太网当前为上电状态，与初始状态一致")
+                    else:
+                        log.info("以太网当前状态为下电状态，与初始状态一致")
+
+            # bt test
+            if int(is_bt_test):
+                if self.device.bt_is_enable() != bt_init_status:
+                    if self.device.bt_is_enable():
+                        log.error("恢复出厂设置设置后之后蓝牙当前为上电状态, 与初始状态不一致，请检查！！！")
+                    else:
+                        log.error("恢复出厂设置设置后之后蓝牙当前为下电状态, 与初始状态不一致，请检查！！！")
+                    time.sleep(3)
+                    raise Exception
+                else:
+                    if self.device.bt_is_enable():
+                        log.info("蓝牙当前为上电状态，与初始状态一致")
+                    else:
+                        log.info("蓝牙当前状态为下电状态，与初始状态一致")
+
+            # wifi上下点相关测试
             if int(is_eth_test) and int(is_wifi_test) and int(is_mobile_test):
                 # 禁用wifi
                 self.device.disable_wifi_btn()
@@ -744,6 +844,109 @@ class TestStabilityCombination:
                     time.sleep(3)
                     raise Exception
                 log.info("wifi可正常上网")
+
+            # 蓝牙上下电相关测试
+            if int(is_bt_test):
+                log.info("********检查蓝牙开关状态")
+                if bt_init_status:
+                    # 对蓝牙进行关开操作
+                    log.info("给蓝牙下电")
+                    self.device.disable_bt_btn()
+                    time.sleep(3)
+                    if self.device.bt_is_enable():
+                        self.device.disable_bt_btn()
+                        time.sleep(3)
+                    if self.device.bt_is_enable():
+                        log.error("蓝牙无法下电，请检查！！！")
+                        time.sleep(3)
+                        raise Exception
+                    log.info("蓝牙下电成功")
+                    log.info("给蓝牙上电")
+                    self.device.enable_bt_btn()
+                    time.sleep(3)
+                    if not self.device.bt_is_enable():
+                        self.device.enable_bt_btn()
+                        time.sleep(3)
+                    if not self.device.bt_is_enable():
+                        log.error("蓝牙无法上电，请检查！！！")
+                        time.sleep(3)
+                        raise Exception
+                    log.info("蓝牙上电成功")
+                else:
+                    log.info("给蓝牙上电")
+                    self.device.enable_bt_btn()
+                    time.sleep(3)
+                    if not self.device.bt_is_enable():
+                        self.device.enable_bt_btn()
+                        time.sleep(3)
+                    if not self.device.bt_is_enable():
+                        log.error("蓝牙无法上电，请检查！！！")
+                        time.sleep(3)
+                        raise Exception
+                    log.info("蓝牙上电成功")
+
+                    log.info("给蓝牙下电")
+                    self.device.disable_bt_btn()
+                    time.sleep(3)
+                    if self.device.bt_is_enable():
+                        self.device.disable_bt_btn()
+                        time.sleep(3)
+                    if self.device.bt_is_enable():
+                        log.error("蓝牙无法下电，请检查！！！")
+                        time.sleep(3)
+                        raise Exception
+                    log.info("蓝牙下电成功")
+
+            if int(is_nfc_test):
+                # 对蓝牙进行关开操作
+                if nfc_init_status:
+                    log.info("给nfc下电")
+                    self.device.disable_nfc_btn()
+                    time.sleep(3)
+                    if self.device.nfc_is_enable():
+                        self.device.disable_nfc_btn()
+                        time.sleep(3)
+                    if self.device.nfc_is_enable():
+                        log.error("nfc无法下电，请检查！！！")
+                        time.sleep(3)
+                        raise Exception
+                    log.info("nfc下电成功")
+
+                    log.info("给nfc上电")
+                    self.device.enable_nfc_btn()
+                    time.sleep(3)
+                    if not self.device.nfc_is_enable():
+                        self.device.enable_nfc_btn()
+                        time.sleep(3)
+                    if not self.device.nfc_is_enable():
+                        log.error("nfc无法上电，请检查！！！")
+                        time.sleep(3)
+                        raise Exception
+                    log.info("nfc上电成功")
+                else:
+                    log.info("给nfc上电")
+                    self.device.enable_nfc_btn()
+                    time.sleep(3)
+                    if not self.device.nfc_is_enable():
+                        self.device.enable_nfc_btn()
+                        time.sleep(3)
+                    if not self.device.nfc_is_enable():
+                        log.error("nfc无法上电，请检查！！！")
+                        time.sleep(3)
+                        raise Exception
+                    log.info("nfc上电成功")
+
+                    log.info("给nfc下电")
+                    self.device.disable_nfc_btn()
+                    time.sleep(3)
+                    if self.device.nfc_is_enable():
+                        self.device.disable_nfc_btn()
+                        time.sleep(3)
+                    if self.device.nfc_is_enable():
+                        log.error("nfc无法下电，请检查！！！")
+                        time.sleep(3)
+                        raise Exception
+                    log.info("nfc下电成功")
 
             time.sleep(1)
         log.info("***************恢复出厂设置检查压测结束***************")
