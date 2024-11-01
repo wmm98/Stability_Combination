@@ -388,12 +388,22 @@ class TestStabilityCombination:
                 raise Exception
         log.info("恢复出厂完成")
 
+        now_time0 = time.time()
+        while True:
+            if self.device.device_boot():
+                break
+            if time.time() > now_time0 + 120:
+                log.error("超过2分钟设备没完全重启，请检查！！！")
+                raise Exception
+        log.info("设备完全开机")
+
         if int(is_wifi_test):
             wifi_init_status = self.device.wifi_is_enable()
             if wifi_init_status:
                 log.info("WIFI的初始为上电状态")
             else:
                 log.info("WIFI的初始为下电状态")
+        self.device.connect_wifi("Telpo", "86337898")
 
         if int(is_bt_test):
             bt_init_status = self.device.bt_is_enable()
@@ -425,6 +435,7 @@ class TestStabilityCombination:
 
         times = 0
         while times < int(test_times):
+            times += 1
             # 安装app:
             self.device.install_app(apk_path)
             time.sleep(1)
@@ -655,6 +666,7 @@ class TestStabilityCombination:
                     time.sleep(3)
                     raise Exception
                 log.info("wifi模块上电成功")
+                self.device.connect_wifi("Telpo", "86337898")
                 # 检查网络
                 if not self.device.ping_network(5, 35):
                     log.error("wifi无法上网， 请检查！！！")
@@ -705,6 +717,7 @@ class TestStabilityCombination:
                     time.sleep(3)
                     raise Exception
                 log.info("wifi模块上电成功")
+                self.device.connect_wifi("Telpo", "86337898")
                 # 检查网络
                 if not self.device.ping_network(5, 35):
                     log.error("wifi无法上网， 请检查！！！")
@@ -838,6 +851,7 @@ class TestStabilityCombination:
                     time.sleep(3)
                     raise Exception
                 log.info("wifi模块上电成功")
+                self.device.connect_wifi("Telpo", "86337898")
                 # 检查网络
                 if not self.device.ping_network(5, 35):
                     log.error("wifi无法上网， 请检查！！！")
@@ -947,6 +961,8 @@ class TestStabilityCombination:
                         time.sleep(3)
                         raise Exception
                     log.info("nfc下电成功")
+
+            log.info("***************恢复出厂设置成功 %d 次" % times)
 
             time.sleep(1)
         log.info("***************恢复出厂设置检查压测结束***************")

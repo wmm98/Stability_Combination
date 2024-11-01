@@ -282,6 +282,9 @@ class Device(publicInterface):
             log.error("获取apk包名出错")
             log.error(str(e))
 
+    def connect_wifi(self, name, password):
+        self.send_adb_shell_command("cmd wifi connect-network %s wpa2 %s" % (name, password))
+
 
 if __name__ == '__main__':
     dev = Device("d")
