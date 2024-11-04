@@ -803,7 +803,11 @@ class TestLXStability:
                 time.sleep(2)
                 if self.device.get_camera_id() == 3:
                     self.device.open_camera()
-                time.sleep(1)
+                time.sleep(2)
+                if self.device.get_camera_id() == 3:
+                    log.error("打开相机失败，请检查！！！")
+                    time.sleep(3)
+                    raise Exception
                 log.info("打开相机")
                 # switch front camera
                 if not self.device.is_first_camera():
@@ -957,6 +961,11 @@ class TestLXStability:
                 log.info("打开相机")
                 if self.device.get_camera_id() == 3:
                     self.device.open_camera()
+                time.sleep(2)
+                if self.device.get_camera_id() == 3:
+                    log.error("打开相机失败，请检查！！！")
+                    time.sleep(3)
+                    raise Exception
 
                 # get camera app package name
                 self.device.get_camera_package_name()

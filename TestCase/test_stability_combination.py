@@ -433,6 +433,9 @@ class TestStabilityCombination:
             else:
                 log.info("以太网的初始为下电状态")
 
+        wlan_ini_address = self.device.get_wlan_mac()
+        log.info("wifi初始地址为：%s" % wlan_ini_address)
+
         times = 0
         while times < int(test_times):
             times += 1
@@ -450,6 +453,7 @@ class TestStabilityCombination:
 
             # 创建文件
             self.device.touch_file(txt_file_path)
+            log.info("创建了文件：%s" % txt_file_path)
 
             if int(is_wifi_test):
                 if not self.device.wifi_is_enable():
@@ -522,6 +526,14 @@ class TestStabilityCombination:
                 log.error("恢复出厂设置之后设备存在非内部文件:%s，请检查！！！" % txt_file_path)
                 time.sleep(3)
                 raise
+
+            current_wifi_address = self.device.get_wlan_mac()
+            log.info("当前WIFI MAC地址为：%s" % current_wifi_address)
+
+            if current_wifi_address != wlan_ini_address:
+                log.error("恢复出厂设置前后wifi mac地址不一致，请检查！！！")
+                time.sleep(3)
+                raise Exception
 
             # wifi test
             if int(is_wifi_test):
@@ -961,6 +973,13 @@ class TestStabilityCombination:
                         time.sleep(3)
                         raise Exception
                     log.info("nfc下电成功")
+
+            # current_wifi_address = self.device.get_wlan_mac()
+            # log.info("当前WIFI MAC地址为：%s" % current_wifi_address)
+            # if current_wifi_address != wlan_ini_address:
+            #     log.error("恢复出厂设置前后wifi mac地址不一致，请检查！！！")
+            #     time.sleep(3)
+            #     raise Exception
 
             log.info("***************恢复出厂设置成功 %d 次" % times)
 

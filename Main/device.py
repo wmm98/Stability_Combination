@@ -285,6 +285,10 @@ class Device(publicInterface):
     def connect_wifi(self, name, password):
         self.send_adb_shell_command("cmd wifi connect-network %s wpa2 %s" % (name, password))
 
+    def get_wlan_mac(self):
+        cmd = "cat sys/class/net/wlan0/address"
+        return self.send_adb_shell_command(cmd)
+
 
 if __name__ == '__main__':
     dev = Device("d")

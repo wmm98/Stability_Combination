@@ -1,6 +1,6 @@
 import os
 from PyQt5 import QtCore, QtWidgets
-from PyQt5.QtWidgets import QHBoxLayout, QCheckBox, QComboBox, QButtonGroup, QWidget, QSplitter, QTextEdit, QLabel
+from PyQt5.QtWidgets import QHBoxLayout, QCheckBox, QComboBox, QButtonGroup, QWidget, QSplitter, QTextEdit, QLabel, QScrollArea
 from PyQt5.QtCore import pyqtSlot
 import subprocess
 import sys
@@ -26,7 +26,7 @@ class Boot_Check_MainWindow(config_path.UIConfigPath):
 
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(600, 600)
+        MainWindow.resize(600, 800)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         # 创建水平布局
         self.main_layout = QHBoxLayout(self.centralwidget)
@@ -38,6 +38,10 @@ class Boot_Check_MainWindow(config_path.UIConfigPath):
         # 左侧所有部件
         left_widget = QWidget()
         self.verticalLayout_left = QtWidgets.QVBoxLayout(left_widget)
+
+        # 配置滚动条
+        scroll_area = QScrollArea()
+        scroll_area.setWidgetResizable(True)
 
         self.verticalLayout_left.addWidget(QLabel("开关机配置："))
         # 间隔
@@ -221,6 +225,19 @@ class Boot_Check_MainWindow(config_path.UIConfigPath):
 
         self.verticalLayout_left.addWidget(QLabel())
 
+        self.usb_label = QtWidgets.QLabel("请输入U盘的路径，例如 mnt/media/E168、/storage/9b18-9E")
+        self.verticalLayout_left.addWidget(self.usb_label)
+        layout_usb_flash_info = QHBoxLayout()
+        self.check_usb_flash_button = QtWidgets.QPushButton("查询U盘挂载的路径")
+        self.usb_flash_path = QtWidgets.QLineEdit()
+        self.check_usb_flash_button.setDisabled(True)
+        self.usb_flash_path.setDisabled(True)
+        layout_usb_flash_info.addWidget(self.check_usb_flash_button)
+        layout_usb_flash_info.addWidget(self.usb_flash_path)
+        self.verticalLayout_left.addLayout(layout_usb_flash_info)
+
+        self.verticalLayout_left.addWidget(QtWidgets.QLabel())
+
         # 压测次数
         layout_test_times_info = QHBoxLayout()
         self.test_times_label = QLabel("用例压测次数设置")
@@ -238,10 +255,20 @@ class Boot_Check_MainWindow(config_path.UIConfigPath):
         self.submit_button = QtWidgets.QPushButton("保存配置")
         self.verticalLayout_left.addWidget(self.submit_button)
 
+        self.verticalLayout_left.addWidget(QtWidgets.QLabel())
+        self.verticalLayout_left.addWidget(QtWidgets.QLabel("日志信息:"))
+
+        # 展示log
+        self.text_edit = ScrollablePlainTextEdit()
+        self.text_edit.setReadOnly(True)
+        self.verticalLayout_left.addWidget(self.text_edit)
+
         self.verticalLayout_left.addStretch(1)
         self.verticalLayout_left.setSpacing(10)  # 设置左侧垂直布局的间距为10像素
 
-        splitter.addWidget(left_widget)
+        scroll_area.setWidget(left_widget)
+
+        splitter.addWidget(scroll_area)
 
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
@@ -284,6 +311,7 @@ class BootCheckDisplay(QtWidgets.QMainWindow, Boot_Check_MainWindow):
         self.submit_button.clicked.connect(self.handle_submit)
         # 进程完成
         self.only_boot.clicked.connect(self.only_boot_checkbox_change)
+        self.is_usb_test.clicked.connect(self.enable_usb_ui)
 
     def get_message_box(self, text):
         QMessageBox.warning(self, "错误提示", text)
@@ -346,6 +374,11 @@ class BootCheckDisplay(QtWidgets.QMainWindow, Boot_Check_MainWindow):
             self.get_message_box("请勾选设备分类！！！")
             return
 
+        if self.is_usb_test.isChecked():
+            if len(self.usb_flash_path.text()) == 0:
+                self.get_message_box("请填入U盘挂载的路径")
+                return
+
         # 检查完保存配置
         self.save_config()
         self.submit_flag = True
@@ -353,6 +386,14 @@ class BootCheckDisplay(QtWidgets.QMainWindow, Boot_Check_MainWindow):
         # 每次提交先删除失败的照片，避免检错误
         if os.path.exists(self.failed_image_key_path):
             os.remove(self.failed_image_key_path)
+
+    def enable_usb_ui(self):
+        if self.is_usb_test.isChecked():
+            self.check_usb_flash_button.setEnabled(True)
+            self.usb_flash_path.setEnabled(True)
+        else:
+            self.check_usb_flash_button.setDisabled(True)
+            self.usb_flash_path.setDisabled(True)
 
     def list_test_times_settings(self):
         times = [str(j * 50) for j in range(1, 500)]
