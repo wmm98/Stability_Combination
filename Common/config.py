@@ -24,7 +24,6 @@ class Config:
     USB_recognition_demo_path = os.path.join(USB_flash_path, "test_demo_usb_recognition.sh")
     storage_speed_path = os.path.join(USB_flash_path, "test_demo_usb_read_write_speed.sh")
 
-
     # 开机卡logo
     camera_key_img_path = os.path.join(project_path, "Photo", "BootLogo", "CameraPhoto", "Key")
     camera_origin_img_path = os.path.join(project_path, "Photo", "BootLogo", "CameraPhoto", "Take")
@@ -47,22 +46,30 @@ class Config:
     # 预期前、后镜头
     camera_sta_exp_front_path = os.path.join(camera_sta_exp_path, "Front")
     camera_sta_exp_rear_path = os.path.join(camera_sta_exp_path, "Rear")
-    camera_sta_exp_front_photograph_path = os.path.join(camera_sta_exp_front_path, "Photograph", "exp_front_photograph.jpg")
+    camera_sta_exp_front_photograph_path = os.path.join(camera_sta_exp_front_path, "Photograph",
+                                                        "exp_front_photograph.jpg")
     camera_sta_exp_front_preview_path = os.path.join(camera_sta_exp_front_path, "PreView", "exp_front_preview.png")
-    camera_sta_exp_rear_photograph_path = os.path.join(camera_sta_exp_rear_path, "Photograph", "exp_rear_photograph.jpg")
+    camera_sta_exp_rear_photograph_path = os.path.join(camera_sta_exp_rear_path, "Photograph",
+                                                       "exp_rear_photograph.jpg")
     camera_sta_exp_rear_preview_path = os.path.join(camera_sta_exp_rear_path, "PreView", "exp_rear_preview.png")
-    camera_sta_exp_default_photograph_path = os.path.join(camera_sta_exp_default_path, "Photograph", "exp_default_photograph.jpg")
-    camera_sta_exp_default_preview_path = os.path.join(camera_sta_exp_default_path, "PreView", "exp_default_preview.png")
+    camera_sta_exp_default_photograph_path = os.path.join(camera_sta_exp_default_path, "Photograph",
+                                                          "exp_default_photograph.jpg")
+    camera_sta_exp_default_preview_path = os.path.join(camera_sta_exp_default_path, "PreView",
+                                                       "exp_default_preview.png")
     # 测试前后镜头
     camera_sta_test_front_path = os.path.join(camera_sta_test_path, "Front")
     camera_sta_test_rear_path = os.path.join(camera_sta_test_path, "Rear")
     camera_sta_test_default_path = os.path.join(camera_sta_test_path, "Default")
-    camera_sta_test_front_photograph_path = os.path.join(camera_sta_test_front_path, "Photograph", "test_front_photograph.jpg")
+    camera_sta_test_front_photograph_path = os.path.join(camera_sta_test_front_path, "Photograph",
+                                                         "test_front_photograph.jpg")
     camera_sta_test_front_preview_path = os.path.join(camera_sta_test_front_path, "PreView", "test_front_preview.png")
-    camera_sta_test_rear_photograph_path = os.path.join(camera_sta_test_rear_path, "Photograph", "test_rear_photograph.jpg")
+    camera_sta_test_rear_photograph_path = os.path.join(camera_sta_test_rear_path, "Photograph",
+                                                        "test_rear_photograph.jpg")
     camera_sta_test_rear_preview_path = os.path.join(camera_sta_test_rear_path, "PreView", "test_rear_preview.png")
-    camera_sta_test_default_photograph_path = os.path.join(camera_sta_test_default_path, "Photograph", "test_default_photograph.jpg")
-    camera_sta_test_default_preview_path = os.path.join(camera_sta_test_default_path, "PreView", "test_default_preview.png")
+    camera_sta_test_default_photograph_path = os.path.join(camera_sta_test_default_path, "Photograph",
+                                                           "test_default_photograph.jpg")
+    camera_sta_test_default_preview_path = os.path.join(camera_sta_test_default_path, "PreView",
+                                                        "test_default_preview.png")
     # camera_preview_photograph.txt
     camera_sta_test_log_path = os.path.join(logcat_path, "camera_preview_photograph.txt")
 
@@ -75,6 +82,11 @@ class Config:
     bat_query_flash_path = os.path.join(project_path, "UI", "bat_query_flash.bat")
     process_usb_flash_path = os.path.join(project_path, "UI", "process_usb_flash_path.py")
     usb_recognize_log_path = os.path.join(project_path, "UI", "usb_recognize_log.txt")
+
+    # 开关机U盘识别
+    bat_boot_query_flash_path = os.path.join(project_path, "UI", "bat_boot_query_flash.bat")
+    process_boot_usb_flash_path = os.path.join(project_path, "UI", "process_usb_path_boot.py")
+    usb_boot_log_path = os.path.join(project_path, "UI", "boot_usb_query_log.txt")
 
     bat_query_storage_path = os.path.join(project_path, "UI", "bat_query_storage.bat")
     process_storage_flash_path = os.path.join(project_path, "UI", "process_storage_path.py")
@@ -130,6 +142,7 @@ class Config:
 
     # 开关机检查
     section_ui_boot_check = "Boot-Check"
+    ui_option_boot_usb_path = "boot_usb_flash_path"
 
     # 相机压测
     section_ui_camera_check = "Camera-Check"
@@ -168,8 +181,3 @@ class Config:
     # 恢复出厂设置配置
     section_factory_reset_stability = "Factory_Reset"
     option_factory_reset_test_times = "reset_test_times"
-
-
-
-
-

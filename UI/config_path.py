@@ -68,5 +68,10 @@ class UIConfigPath:
     bat_query_storage_path = os.path.join(project_path, "UI", "bat_query_storage.bat")
     process_storage_flash_path = os.path.join(project_path, "UI", "process_storage_path.py")
     storage_query_log_path = os.path.join(project_path, "UI", "storage_query_log.txt")
+    # 开关机U盘识别
+    bat_boot_query_flash_path = os.path.join(project_path, "UI", "bat_boot_query_flash.bat")
+    process_boot_usb_flash_path = os.path.join(project_path, "UI", "process_usb_path_boot.py")
+    usb_boot_log_path = os.path.join(project_path, "UI", "boot_usb_query_log.txt")
+
     # 恢复出厂设置
     process_factory_reset_path = os.path.join(project_path, "UI", "factory_reset_ui.py")

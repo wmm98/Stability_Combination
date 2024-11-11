@@ -1041,3 +1041,10 @@ class TestLXStability:
         self.device.kill_process(logcat_process_id)
         self.device.adb_pull_file(log_path, os.path.dirname(Config.camera_sta_test_log_path))
         log.info("************前后摄像头拍照问题对比用例结束*******")
+
+    @allure.feature("bt_connect_test")
+    @allure.title("连接蓝牙音响开关测试")
+    def test_bt_connect_test(self):
+        log.info("***********连接蓝牙音响测试开始************")
+
+        log.info("***********连接蓝牙音响测试结束************")

@@ -15,6 +15,7 @@ from eth_btn_stability_ui import EthBtnCheckDisplay
 from usb_recognition_ui import USBFlashTestDisplay
 from storage_read_write_speeds_ui import StorageTestDisplay
 from factory_reset_ui import FactoryResetDisplay
+from bt_connect_stability_ui import BtConnectDisplay
 import os
 import shutil
 from PyQt5.QtGui import QPixmap
@@ -129,6 +130,7 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
         self.usb_recognition_window = USBFlashTestDisplay()
         self.storage_read_write_speed_window = StorageTestDisplay()
         self.factory_reset_window = FactoryResetDisplay()
+        self.bt_connect_test_window = BtConnectDisplay()
         self.setupUi(self)
         self.AllTestCase = None
         self.intiui()
@@ -175,6 +177,7 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
         self.usb_recognition_window.submit_button.clicked.connect(self.display_usb_recognize_test_times)
         self.storage_read_write_speed_window.submit_button.clicked.connect(self.display_storage_write_read_speed_test_times)
         self.factory_reset_window.submit_button.clicked.connect(self.display_factory_reset_test_times)
+        self.bt_connect_test_window.submit_button.clicked.connect(self.display_bt_connect_test_times)
         # 初始化图片cursor
         # self.cursor = QTextCursor(self.document)
 
@@ -216,6 +219,15 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
         self.item_L_X_STA_child_camera_compare.setText(2, "次")
         self.item_L_X_STA_child_camera_compare.setFlags(
             self.item_L_X_STA_child_camera_compare.flags() | Qt.ItemIsSelectable | Qt.ItemIsUserCheckable | Qt.ItemIsEditable)
+
+        # 蓝牙连压测
+        self.item_L_X_STA_child_bt_conenct = QTreeWidgetItem(self.item_L_X_STA)
+        self.item_L_X_STA_child_bt_conenct.setText(0, "蓝牙连接测试")
+        self.item_L_X_STA_child_bt_conenct.setCheckState(0, Qt.Unchecked)
+        self.item_L_X_STA_child_bt_conenct.setText(1, "")
+        self.item_L_X_STA_child_bt_conenct.setText(2, "次")
+        self.item_L_X_STA_child_bt_conenct.setFlags(
+            self.item_L_X_STA_child_bt_conenct.flags() | Qt.ItemIsSelectable | Qt.ItemIsUserCheckable | Qt.ItemIsEditable)
 
         # DDR、EMMC压测
         self.item_D_E_STA = QTreeWidgetItem(self.item_sta_root)
@@ -338,6 +350,15 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
         self.item_M_T_STA_factory_reset.setText(2, "次")
         self.item_M_T_STA_factory_reset.setFlags(
             self.item_M_T_STA_factory_reset.flags() | Qt.ItemIsSelectable | Qt.ItemIsUserCheckable | Qt.ItemIsEditable)
+
+    def display_bt_connect_test_times(self):
+        time.sleep(1)
+        if self.bt_connect_test_window.submit_flag:
+            if self.item_L_X_STA_child_bt_conenct.checkState(0) == 2:
+                times = self.ui_config.get_option_value(self.ui_config.section_bt_connect_test,
+                                                        self.ui_config.option_bt_connect_test_times)
+                self.item_L_X_STA_child_bt_conenct.setText(1, times)
+                self.item_L_X_STA_child_bt_conenct.setTextAlignment(1, Qt.AlignRight)  # 设置第二列文本右对齐
 
     def display_factory_reset_test_times(self):
         time.sleep(1)
@@ -522,6 +543,11 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
             if item.checkState(0) == 2:
                 if not self.factory_reset_window.isVisible():
                     self.factory_reset_window.show()
+
+        if item == self.item_L_X_STA_child_bt_conenct:
+            if item.checkState(0) == 2:
+                if not self.bt_connect_test_window.isVisible():
+                    self.bt_connect_test_window.show()
 
     def handlechanged(self, item, column):
         # 获取选中节点的子节点个数

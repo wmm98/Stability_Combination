@@ -56,6 +56,7 @@ class ConfigP(UIConfigPath):
 
     # 开关机检查
     section_ui_boot_check = "Boot-Check"
+    ui_option_boot_usb_path = "boot_usb_flash_path"
 
     # 相机压测
     section_ui_camera_check = "Camera-Check"
@@ -94,6 +95,11 @@ class ConfigP(UIConfigPath):
     # 恢复出厂设置压测用例配置
     section_factory_reset_stability = "Factory_Reset"
     option_factory_reset_test_times = "reset_test_times"
+
+    # 蓝牙连接测试
+    section_bt_connect_test = "Bt_connect_test"
+    option_bt_connect_test_times = "bt_connect_test_times"
+    option_bt_connect_test_com = "bt_connect_com"
 
     def __init__(self, ini_path):
         self.ini_path = ini_path

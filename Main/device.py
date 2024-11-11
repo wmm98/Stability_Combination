@@ -14,6 +14,51 @@ class Device(publicInterface):
         self.device_name = device
         self.camera_package_name = ""
 
+    def connected_bt_mac(self):
+        res = shell.invoke("dumpsys bluetooth_manager |grep mCurrentDevice")
+        connected_mac = res.split(":", 1)[1].strip()
+        return connected_mac
+
+    def bt_is_connected(self):
+        res = shell.invoke("dumpsys bluetooth_manager |grep mCurrentState")
+        if "Disconnected" in res:
+            return False
+        else:
+            return True
+
+    def is_screen_on(self):
+        res = shell.invoke("dumpsys window | grep mAwake")
+        if "mAwake=true" in res:
+            return True
+        else:
+            return False
+
+    def eth0_internet(self, times=4):
+        res = shell.invoke("ping -c %d -I eht0 www.baidu.com" % times)
+        # 处理下wifi的情况
+        if self.remove_info_space("Destination Host Unreachable") in self.remove_info_space(res):
+            return False
+        else:
+            return True
+        # 处理下以太网的情况
+
+    def is_wifi_internet(self, times=4):
+        res = shell.invoke("ping -c %d -I wlan0 www.baidu.com" % times)
+        # 处理下wifi的情况
+        if self.remove_info_space("Destination Host Unreachable") in self.remove_info_space(res):
+            return False
+        else:
+            return True
+
+    def back_home(self):
+        shell.invoke("input keyevent KEYCODE_BACK")
+
+    def unlock(self):
+        shell.invoke("input swipe 300 500 300 0")
+
+    def press_power_button(self):
+        shell.invoke("input keyevent KEYCODE_POWER")
+
     def restart_adb(self):
         shell.invoke("adb kill-server")
         shell.invoke("adb start-server")

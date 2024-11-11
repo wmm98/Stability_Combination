@@ -1,7 +1,7 @@
 import os
 from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtWidgets import QHBoxLayout, QCheckBox, QComboBox, QButtonGroup, QWidget, QSplitter, QTextEdit, QLabel, QScrollArea
-from PyQt5.QtCore import pyqtSlot
+from PyQt5.QtCore import pyqtSlot, QProcess
 import subprocess
 import sys
 from PyQt5 import QtWidgets, QtCore
@@ -18,6 +18,8 @@ import configparser
 import time
 from configfile import ConfigP
 import config_path
+
+conf_path = config_path.UIConfigPath()
 
 
 class Boot_Check_MainWindow(config_path.UIConfigPath):
@@ -48,6 +50,10 @@ class Boot_Check_MainWindow(config_path.UIConfigPath):
         self.verticalLayout_left.addWidget(QLabel())
 
         layout_device_info = QHBoxLayout()
+
+        self.label_device_name = QtWidgets.QLabel("设备名称:")
+        self.edit_device_name = QComboBox()
+
         # 测试COM
         self.COM_tips = QLabel("测试COM口:")
         self.test_COM = QComboBox()
@@ -55,6 +61,8 @@ class Boot_Check_MainWindow(config_path.UIConfigPath):
         self.adb_log_lable = QLabel("Logcat时长(min):")
         self.adb_log_duration = QComboBox()
 
+        layout_device_info.addWidget(self.label_device_name)
+        layout_device_info.addWidget(self.edit_device_name)
         layout_device_info.addWidget(self.COM_tips)
         layout_device_info.addWidget(self.test_COM)
         layout_device_info.addWidget(self.adb_log_lable)
@@ -294,12 +302,16 @@ class Boot_Check_MainWindow(config_path.UIConfigPath):
 class BootCheckDisplay(QtWidgets.QMainWindow, Boot_Check_MainWindow):
     def __init__(self):
         super(BootCheckDisplay, self).__init__()
+        self.bg_config = ConfigP(self.background_config_file_path)
+        self.ui_config = ConfigP(self.ui_config_file_path)
         self.setupUi(self)
         self.intiui()
         self.submit_flag = False
 
     def intiui(self):
         # 初始化进程
+        self.usb_process = QProcess()
+        self.select_devices_name()
         self.list_COM()
         self.list_logcat_duration()
         self.list_test_times_settings()
@@ -312,6 +324,24 @@ class BootCheckDisplay(QtWidgets.QMainWindow, Boot_Check_MainWindow):
         # 进程完成
         self.only_boot.clicked.connect(self.only_boot_checkbox_change)
         self.is_usb_test.clicked.connect(self.enable_usb_ui)
+        self.check_usb_flash_button.clicked.connect(self.query_usb_flash_path)
+        self.usb_process.finished.connect(self.query_usb_boot_finished_handle)
+
+    def query_usb_boot_finished_handle(self):
+        with open(conf_path.usb_boot_log_path, "r") as f:
+            text = f.read()
+        if len(text) != 0:
+            self.text_edit.insertPlainText(text)
+        else:
+            self.text_edit.insertPlainText("读取可用运行内存数据失败， 请检查！！！")
+        self.text_edit.insertPlainText("查询结束.")
+
+    def query_usb_flash_path(self):
+        # 保存root steps
+        # self.double_check_root()
+        self.ui_config.add_config_option(self.ui_config.section_ui_boot_check, self.ui_config.ui_option_device_name,
+                                         self.edit_device_name.currentText())
+        self.usb_process.start(conf_path.bat_boot_query_flash_path)
 
     def get_message_box(self, text):
         QMessageBox.warning(self, "错误提示", text)
@@ -443,6 +473,12 @@ class BootCheckDisplay(QtWidgets.QMainWindow, Boot_Check_MainWindow):
             for line in self.get_COM_config():
                 self.usb_config.addItem(line)
 
+    def select_devices_name(self):
+        devices = self.bg_config.get_option_value(self.bg_config.section_background_to_ui,
+                                                  self.bg_config.bg_option_devices_name).split(",")
+        for device in devices:
+            self.edit_device_name.addItem(str(device))
+
     def get_COM_config(self):
         return ["1路", "2路", "3路", "4路"]
 
@@ -509,6 +545,9 @@ class BootCheckDisplay(QtWidgets.QMainWindow, Boot_Check_MainWindow):
             config.add_config_option(section, "double_screen_config", "1")
         else:
             config.add_config_option(section, "double_screen_config", "0")
+
+        # 保存U盘挂载的路径
+        config.add_config_option(section, config.ui_option_boot_usb_path, self.usb_flash_path.text().strip())
 
         if self.button_boot_time.isEnabled():
             config.add_config_option(section, "button_boot_time", self.button_boot_time.currentText())
