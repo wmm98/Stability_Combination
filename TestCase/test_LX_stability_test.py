@@ -1046,5 +1046,23 @@ class TestLXStability:
     @allure.title("连接蓝牙音响开关测试")
     def test_bt_connect_test(self):
         log.info("***********连接蓝牙音响测试开始************")
+        # 测试设备（主）开关蓝牙，查看蓝牙连接情况，从机（蓝牙音响）开关开关蓝牙，主机中蓝牙连接状况
+        # 查看蓝牙打开、连接情况
+        if not self.device.bt_is_enable():
+            log.error("设备蓝牙没打开，请检查！！！")
+            time.sleep(3)
+            raise Exception
+
+        if not self.device.bt_is_connected():
+            log.error("当前没有连接到蓝牙设备，请检查！！！")
+            time.sleep(3)
+            raise Exception
+
+        slave_device_mac = self.device.get_connected_bt_mac()
+        total_times = int(self.ui_conf_file.get(Config.section_bt_connect_test, Config.option_camera_test_times))
+        times = 0
+        while times < total_times:
+
+
 
         log.info("***********连接蓝牙音响测试结束************")

@@ -14,7 +14,7 @@ class Device(publicInterface):
         self.device_name = device
         self.camera_package_name = ""
 
-    def connected_bt_mac(self):
+    def get_connected_bt_mac(self):
         res = shell.invoke("dumpsys bluetooth_manager |grep mCurrentDevice")
         connected_mac = res.split(":", 1)[1].strip()
         return connected_mac

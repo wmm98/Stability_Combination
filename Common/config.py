@@ -181,3 +181,8 @@ class Config:
     # 恢复出厂设置配置
     section_factory_reset_stability = "Factory_Reset"
     option_factory_reset_test_times = "reset_test_times"
+
+    # 蓝牙连接测试
+    section_bt_connect_test = "Bt_connect_test"
+    option_bt_connect_test_times = "bt_connect_test_times"
+    option_bt_connect_test_com = "bt_connect_com"
