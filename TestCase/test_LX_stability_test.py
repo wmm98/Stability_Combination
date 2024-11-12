@@ -1058,11 +1058,150 @@ class TestLXStability:
             time.sleep(3)
             raise Exception
 
-        slave_device_mac = self.device.get_connected_bt_mac()
-        total_times = int(self.ui_conf_file.get(Config.section_bt_connect_test, Config.option_camera_test_times))
+        # slave_device_mac = self.device.get_connected_bt_mac()
+        total_times = int(self.ui_conf_file.get(Config.section_bt_connect_test, Config.option_bt_connect_test_times))
+        is_probability_test = int(self.ui_conf_file.get(Config.section_bt_connect_test, Config.is_probability_test))
         times = 0
+
+        fail_flag = 0
+        slave_fail_flag = 0
         while times < total_times:
+            times += 1
+            log.info("**********************第%d次测试开始********************" % times)
+            # 蓝牙关
+            self.device.disable_bt_btn()
+            time.sleep(2)
+            if self.device.bt_is_enable():
+                self.device.disable_bt_btn()
+                time.sleep(2)
+            if self.device.bt_is_enable():
+                log.error("无法关闭主设备蓝牙")
+                continue
 
+            log.info("已关主设备闭蓝牙")
+            time.sleep(30)
+            if not self.device.bt_is_connected():
+                log.info("主设显示已断开连接蓝牙设备(从)")
+            else:
+                if is_probability_test:
+                    fail_flag += 1
+                    log.info("主设显示未断开连接蓝牙设备(从) %d 次" % fail_flag)
+                    continue
 
+            # now_time = time.time()
+            # while True:
+            #     if not self.device.bt_is_connected():
+            #         log.info("已断开连接蓝牙设备")
+            #         break
+            #     if time.time() > now_time + 60:
+            #         log.error("无法断连蓝牙设备")
+            #         if is_probability_test:
+            #             fail_flag += 1
+            #             continue
+            #         else:
+            #             time.sleep(3)
+            #             raise
+            #     time.sleep(1)
+
+            # 开启蓝牙
+            self.device.enable_bt_btn()
+            time.sleep(2)
+            if not self.device.bt_is_enable():
+                self.device.enable_bt_btn()
+                time.sleep(2)
+            if not self.device.bt_is_enable():
+                log.error("无法打开主设备蓝牙")
+                continue
+
+            log.info("已打开主设备蓝牙")
+            time.sleep(30)
+            if self.device.bt_is_connected():
+                log.info("主设备显示已经连接上蓝牙设备（从）")
+            else:
+                if is_probability_test:
+                    fail_flag += 1
+                    log.error("主设备显示未连接上蓝牙设备（从）%d 次" % fail_flag)
+                    continue
+
+            # now_time1 = time.time()
+            # while True:
+            #     if self.device.bt_is_connected():
+            #         log.info("已经连接上蓝牙设备")
+            #         break
+            #     if time.time() > now_time1 + 120:
+            #         log.error("无法连接上蓝牙设备")
+            #         if is_probability_test:
+            #             fail_flag += 1
+            #             continue
+            #         else:
+            #             time.sleep(3)
+            #             raise
+            #     time.sleep(1)
+
+            # 关闭蓝牙设备，暂时用等待来替代
+            # 关闭蓝牙设备操作
+            log.info("断开蓝牙设备（从）")
+            time.sleep(30)
+            if not self.device.bt_is_connected():
+                log.error("主设备显示已经断连接蓝牙设备（从）")
+            else:
+                if is_probability_test:
+                    slave_fail_flag += 1
+                    log.error("主设备显示没断连蓝牙设备（从）%d 次" % slave_fail_flag)
+                    continue
+
+            # now_time2 = time.time()
+            # while True:
+            #     if not self.device.bt_is_connected():
+            #         log.info("已经断连接蓝牙设备")
+            #         break
+            #     if time.time() > now_time2 + 60:
+            #         log.error("无法断连蓝牙设备")
+            #         if is_probability_test:
+            #             slave_fail_flag += 1
+            #             continue
+            #         else:
+            #             time.sleep(3)
+            #             raise
+            #     time.sleep(1)
+
+            # 打开蓝牙设备，暂时用等待来替代
+            # 打开蓝牙操作
+            log.info("打开蓝牙设备（从）")
+            time.sleep(30)
+            if self.device.bt_is_connected():
+                log.info("主设备显示已经连接上蓝牙设备（从）")
+                break
+            else:
+                if is_probability_test:
+                    slave_fail_flag += 1
+                    log.error("主设备显示没连接上蓝牙设备（从）%d 次" % slave_fail_flag)
+                    continue
+
+            # now_time3 = time.time()
+            # while True:
+            #     if self.device.bt_is_connected():
+            #         log.info("已经连接上蓝牙设备")
+            #         break
+            #     if time.time() > now_time3 + 120:
+            #         log.error("无法连接上蓝牙设备")
+            #         if is_probability_test:
+            #             slave_fail_flag += 1
+            #             continue
+            #         else:
+            #             time.sleep(3)
+            #             raise
+            #     time.sleep(1)
+
+        if is_probability_test:
+            if fail_flag > 0:
+                probability = fail_flag / times
+                log.error("设备重开蓝牙连接不上蓝牙设备的次数为：%d" % fail_flag)
+                log.error("设备重开蓝牙连接不上蓝牙设备的概率为%s" % probability)
+
+            if slave_fail_flag > 0:
+                slave_probability = slave_fail_flag / times
+                log.error("蓝牙设备断连，显示异常的概率为：%d" % slave_fail_flag)
+                log.error("蓝牙设备断连，显示异常的概率为%s" % slave_probability)
 
         log.info("***********连接蓝牙音响测试结束************")

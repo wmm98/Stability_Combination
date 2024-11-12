@@ -12,6 +12,9 @@ class Config:
     # 辅助测试apk路径
     factory_reset_pak_path = os.path.join(project_path, "APK", "FactoryReset")
 
+    # 是否进行失败概率性统计测试
+    is_probability_test = "is_probability_test"
+
     # EMMC, DDR压测
     pretesting_path = os.path.join(project_path, "PreTesting")
     DDR_memtester_path = os.path.join(pretesting_path, "DDR", "memtester")
@@ -186,3 +189,4 @@ class Config:
     section_bt_connect_test = "Bt_connect_test"
     option_bt_connect_test_times = "bt_connect_test_times"
     option_bt_connect_test_com = "bt_connect_com"
+
