@@ -1201,7 +1201,7 @@ class TestLXStability:
 
             if slave_fail_flag > 0:
                 slave_probability = slave_fail_flag / times
-                log.error("蓝牙设备断连，显示异常的概率为：%d" % slave_fail_flag)
+                log.error("蓝牙设备断连，显示异常的次数为：%d" % slave_fail_flag)
                 log.error("蓝牙设备断连，显示异常的概率为%s" % slave_probability)
 
         log.info("***********连接蓝牙音响测试结束************")
