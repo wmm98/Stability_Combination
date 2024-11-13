@@ -9,6 +9,7 @@ from Common.device_check import DeviceCheck
 import configparser
 from Common.config import Config
 from Main.public import publicInterface
+import shutil
 
 conf = Config()
 log = MyLog()
@@ -752,6 +753,31 @@ class TestLXStability:
     @allure.title("前后摄像头拍照问题对比")
     def test_lx_front_rear_camera_test(self):
         log.info("************前后摄像头拍照问题对比用例开始*******")
+
+        def clear_directory(dir_path):
+            file_names = os.listdir(dir_path)
+            if len(file_names) != 0:
+                # 遍历文件名列表并删除文件
+                for file_name in file_names:
+                    file_path = os.path.join(dir_path, file_name)  # 文件路径
+                    os.remove(file_path)
+
+        # 删除异常照片
+        # 获取文件夹中的所有文件名
+        default_photograph_file_names = conf.camera_sta_err_default_photograph_path
+        default_preview_file_names = conf.camera_sta_err_default_preview_path
+        front_photograph_file_names = conf.camera_sta_err_front_photograph_path
+        front_preview_file_names = conf.camera_sta_err_front_preview_path
+        rear_photograph_file_names = conf.camera_sta_err_rear_photograph_path
+        rear_preview_file_names = conf.camera_sta_err_rear_preview_path
+
+        clear_directory(default_preview_file_names)
+        clear_directory(default_photograph_file_names)
+        clear_directory(front_preview_file_names)
+        clear_directory(front_photograph_file_names)
+        clear_directory(rear_photograph_file_names)
+        clear_directory(rear_preview_file_names)
+
         # 删除已存在的logcat文件
         if os.path.exists(Config.camera_sta_test_log_path):
             os.remove(Config.camera_sta_test_log_path)
@@ -769,10 +795,10 @@ class TestLXStability:
         open_fail_flag = 0
         compare_fail_flag = 0
         photograph_fail_flag = 0
+        continue_flag = 0
 
-        times = 1
+        times = 0
         while times <= int(total_times):
-            times += 1
             is_double = self.ui_conf_file.get(Config.section_ui_camera_check, Config.option_front_and_rear)
             # 测试前删除已存在的照片
             if int(is_double):
@@ -907,40 +933,74 @@ class TestLXStability:
                 front_preview_score = cnns.generateScore(Config.camera_sta_test_front_preview_path,
                                                          Config.camera_sta_exp_front_preview_path)
                 log.info("前镜头预览画面预期和测试截图相似度分数为：%s" % str(front_preview_score))
-                if front_preview_score < 75:
+                if front_preview_score < 90:
                     log.error("前镜头预览画面预期和测试截图差异过大，请检查！！！")
-                    time.sleep(3)
-                    self.device.kill_process(logcat_process_id)
-                    self.device.adb_pull_file(log_path, os.path.dirname(Config.camera_sta_test_log_path))
-                    raise
+                    if is_probability:
+                        # 复制测试中异常的照片到Error文件夹地址
+                        preview_file_name1 = os.path.basename(Config.camera_sta_test_front_preview_path)
+                        preview_file_new_path1 = Config.camera_sta_err_front_preview_path
+                        shutil.copy(Config.camera_sta_test_front_preview_path, preview_file_new_path1)
+                        os.rename(os.path.join(preview_file_new_path1, preview_file_name1),
+                                  os.path.join(preview_file_new_path1, "%d_%s" % (times, preview_file_name1)))
+                        compare_fail_flag += 1
+                    else:
+                        time.sleep(3)
+                        self.device.kill_process(logcat_process_id)
+                        self.device.adb_pull_file(log_path, os.path.dirname(Config.camera_sta_test_log_path))
+                        raise
+
                 front_photograph_score = cnns.generateScore(Config.camera_sta_test_front_photograph_path,
                                                             Config.camera_sta_exp_front_photograph_path)
                 log.info("前镜头拍照预期和测试拍照相似度分数为：%s" % str(front_photograph_score))
-                if front_photograph_score < 75:
+                if front_photograph_score < 90:
                     log.error("前镜头拍照预期和测试拍照差异过大，请检查！！！")
-                    time.sleep(3)
-                    self.device.kill_process(logcat_process_id)
-                    self.device.adb_pull_file(log_path, os.path.dirname(Config.camera_sta_test_log_path))
-                    raise
+                    if is_probability:
+                        photograph_file_name1 = os.path.basename(Config.camera_sta_test_front_photograph_path)
+                        photograph_file_new_path1 = Config.camera_sta_err_front_photograph_path
+                        shutil.copy(Config.camera_sta_test_front_photograph_path, photograph_file_new_path1)
+                        os.rename(os.path.join(photograph_file_new_path1, photograph_file_name1),
+                                  os.path.join(photograph_file_new_path1, "%d_%s" % (times, photograph_file_name1)))
+                        compare_fail_flag += 1
+                    else:
+                        time.sleep(3)
+                        self.device.kill_process(logcat_process_id)
+                        self.device.adb_pull_file(log_path, os.path.dirname(Config.camera_sta_test_log_path))
+                        raise
                 # 对比后镜头
                 rear_preview_score = cnns.generateScore(Config.camera_sta_test_rear_preview_path,
                                                         Config.camera_sta_exp_rear_preview_path)
                 log.info("后镜头预览画面预期和测试截图相似度分数为：%s" % str(rear_preview_score))
-                if rear_preview_score < 75:
+                if rear_preview_score < 90:
                     log.error("后镜头预览画面预期和测试截图差异过大，请检查！！！")
-                    time.sleep(3)
-                    self.device.kill_process(logcat_process_id)
-                    self.device.adb_pull_file(log_path, os.path.dirname(Config.camera_sta_test_log_path))
-                    raise
+                    if is_probability:
+                        preview_file_name2 = os.path.basename(Config.camera_sta_test_rear_preview_path)
+                        preview_file_new_path2 = Config.camera_sta_err_rear_preview_path
+                        shutil.copy(Config.camera_sta_test_rear_preview_path, preview_file_new_path2)
+                        os.rename(os.path.join(preview_file_new_path2, preview_file_name2),
+                                  os.path.join(preview_file_new_path2, "%d_%s" % (times, preview_file_name2)))
+                        compare_fail_flag += 1
+                    else:
+                        time.sleep(3)
+                        self.device.kill_process(logcat_process_id)
+                        self.device.adb_pull_file(log_path, os.path.dirname(Config.camera_sta_test_log_path))
+                        raise
                 rear_photograph_score = cnns.generateScore(Config.camera_sta_test_rear_photograph_path,
                                                            Config.camera_sta_exp_rear_photograph_path)
                 log.info("后镜头拍照预期和测试拍照相似度分数为：%s" % str(rear_photograph_score))
-                if rear_photograph_score < 75:
-                    log.error("后镜头拍照预期和测试拍照差异过大，请检查！！！")
-                    time.sleep(3)
-                    self.device.kill_process(logcat_process_id)
-                    self.device.adb_pull_file(log_path, os.path.dirname(Config.camera_sta_test_log_path))
-                    raise
+                if rear_photograph_score < 90:
+                    if is_probability:
+                        photograph_file_name2 = os.path.basename(Config.camera_sta_test_rear_photograph_path)
+                        photograph_file_new_path2 = Config.camera_sta_err_rear_photograph_path
+                        shutil.copy(Config.camera_sta_test_rear_photograph_path, photograph_file_new_path2)
+                        os.rename(os.path.join(photograph_file_new_path2, photograph_file_name2),
+                                  os.path.join(photograph_file_new_path2, "%d_%s" % (times, photograph_file_name2)))
+                        compare_fail_flag += 1
+                    else:
+                        log.error("后镜头拍照预期和测试拍照差异过大，请检查！！！")
+                        time.sleep(3)
+                        self.device.kill_process(logcat_process_id)
+                        self.device.adb_pull_file(log_path, os.path.dirname(Config.camera_sta_test_log_path))
+                        raise
             else:
                 # 测试前删除已存在的照片
                 if os.path.exists(Config.camera_sta_test_default_preview_path):
@@ -1026,13 +1086,18 @@ class TestLXStability:
                 default_preview_score = cnns.generateScore(Config.camera_sta_test_default_preview_path,
                                                            Config.camera_sta_exp_default_preview_path)
                 log.info("镜头预览画面预期和测试截图相似度分数为：%s" % str(default_preview_score))
-                if default_preview_score < 75:
+                if default_preview_score < 90:
                     log.error("镜头预览画面预期和测试截图差异过大，请检查！！！")
                     if is_probability:
                         compare_fail_flag += 1
                         self.device.force_stop_app()
                         self.device.clear_app()
-                        continue
+                        # 复制测试中异常的照片到Error文件夹地址
+                        preview_file_name = os.path.basename(Config.camera_sta_test_default_preview_path)
+                        preview_file_new_path = Config.camera_sta_err_default_preview_path
+                        shutil.copy(Config.camera_sta_test_default_preview_path, preview_file_new_path)
+                        os.rename(os.path.join(preview_file_new_path, preview_file_name), os.path.join(preview_file_new_path, "%d_%s" % (times, preview_file_name)))
+                        # continue
                     else:
                         time.sleep(3)
                         self.device.kill_process(logcat_process_id)
@@ -1041,13 +1106,18 @@ class TestLXStability:
                 default_photograph_score = cnns.generateScore(Config.camera_sta_test_default_photograph_path,
                                                               Config.camera_sta_exp_default_photograph_path)
                 log.info("镜头拍照预期和测试拍照相似度分数为：%s" % str(default_photograph_score))
-                if default_photograph_score < 75:
+                if default_photograph_score < 90:
                     log.error("镜头拍照预期和测试拍照差异过大，请检查！！！")
                     if is_probability:
                         compare_fail_flag += 1
                         self.device.force_stop_app()
                         self.device.clear_app()
-                        continue
+                        photograph_file_name = os.path.basename(Config.camera_sta_test_default_photograph_path)
+                        photograph_file_new_path = Config.camera_sta_err_default_photograph_path
+                        shutil.copy(Config.camera_sta_test_default_photograph_path, photograph_file_new_path)
+                        os.rename(os.path.join(photograph_file_new_path, photograph_file_name),
+                                  os.path.join(photograph_file_new_path, "%d_%s" % (times, photograph_file_name)))
+                        # continue
                     else:
                         time.sleep(3)
                         self.device.kill_process(logcat_process_id)
@@ -1066,7 +1136,8 @@ class TestLXStability:
             time.sleep(1)
             if len(self.device.get_latest_img()) != 0:
                 self.device.remove_img()
-            log.info("******相机压测完成%d次*****" % (times - 1))
+            times += 1
+            log.info("******相机压测完成%d次*****" % times)
 
         if open_fail_flag > 0:
             log.error("打开相机失败的次数为： %d次" % open_fail_flag)

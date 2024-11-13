@@ -46,6 +46,7 @@ class Config:
     camera_sta_exp_path = os.path.join(camera_stability_path, "Expect")
     camera_sta_test_path = os.path.join(camera_stability_path, "Test")
     camera_sta_exp_default_path = os.path.join(camera_sta_exp_path, "Default")
+    camera_sta_test_err_path = os.path.join(camera_stability_path, "Error")
     # 预期前、后镜头
     camera_sta_exp_front_path = os.path.join(camera_sta_exp_path, "Front")
     camera_sta_exp_rear_path = os.path.join(camera_sta_exp_path, "Rear")
@@ -73,6 +74,19 @@ class Config:
                                                            "test_default_photograph.jpg")
     camera_sta_test_default_preview_path = os.path.join(camera_sta_test_default_path, "PreView",
                                                         "test_default_preview.png")
+
+    # 异常的照片存放地址
+    camera_sta_err_default_path = os.path.join(camera_sta_test_err_path, "Default")
+    camera_sta_err_front_path = os.path.join(camera_sta_test_err_path, "Front")
+    camera_sta_err_rear_path = os.path.join(camera_sta_test_err_path, "Rear")
+    # 具体文件夹
+    camera_sta_err_default_photograph_path = os.path.join(camera_sta_err_default_path, "Photograph")
+    camera_sta_err_default_preview_path = os.path.join(camera_sta_err_default_path, "PreView")
+    camera_sta_err_front_photograph_path = os.path.join(camera_sta_err_front_path, "Photograph")
+    camera_sta_err_front_preview_path = os.path.join(camera_sta_err_front_path, "PreView")
+    camera_sta_err_rear_photograph_path = os.path.join(camera_sta_err_rear_path, "Photograph")
+    camera_sta_err_rear_preview_path = os.path.join(camera_sta_err_rear_path, "PreView")
+
     # camera_preview_photograph.txt
     camera_sta_test_log_path = os.path.join(logcat_path, "camera_preview_photograph.txt")
 
