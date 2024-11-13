@@ -764,6 +764,12 @@ class TestLXStability:
         logcat_process_id = self.device.get_current_logcat_process_id()
 
         total_times = self.ui_conf_file.get(Config.section_ui_camera_check, Config.option_camera_test_times)
+        # 是否统计失败概率
+        is_probability = int(self.ui_conf_file.get(Config.section_ui_camera_check, Config.is_probability_test))
+        open_fail_flag = 0
+        compare_fail_flag = 0
+        photograph_fail_flag = 0
+
         times = 1
         while times <= int(total_times):
             times += 1
@@ -964,8 +970,14 @@ class TestLXStability:
                 time.sleep(2)
                 if self.device.get_camera_id() == 3:
                     log.error("打开相机失败，请检查！！！")
-                    time.sleep(3)
-                    raise Exception
+                    if is_probability:
+                        open_fail_flag += 1
+                        self.device.force_stop_app()
+                        self.device.clear_app()
+                        continue
+                    else:
+                        time.sleep(3)
+                        raise Exception
 
                 # get camera app package name
                 self.device.get_camera_package_name()
@@ -994,10 +1006,16 @@ class TestLXStability:
 
                 if len(self.device.get_latest_img()) == 0:
                     log.info("拍照失败，请检查！！！")
-                    time.sleep(3)
-                    self.device.kill_process(logcat_process_id)
-                    self.device.adb_pull_file(log_path, os.path.dirname(Config.camera_sta_test_log_path))
-                    raise
+                    if is_probability:
+                        photograph_fail_flag += 1
+                        self.device.force_stop_app()
+                        self.device.clear_app()
+                        continue
+                    else:
+                        time.sleep(3)
+                        self.device.kill_process(logcat_process_id)
+                        self.device.adb_pull_file(log_path, os.path.dirname(Config.camera_sta_test_log_path))
+                        raise
 
                 log.info("拍照完成")
                 self.device.pull_img(Config.camera_sta_test_default_photograph_path)
@@ -1010,19 +1028,31 @@ class TestLXStability:
                 log.info("镜头预览画面预期和测试截图相似度分数为：%s" % str(default_preview_score))
                 if default_preview_score < 75:
                     log.error("镜头预览画面预期和测试截图差异过大，请检查！！！")
-                    time.sleep(3)
-                    self.device.kill_process(logcat_process_id)
-                    self.device.adb_pull_file(log_path, os.path.dirname(Config.camera_sta_test_log_path))
-                    raise
+                    if is_probability:
+                        compare_fail_flag += 1
+                        self.device.force_stop_app()
+                        self.device.clear_app()
+                        continue
+                    else:
+                        time.sleep(3)
+                        self.device.kill_process(logcat_process_id)
+                        self.device.adb_pull_file(log_path, os.path.dirname(Config.camera_sta_test_log_path))
+                        raise
                 default_photograph_score = cnns.generateScore(Config.camera_sta_test_default_photograph_path,
                                                               Config.camera_sta_exp_default_photograph_path)
                 log.info("镜头拍照预期和测试拍照相似度分数为：%s" % str(default_photograph_score))
                 if default_photograph_score < 75:
                     log.error("镜头拍照预期和测试拍照差异过大，请检查！！！")
-                    time.sleep(3)
-                    self.device.kill_process(logcat_process_id)
-                    self.device.adb_pull_file(log_path, os.path.dirname(Config.camera_sta_test_log_path))
-                    raise
+                    if is_probability:
+                        compare_fail_flag += 1
+                        self.device.force_stop_app()
+                        self.device.clear_app()
+                        continue
+                    else:
+                        time.sleep(3)
+                        self.device.kill_process(logcat_process_id)
+                        self.device.adb_pull_file(log_path, os.path.dirname(Config.camera_sta_test_log_path))
+                        raise
 
             # close and clear data to camera
             self.device.force_stop_app()
@@ -1037,6 +1067,18 @@ class TestLXStability:
             if len(self.device.get_latest_img()) != 0:
                 self.device.remove_img()
             log.info("******相机压测完成%d次*****" % (times - 1))
+
+        if open_fail_flag > 0:
+            log.error("打开相机失败的次数为： %d次" % open_fail_flag)
+            log.error("打开相机失败的概率为： %f" % (open_fail_flag / times))
+
+        if photograph_fail_flag > 0:
+            log.error("拍照失败的次数为： %d次" % photograph_fail_flag)
+            log.error("拍照失败的概率为： %f" % (photograph_fail_flag / times))
+
+        if compare_fail_flag > 0:
+            log.error("预期图片和实际图片差异过大的次数： %d次" % compare_fail_flag)
+            log.error("预期图片和实际图片差异过大的概率为： %f" % (compare_fail_flag / times))
 
         self.device.kill_process(logcat_process_id)
         self.device.adb_pull_file(log_path, os.path.dirname(Config.camera_sta_test_log_path))

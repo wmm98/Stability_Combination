@@ -91,6 +91,13 @@ class PreviewPhotoGraph_MainWindow(config_path.UIConfigPath):
         self.test_times.setEditable(True)
         layout_test_times_info.addWidget(self.test_times_label)
         layout_test_times_info.addWidget(self.test_times)
+
+        # 是否测概率测试
+        probability_test_label = QLabel("是否进行失败概率性统计")
+        self.is_probability_test = QCheckBox()
+        layout_test_times_info.addWidget(probability_test_label)
+        layout_test_times_info.addWidget(self.is_probability_test)
+
         layout_test_times_info.addStretch(1)
         self.verticalLayout_left.addLayout(layout_test_times_info)
 
@@ -200,6 +207,11 @@ class CameraStabilityDisplay(QtWidgets.QMainWindow, PreviewPhotoGraph_MainWindow
         #     self.ui_config.add_config_option(self.ui_config.section_ui_camera_check, self.ui_config.option_switch_y_value, self.Y_info.text())
         self.ui_config.add_config_option(self.ui_config.section_ui_camera_check,
                                          self.ui_config.option_camera_test_times, str(case_test_times))
+
+        if self.is_probability_test.isChecked():
+            self.ui_config.add_config_option(self.ui_config.section_ui_camera_check, self.ui_config.is_probability_test, "1")
+        else:
+            self.ui_config.add_config_option(self.ui_config.section_ui_camera_check, self.ui_config.is_probability_test, "0")
 
         self.submit_flag = True
         self.get_message_box("相机压测用例保存成功")
