@@ -24,10 +24,17 @@ class Bt_Connect_MainWindow(config_path.UIConfigPath):
         self.verticalLayout_left = QtWidgets.QVBoxLayout(left_widget)
 
         device_info = QHBoxLayout()
+        self.config_label = QLabel("蓝牙接线配置:")
         self.COM_tips = QtWidgets.QLabel("测试COM口:")
         self.test_COM = QComboBox()
+
+        self.com_line = QLabel("继电器:")
+        self.com_config = QComboBox()
+        device_info.addWidget(self.config_label)
         device_info.addWidget(self.COM_tips)
         device_info.addWidget(self.test_COM)
+        device_info.addWidget(self.com_line)
+        device_info.addWidget(self.com_config)
         device_info.addStretch(1)
         self.verticalLayout_left.addLayout(device_info)
 
@@ -89,6 +96,10 @@ class BtConnectDisplay(QtWidgets.QMainWindow, Bt_Connect_MainWindow):
         self.submit_button.clicked.connect(self.handle_submit)
         self.list_case_test_cases()
         self.list_COM()
+        self.get_COM_config()
+
+    def get_COM_config(self):
+        self.com_config.addItems(["1路", "2路", "3路", "4路"])
 
     def list_COM(self):
         ports = self.get_current_COM()
@@ -125,6 +136,16 @@ class BtConnectDisplay(QtWidgets.QMainWindow, Bt_Connect_MainWindow):
         # 保存用例压测次数设置
         config.add_config_option(section, config.option_bt_connect_test_times, self.test_times.currentText())
         config.add_config_option(section, config.option_bt_connect_test_com, self.test_COM.currentText())
+
+        if self.com_config.currentText() == "1路":
+            config.add_config_option(section, config.option_bt_com_config, "relay_1")
+        elif self.com_config.currentText() == "2路":
+            config.add_config_option(section, config.option_bt_com_config, "relay_2")
+        elif self.com_config.currentText() == "3路":
+            config.add_config_option(section, config.option_bt_com_config, "relay_3")
+        else:
+            config.add_config_option(section, config.option_bt_com_config, "relay_4")
+
         if self.is_probability_test.isChecked():
             config.add_config_option(section, config.is_probability_test, "1")
         else:

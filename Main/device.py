@@ -20,9 +20,9 @@ class Device(publicInterface):
         return connected_mac
 
     def bt_is_connected(self):
-        res = self.send_adb_shell_command("\"dumpsys bluetooth_manager |grep mCurrentState\"")
+        res = self.send_adb_shell_command("\"dumpsys bluetooth_manager |grep ConnectionState\"")
         # print(res)
-        if "Connected" in res:
+        if "STATE_CONNECTED" in res:
             return True
         else:
             return False

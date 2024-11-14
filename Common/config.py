@@ -203,4 +203,5 @@ class Config:
     section_bt_connect_test = "Bt_connect_test"
     option_bt_connect_test_times = "bt_connect_test_times"
     option_bt_connect_test_com = "bt_connect_com"
+    option_bt_com_config = "com_config"
 

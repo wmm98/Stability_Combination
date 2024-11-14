@@ -102,6 +102,7 @@ class ConfigP(UIConfigPath):
     section_bt_connect_test = "Bt_connect_test"
     option_bt_connect_test_times = "bt_connect_test_times"
     option_bt_connect_test_com = "bt_connect_com"
+    option_bt_com_config = "com_config"
 
     def __init__(self, ini_path):
         self.ini_path = ini_path

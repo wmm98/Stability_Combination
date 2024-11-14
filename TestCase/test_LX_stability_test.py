@@ -1174,10 +1174,13 @@ class TestLXStability:
         # slave_device_mac = self.device.get_connected_bt_mac()
         total_times = int(self.ui_conf_file.get(Config.section_bt_connect_test, Config.option_bt_connect_test_times))
         is_probability_test = int(self.ui_conf_file.get(Config.section_bt_connect_test, Config.is_probability_test))
-        times = 0
+        line_num = int(self.ui_conf_file.get(Config.section_bt_connect_test, Config.option_bt_com_config).split("_")[1])
+        com_port = self.ui_conf_file.get(Config.section_bt_connect_test, Config.option_bt_connect_test_com)
 
+        times = 0
         fail_flag = 0
         slave_fail_flag = 0
+        t_ser.loginSer(com_port)
         while times < total_times:
             times += 1
             log.info("**********************第%d次测试开始********************" % times)
@@ -1194,11 +1197,11 @@ class TestLXStability:
             log.info("已关主设备闭蓝牙")
             time.sleep(30)
             if not self.device.bt_is_connected():
-                log.info("主设显示已断开连接蓝牙设备(从)")
+                log.info("主设备显示已断开连接蓝牙设备(从)")
             else:
                 if is_probability_test:
                     fail_flag += 1
-                    log.info("主设显示未断开连接蓝牙设备(从) %d 次" % fail_flag)
+                    log.info("主设备显示未断开连接蓝牙设备(从) %d 次" % fail_flag)
                     continue
 
             # now_time = time.time()
@@ -1236,6 +1239,7 @@ class TestLXStability:
                     log.error("主设备显示未连接上蓝牙设备（从）%d 次" % fail_flag)
                     continue
 
+
             # now_time1 = time.time()
             # while True:
             #     if self.device.bt_is_connected():
@@ -1253,6 +1257,7 @@ class TestLXStability:
 
             # 关闭蓝牙设备，暂时用等待来替代
             # 关闭蓝牙设备操作
+            t_ser.open_relay(line_num)
             log.info("断开蓝牙设备（从）")
             time.sleep(30)
             if not self.device.bt_is_connected():
@@ -1280,11 +1285,11 @@ class TestLXStability:
 
             # 打开蓝牙设备，暂时用等待来替代
             # 打开蓝牙操作
+            t_ser.close_relay(line_num)
             log.info("打开蓝牙设备（从）")
             time.sleep(30)
             if self.device.bt_is_connected():
                 log.info("主设备显示已经连接上蓝牙设备（从）")
-                break
             else:
                 if is_probability_test:
                     slave_fail_flag += 1
@@ -1305,6 +1310,9 @@ class TestLXStability:
             #             time.sleep(3)
             #             raise
             #     time.sleep(1)
+            log.info("**********************第%d次测试结束********************" % times)
+
+        t_ser.logoutSer()
 
         if is_probability_test:
             if fail_flag > 0:

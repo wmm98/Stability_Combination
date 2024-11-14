@@ -164,19 +164,19 @@ class Boot_Check_MainWindow(config_path.UIConfigPath):
         self.verticalLayout_left.addWidget(QLabel())
 
         # 上传图片
-        self.reboot_logo_info = QLabel("上传设备开机后第一个画面的照片：")
-        self.verticalLayout_left.addWidget(self.reboot_logo_info)
-        layout_upload_logo = QHBoxLayout()
-        self.logo_path_edit = QtWidgets.QLineEdit()
-        layout_upload_logo.addWidget(self.logo_path_edit)
-        self.logo_upload_button = QtWidgets.QPushButton("点击上传")
-        layout_upload_logo.addWidget(self.logo_upload_button)
-        self.verticalLayout_left.addLayout(layout_upload_logo)
+        # self.reboot_logo_info = QLabel("上传设备开机后第一个画面的照片：")
+        # self.verticalLayout_left.addWidget(self.reboot_logo_info)
+        # layout_upload_logo = QHBoxLayout()
+        # self.logo_path_edit = QtWidgets.QLineEdit()
+        # layout_upload_logo.addWidget(self.logo_path_edit)
+        # self.logo_upload_button = QtWidgets.QPushButton("点击上传")
+        # layout_upload_logo.addWidget(self.logo_upload_button)
+        # self.verticalLayout_left.addLayout(layout_upload_logo)
 
         # 创建 QLabel 用于显示照片
         # 显示图片
-        self.show_keying_button = QtWidgets.QPushButton("显示抠图")
-        self.verticalLayout_left.addWidget(self.show_keying_button)
+        # self.show_keying_button = QtWidgets.QPushButton("显示抠图")
+        # self.verticalLayout_left.addWidget(self.show_keying_button)
 
         self.exp_image_label = QLabel()
         self.exp_image_label.setScaledContents(True)
@@ -318,8 +318,8 @@ class BootCheckDisplay(QtWidgets.QMainWindow, Boot_Check_MainWindow):
         self.is_adapter.clicked.connect(self.adapter_checkbox_change)
         self.is_power_button.clicked.connect(self.power_button_checkbox_change)
         self.is_usb.clicked.connect(self.usb_checkbox_change)
-        self.logo_upload_button.clicked.connect(self.upload_reboot_logo)
-        self.show_keying_button.clicked.connect(self.show_keying_image)
+        # self.logo_upload_button.clicked.connect(self.upload_reboot_logo)
+        # self.show_keying_button.clicked.connect(self.show_keying_image)
         self.submit_button.clicked.connect(self.handle_submit)
         # 进程完成
         self.only_boot.clicked.connect(self.only_boot_checkbox_change)
