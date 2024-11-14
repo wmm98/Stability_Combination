@@ -28,11 +28,20 @@ class Config:
     storage_speed_path = os.path.join(USB_flash_path, "test_demo_usb_read_write_speed.sh")
 
     # 开机卡logo
-    camera_key_img_path = os.path.join(project_path, "Photo", "BootLogo", "CameraPhoto", "Key")
-    camera_origin_img_path = os.path.join(project_path, "Photo", "BootLogo", "CameraPhoto", "Take")
+    logo_base_path = os.path.join(project_path, "BootLogo")
+    logo_expect_path = os.path.join(logo_base_path, "Expect")
+    logo_test_path = os.path.join(logo_base_path, "Test")
+    logo_error_path = os.path.join(logo_base_path, "Error")
+    logo_expect_screen0_path = os.path.join(logo_expect_path, "screen0", "expect.png")
+    logo_expect_screen1_path = os.path.join(logo_expect_path, "screen1", "expect.png")
+    logo_test_screen0_path = os.path.join(logo_expect_path, "screen0", "test.png")
+    logo_test_screen1_path = os.path.join(logo_expect_path, "screen1", "test.png")
+    # camera_key_img_path = os.path.join(project_path, "Photo", "BootLogo", "CameraPhoto", "Key")
+    # camera_origin_img_path = os.path.join(project_path, "Photo", "BootLogo", "CameraPhoto", "Take")
+    #
+    # logo_key_path = os.path.join(project_path, "Photo", "BootLogo", "Logo", "Key")
+    # logo_logo_path = os.path.join(project_path, "Photo", "BootLogo", "Logo", "Logo")
 
-    logo_key_path = os.path.join(project_path, "Photo", "BootLogo", "Logo", "Key")
-    logo_logo_path = os.path.join(project_path, "Photo", "BootLogo", "Logo", "Logo")
     # debug_log_path = os.path.join(project_path, "Log", "Debug", "debug_log.txt")
     system_failed_log_path = os.path.join(project_path, "Log", "Logcat", "failed_logcat.txt")
     flag_file_path = os.path.join(project_path, "UI", "flag.txt")

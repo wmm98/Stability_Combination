@@ -18,13 +18,22 @@ class UIConfigPath:
     mem_log_path = os.path.join(project_path, "UI", "mem_log.txt")
 
     # 卡logo压测
-    logo_take_path = os.path.join(project_path, "Photo", "BootLogo", "Logo", "Logo", "Logo.png")
-    logo_key_path = os.path.join(project_path, "Photo", "BootLogo", "Logo", "Key", "Key.png")
-    camera_key_path = os.path.join(project_path, "Photo", "BootLogo", "CameraPhoto", "Key", "Key.png")
-    camera2_key_path = os.path.join(project_path, "Photo", "BootLogo", "CameraPhoto", "Key", "Key2.png")
+    logo_base_path = os.path.join(project_path, "BootLogo")
+    logo_expect_path = os.path.join(logo_base_path, "Expect")
+    logo_test_path = os.path.join(logo_base_path, "Test")
+    logo_error_path = os.path.join(logo_base_path, "Error")
+    logo_expect_screen0_path = os.path.join(logo_expect_path, "screen0", "expect.png")
+    logo_expect_screen1_path = os.path.join(logo_expect_path, "screen1", "expect.png")
+    logo_test_screen0_path = os.path.join(logo_expect_path, "screen0", "test.png")
+    logo_test_screen1_path = os.path.join(logo_expect_path, "screen1", "test.png")
+    bat_logo_stability_path = os.path.join(project_path, "UI", "process_get_logo.py")
+    # logo_take_path = os.path.join(project_path, "Photo", "BootLogo", "Logo", "Logo", "Logo.png")
+    # logo_key_path = os.path.join(project_path, "Photo", "BootLogo", "Logo", "Key", "Key.png")
+    # camera_key_path = os.path.join(project_path, "Photo", "BootLogo", "CameraPhoto", "Key", "Key.png")
+    # camera2_key_path = os.path.join(project_path, "Photo", "BootLogo", "CameraPhoto", "Key", "Key2.png")
     # failed_logcat.txt
     adb_log_path = os.path.join(project_path, "Log", "Logcat", "failed_logcat.txt")
-    failed_image_key_path = os.path.join(project_path, "Photo", "BootLogo", "CameraPhoto", "Key", "Failed.png")
+    # failed_image_key_path = os.path.join(project_path, "Photo", "BootLogo", "CameraPhoto", "Key", "Failed.png")
 
     # 摄像头压测
     bat_camera_stability_path = os.path.join(project_path, "UI", "bat_pre_camera.bat")

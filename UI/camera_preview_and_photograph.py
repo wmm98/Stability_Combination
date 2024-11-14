@@ -162,7 +162,6 @@ class CameraStabilityDisplay(QtWidgets.QMainWindow, PreviewPhotoGraph_MainWindow
     def intiui(self):
         # 初始化进程
         self.get_exp_imag_process = QProcess()
-
         self.list_devices_name()
         self.list_test_times_settings()
         self.submit_button.clicked.connect(self.handle_submit)

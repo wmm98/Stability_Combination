@@ -235,8 +235,8 @@ class Device(publicInterface):
     def take_photo(self):
         shell.invoke("adb -s %s shell \"input keyevent 27\"" % self.device_name)
 
-    def screen_shot(self, des_path):
-        shell.invoke("adb -s %s exec-out screencap -p > %s" % (self.device_name, des_path))
+    def screen_shot(self, des_path, display_id=0):
+        shell.invoke("adb -s %s exec-out screencap -d %d -p > %s" % (self.device_name, display_id, des_path))
 
     def remove_img(self):
         shell.invoke("adb -s %s shell \"rm -rf /sdcard/DCIM/Camera/*\"" % self.device_name)

@@ -178,6 +178,15 @@ class Boot_Check_MainWindow(config_path.UIConfigPath):
         # self.show_keying_button = QtWidgets.QPushButton("显示抠图")
         # self.verticalLayout_left.addWidget(self.show_keying_button)
 
+        # 点击获取预期照片
+        layout_get_image_info = QHBoxLayout()
+        self.get_logo_image_button = QPushButton("点击获取预期照片")
+        self.logo_image_tips = QLabel("未保存预期照片，请点击获取！")
+        self.logo_image_tips.setStyleSheet("color: blue;")
+        layout_get_image_info.addWidget(self.get_logo_image_button)
+        layout_get_image_info.addWidget(self.logo_image_tips)
+        self.verticalLayout_left.addLayout(layout_get_image_info)
+
         self.exp_image_label = QLabel()
         self.exp_image_label.setScaledContents(True)
         self.verticalLayout_left.addWidget(self.exp_image_label)
@@ -310,6 +319,7 @@ class BootCheckDisplay(QtWidgets.QMainWindow, Boot_Check_MainWindow):
 
     def intiui(self):
         # 初始化进程
+        self.get_exp_logo_process = QProcess()
         self.usb_process = QProcess()
         self.select_devices_name()
         self.list_COM()
@@ -326,6 +336,26 @@ class BootCheckDisplay(QtWidgets.QMainWindow, Boot_Check_MainWindow):
         self.is_usb_test.clicked.connect(self.enable_usb_ui)
         self.check_usb_flash_button.clicked.connect(self.query_usb_flash_path)
         self.usb_process.finished.connect(self.query_usb_boot_finished_handle)
+        self.get_logo_image_button.clicked.connect(self.get_logo_image_button_change)
+
+    def get_logo_image_button_change(self):
+        self.ui_config.add_config_option(self.ui_config.section_ui_boot_check, self.ui_config.ui_option_device_name, self.edit_device_name.currentText())
+        if os.path.exists(conf_path.logo_expect_screen0_path):
+            os.remove(conf_path.logo_expect_screen0_path)
+        if self.double_screen.isChecked():
+            if os.path.exists(conf_path.logo_expect_screen1_path):
+                os.remove(conf_path.logo_expect_screen1_path)
+
+        # 调起来进程， 获取预期照片
+        self.get_exp_logo_process.start(self.bat_logo_stability_path)
+        self.phot_tips.setText("正在拍照保存，请等待...")
+        self.logo_image_tips.setStyleSheet("color: green;")
+        # self.document.clear()
+        # self.file_timer = QTimer(self)
+        # self.file_timer.timeout.connect(self.check_image_modification)
+        # self.check_interval = 2000  # 定时器间隔，单位毫秒
+
+        # self.file_timer.start(self.check_interval)
 
     def query_usb_boot_finished_handle(self):
         with open(conf_path.usb_boot_log_path, "r") as f:
@@ -483,7 +513,7 @@ class BootCheckDisplay(QtWidgets.QMainWindow, Boot_Check_MainWindow):
         return ["1路", "2路", "3路", "4路"]
 
     def save_config(self):
-        config = ConfigP(self.ui_config_file_path)
+        config = self.ui_config
         section = config.section_ui_boot_check
         config.add_config_section(section)
 
