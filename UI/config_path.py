@@ -18,7 +18,8 @@ class UIConfigPath:
     mem_log_path = os.path.join(project_path, "UI", "mem_log.txt")
 
     # 卡logo压测
-    logo_base_path = os.path.join(project_path, "BootLogo")
+    photo_path = os.path.join(project_path, "Photo")
+    logo_base_path = os.path.join(photo_path, "BootLogo")
     logo_expect_path = os.path.join(logo_base_path, "Expect")
     logo_test_path = os.path.join(logo_base_path, "Test")
     logo_error_path = os.path.join(logo_base_path, "Error")
@@ -26,7 +27,7 @@ class UIConfigPath:
     logo_expect_screen1_path = os.path.join(logo_expect_path, "screen1", "expect.png")
     logo_test_screen0_path = os.path.join(logo_expect_path, "screen0", "test.png")
     logo_test_screen1_path = os.path.join(logo_expect_path, "screen1", "test.png")
-    bat_logo_stability_path = os.path.join(project_path, "UI", "process_get_logo.py")
+    bat_logo_stability_path = os.path.join(project_path, "UI", "bat_pre_logo.bat")
     # logo_take_path = os.path.join(project_path, "Photo", "BootLogo", "Logo", "Logo", "Logo.png")
     # logo_key_path = os.path.join(project_path, "Photo", "BootLogo", "Logo", "Key", "Key.png")
     # camera_key_path = os.path.join(project_path, "Photo", "BootLogo", "CameraPhoto", "Key", "Key.png")

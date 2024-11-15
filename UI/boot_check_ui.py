@@ -9,7 +9,7 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtCore import QTimer, Qt, pyqtSlot
 import os
 import shutil
-from PyQt5.QtGui import QPixmap
+from PyQt5.QtGui import QPixmap,  QTextCursor, QTextImageFormat, QTextDocument
 import serial.tools.list_ports
 from PIL import Image
 import rembg
@@ -28,7 +28,7 @@ class Boot_Check_MainWindow(config_path.UIConfigPath):
 
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(600, 800)
+        MainWindow.resize(600, 900)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         # 创建水平布局
         self.main_layout = QHBoxLayout(self.centralwidget)
@@ -187,14 +187,25 @@ class Boot_Check_MainWindow(config_path.UIConfigPath):
         layout_get_image_info.addWidget(self.logo_image_tips)
         self.verticalLayout_left.addLayout(layout_get_image_info)
 
-        self.exp_image_label = QLabel()
-        self.exp_image_label.setScaledContents(True)
-        self.verticalLayout_left.addWidget(self.exp_image_label)
+        self.image_edit = ScrollablePlainTextEdit()
+        self.image_edit.setFixedHeight(300)
+        width = self.image_edit.viewport().width()
+        height = self.image_edit.viewport().height()
+        self.image_width = width
+        self.image_height = 500
+        # self.image_width = width
+        # self.image_height = height
+        self.document = self.image_edit.document()
+        self.verticalLayout_left.addWidget(self.image_edit)
 
-        self.test_image_label = QLabel()
-        self.test_image_label.setScaledContents(True)
-        self.verticalLayout_left.addWidget(self.test_image_label)
-        self.verticalLayout_left.setSpacing(10)
+        # self.exp_image_label = QLabel()
+        # self.exp_image_label.setScaledContents(True)
+        # self.verticalLayout_left.addWidget(self.exp_image_label)
+        #
+        # self.test_image_label = QLabel()
+        # self.test_image_label.setScaledContents(True)
+        # self.verticalLayout_left.addWidget(self.test_image_label)
+        # self.verticalLayout_left.setSpacing(10)
 
         self.verticalLayout_left.addWidget(QLabel())
         # 设备信息配置
@@ -337,24 +348,43 @@ class BootCheckDisplay(QtWidgets.QMainWindow, Boot_Check_MainWindow):
         self.check_usb_flash_button.clicked.connect(self.query_usb_flash_path)
         self.usb_process.finished.connect(self.query_usb_boot_finished_handle)
         self.get_logo_image_button.clicked.connect(self.get_logo_image_button_change)
+        self.get_exp_logo_process.finished.connect(self.get_logo_finished_handle)
+
+        # 初始化图片cursor
+        self.cursor = QTextCursor(self.document)
+
+    def get_logo_finished_handle(self):
+        # self.file_timer.stop()
+        if self.double_screen.isChecked():
+            pass
+        else:
+            if os.path.exists(self.logo_expect_screen0_path):
+                self.logo_image_tips.setText("已经获取到预期参照图片！")
+                self.logo_image_tips.setStyleSheet("color: read;")
+                self.add_logo_image(self.logo_expect_screen0_path)
+            else:
+                self.logo_image_tips.setText("未获取到预期参照照片！！！")
+                self.logo_image_tips.setStyleSheet("color: gray;")
 
     def get_logo_image_button_change(self):
+        if self.double_screen.isChecked():
+            self.ui_config.add_config_option(self.ui_config.section_ui_boot_check, self.ui_config.option_logo_double_screen, "1")
+        else:
+            self.ui_config.add_config_option(self.ui_config.section_ui_boot_check, self.ui_config.option_logo_double_screen, "0")
         self.ui_config.add_config_option(self.ui_config.section_ui_boot_check, self.ui_config.ui_option_device_name, self.edit_device_name.currentText())
         if os.path.exists(conf_path.logo_expect_screen0_path):
             os.remove(conf_path.logo_expect_screen0_path)
         if self.double_screen.isChecked():
             if os.path.exists(conf_path.logo_expect_screen1_path):
                 os.remove(conf_path.logo_expect_screen1_path)
-
         # 调起来进程， 获取预期照片
         self.get_exp_logo_process.start(self.bat_logo_stability_path)
-        self.phot_tips.setText("正在拍照保存，请等待...")
+        self.logo_image_tips.setText("正在拍照保存，请等待...")
         self.logo_image_tips.setStyleSheet("color: green;")
-        # self.document.clear()
+        self.document.clear()
         # self.file_timer = QTimer(self)
         # self.file_timer.timeout.connect(self.check_image_modification)
         # self.check_interval = 2000  # 定时器间隔，单位毫秒
-
         # self.file_timer.start(self.check_interval)
 
     def query_usb_boot_finished_handle(self):
@@ -377,12 +407,6 @@ class BootCheckDisplay(QtWidgets.QMainWindow, Boot_Check_MainWindow):
         QMessageBox.warning(self, "错误提示", text)
 
     def handle_submit(self):
-        # 先删除原来存在的key图片
-        if os.path.exists(self.camera_key_path):
-            os.remove(self.camera_key_path)
-        if os.path.exists(self.camera2_key_path):
-            os.remove(self.camera2_key_path)
-
         if len(self.test_COM.currentText()) == 0:
             self.get_message_box("没检测到可用的串口，请检查或者重启界面！！！")
             return
@@ -683,6 +707,19 @@ class BootCheckDisplay(QtWidgets.QMainWindow, Boot_Check_MainWindow):
         if not pixmap.isNull():
             scaled_pixmap = pixmap.scaled(429, 311)
             self.test_image_label.setPixmap(scaled_pixmap)
+
+    def add_logo_image(self, img_path):
+        image_format = QTextImageFormat()
+        image_url = QUrl.fromLocalFile(img_path)
+        # 添加图片资源到 QTextDocument
+        self.document.addResource(QTextDocument.ImageResource, image_url, image_url)
+        # 设置图片格式的 ID
+        image_format.setName(image_url.toString())
+        # 设置图片的大小
+        image_format.setWidth(200)
+        image_format.setHeight(200)
+        # # 插入图片到 QTextDocument
+        self.cursor.insertImage(image_format)
 
 
 class ScrollablePlainTextEdit(QTextEdit):

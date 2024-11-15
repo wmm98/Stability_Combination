@@ -28,7 +28,8 @@ class Config:
     storage_speed_path = os.path.join(USB_flash_path, "test_demo_usb_read_write_speed.sh")
 
     # 开机卡logo
-    logo_base_path = os.path.join(project_path, "BootLogo")
+    photo_path = os.path.join(project_path, "Photo")
+    logo_base_path = os.path.join(photo_path, "BootLogo")
     logo_expect_path = os.path.join(logo_base_path, "Expect")
     logo_test_path = os.path.join(logo_base_path, "Test")
     logo_error_path = os.path.join(logo_base_path, "Error")
@@ -36,6 +37,7 @@ class Config:
     logo_expect_screen1_path = os.path.join(logo_expect_path, "screen1", "expect.png")
     logo_test_screen0_path = os.path.join(logo_expect_path, "screen0", "test.png")
     logo_test_screen1_path = os.path.join(logo_expect_path, "screen1", "test.png")
+    bat_logo_stability_path = os.path.join(project_path, "UI", "bat_pre_logo.bat")
     # camera_key_img_path = os.path.join(project_path, "Photo", "BootLogo", "CameraPhoto", "Key")
     # camera_origin_img_path = os.path.join(project_path, "Photo", "BootLogo", "CameraPhoto", "Take")
     #
