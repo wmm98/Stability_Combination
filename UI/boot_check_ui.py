@@ -442,16 +442,6 @@ class BootCheckDisplay(QtWidgets.QMainWindow, Boot_Check_MainWindow):
         if len(config_list) != len(set(config_list)):
             self.get_message_box("接线配置有相同，请检查！！！")
             return
-        # 如果只测开关机，不进行图片比对
-        if not self.only_boot.isChecked():
-            if len(self.logo_path_edit.text()) == 0:
-                self.get_message_box("请上传开机logo！！！")
-                return
-            # # 检查文件是否存在
-            reboot_logo_path = self.logo_path_edit.text().strip()
-            if not os.path.exists(reboot_logo_path):
-                self.get_message_box("文件路径：%s不存在" % reboot_logo_path)
-                return
 
         if len(self.test_times.currentText()) == 0:
             self.get_message_box("请设置压测次数")
@@ -459,11 +449,6 @@ class BootCheckDisplay(QtWidgets.QMainWindow, Boot_Check_MainWindow):
 
         if not self.adapter_boot.isChecked() and not self.normal_boot.isChecked() and not self.abnormal_boot.isChecked():
             self.get_message_box("请选择开关机模式！！！")
-            return
-
-        # 检查是否抠图了
-        if not os.path.exists(self.logo_key_path):
-            self.get_message_box("请抠图检查图片是否完整！！！")
             return
 
         if not self.is_wifi_test.isChecked() and not self.is_eth_test.isChecked() and not self.is_mobile_test.isChecked() and not self.is_bt_test.isChecked() and not self.is_nfc_test.isChecked() and not self.is_usb_test.isChecked():
@@ -483,9 +468,6 @@ class BootCheckDisplay(QtWidgets.QMainWindow, Boot_Check_MainWindow):
         self.save_config()
         self.submit_flag = True
         self.get_message_box("开机卡logo用例配置保存成功")
-        # 每次提交先删除失败的照片，避免检错误
-        if os.path.exists(self.failed_image_key_path):
-            os.remove(self.failed_image_key_path)
 
     def enable_usb_ui(self):
         if self.is_usb_test.isChecked():
@@ -502,12 +484,8 @@ class BootCheckDisplay(QtWidgets.QMainWindow, Boot_Check_MainWindow):
     def only_boot_checkbox_change(self):
         if self.only_boot.isChecked():
             self.double_screen.setDisabled(True)
-            self.logo_upload_button.setDisabled(True)
-            self.show_keying_button.setDisabled(True)
         else:
             self.double_screen.setEnabled(True)
-            self.logo_upload_button.setEnabled(True)
-            self.show_keying_button.setEnabled(True)
 
     def adapter_checkbox_change(self):
         if self.adapter_config.isEnabled():
@@ -559,7 +537,6 @@ class BootCheckDisplay(QtWidgets.QMainWindow, Boot_Check_MainWindow):
 
         config.add_config_option(section, "COM", self.test_COM.currentText())
         config.add_config_option(section, "logcat_duration", self.adb_log_duration.currentText())
-
         # 接线方式
         if self.is_adapter.isChecked():
             config.add_config_option(section, "is_adapter", "1")
@@ -617,7 +594,8 @@ class BootCheckDisplay(QtWidgets.QMainWindow, Boot_Check_MainWindow):
             config.add_config_option(section, "double_screen_config", "0")
 
         # 保存U盘挂载的路径
-        config.add_config_option(section, config.ui_option_boot_usb_path, self.usb_flash_path.text().strip())
+        if self.is_usb_test.isChecked():
+            config.add_config_option(section, config.ui_option_boot_usb_path, self.usb_flash_path.text())
 
         if self.button_boot_time.isEnabled():
             config.add_config_option(section, "button_boot_time", self.button_boot_time.currentText())

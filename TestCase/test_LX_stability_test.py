@@ -124,67 +124,67 @@ class TestLXStability:
                 raise Exception
             log.info("NFC上电成功")
 
-        if is_eth:
-            log.info("****检查以太网当前状态")
-            if not self.device.eth0_is_enable():
-                self.device.enable_eth0_btn()
-                time.sleep(3)
-                log.info("以太网上电")
-                if self.device.is_eth0_internet(5):
-                    log.info("以太网可上网")
-                else:
-                    log.error("以太网不可上网， 请检查！！！")
-                    time.sleep(3)
-                    raise Exception
-
-        if is_wifi:
-            log.info("****检查wifi当前状态")
-            if not self.device.wifi_is_enable():
-                self.device.enable_wifi_btn()
-                time.sleep(3)
-            log.info("wifi上电")
-
-            if not self.device.is_wifi_internet(5):
-                log.error("无法上网，请连接wifi！！！")
-                time.sleep(3)
-                raise Exception
-            else:
-                log.info("wifi可上网")
-
-        if is_mobile:
-            log.info("****检查移动数据流量当前状态")
-            if is_wifi:
-                if self.device.wifi_is_enable():
-                    self.device.disable_wifi_btn()
-                    time.sleep(3)
-            if is_eth:
-                if self.device.eth0_is_enable():
-                    self.device.disable_eth0_btn()
-                    time.sleep(3)
-
-            if not self.device.ping_network(120):
-                log.error("4G卡无法上网， 请见检查！！！")
-                time.sleep(3)
-                raise Exception
-
-        # wifi, 以太网上电
-        if is_wifi:
-            self.device.enable_wifi_btn()
-            time.sleep(3)
-            if not self.device.wifi_is_enable():
-                self.device.enable_wifi_btn()
-                time.sleep(3)
-            if not self.device.wifi_is_enable():
-                log.error("wifi无法上电，请检查！！！")
-
-        if is_eth:
-            self.device.enable_eth0_btn()
-            time.sleep(3)
-            if not self.device.eth0_is_enable():
-                self.device.enable_eth0_btn()
-                time.sleep(3)
-            if not self.device.eth0_is_enable():
-                log.error("以太网无法上电，请检查！！！")
+        # if is_eth:
+        #     log.info("****检查以太网当前状态")
+        #     if not self.device.eth0_is_enable():
+        #         self.device.enable_eth0_btn()
+        #         time.sleep(3)
+        #         log.info("以太网上电")
+        #         if self.device.is_eth0_internet(5):
+        #             log.info("以太网可上网")
+        #         else:
+        #             log.error("以太网不可上网， 请检查！！！")
+        #             time.sleep(3)
+        #             raise Exception
+        #
+        # if is_wifi:
+        #     log.info("****检查wifi当前状态")
+        #     if not self.device.wifi_is_enable():
+        #         self.device.enable_wifi_btn()
+        #         time.sleep(3)
+        #     log.info("wifi上电")
+        #
+        #     if not self.device.is_wifi_internet(5):
+        #         log.error("无法上网，请连接wifi！！！")
+        #         time.sleep(3)
+        #         raise Exception
+        #     else:
+        #         log.info("wifi可上网")
+        #
+        # if is_mobile:
+        #     log.info("****检查移动数据流量当前状态")
+        #     if is_wifi:
+        #         if self.device.wifi_is_enable():
+        #             self.device.disable_wifi_btn()
+        #             time.sleep(3)
+        #     if is_eth:
+        #         if self.device.eth0_is_enable():
+        #             self.device.disable_eth0_btn()
+        #             time.sleep(3)
+        #
+        #     if not self.device.ping_network(120):
+        #         log.error("4G卡无法上网， 请见检查！！！")
+        #         time.sleep(3)
+        #         raise Exception
+        #
+        # # wifi, 以太网上电
+        # if is_wifi:
+        #     self.device.enable_wifi_btn()
+        #     time.sleep(3)
+        #     if not self.device.wifi_is_enable():
+        #         self.device.enable_wifi_btn()
+        #         time.sleep(3)
+        #     if not self.device.wifi_is_enable():
+        #         log.error("wifi无法上电，请检查！！！")
+        #
+        # if is_eth:
+        #     self.device.enable_eth0_btn()
+        #     time.sleep(3)
+        #     if not self.device.eth0_is_enable():
+        #         self.device.enable_eth0_btn()
+        #         time.sleep(3)
+        #     if not self.device.eth0_is_enable():
+        #         log.error("以太网无法上电，请检查！！！")
 
         # U盘， 后续开发适配, sdcard数据检查后续开发
 
@@ -214,7 +214,7 @@ class TestLXStability:
         while flag < int(self.ui_conf_file.get(Config.section_ui_boot_check, Config.ui_option_logo_test_times)):
             flag += 1
             # 上下电启动
-            t_ser.loginSer(self.ui_conf_file.get(Config.section_ui_boot_check, Config.option_logo_COM))
+            # t_ser.loginSer(self.ui_conf_file.get(Config.section_ui_boot_check, Config.option_logo_COM))
             log.info("关机")
 
             # if self.ui_conf_file.get(Config.section_ui_boot_check, Config.ui_option_logo_cases) == "1":
@@ -315,7 +315,6 @@ class TestLXStability:
             if self.ui_conf_file[Config.section_ui_boot_check][Config.option_only_boot_config] == "0":
                 # 拍照
                 time.sleep(30)
-
                 if not self.device.is_screen_on():
                     self.device.press_power_button()
                 time.sleep(1)
@@ -347,9 +346,10 @@ class TestLXStability:
                         time.sleep(3)
                         break
 
-                    # 截图主屏
-                    self.device.screen_shot(Config.logo_test_screen0_path)
-                    log.info("主屏桌面截图完成")
+                # 截图主屏
+                print("截图照片：%s" % Config.logo_test_screen0_path)
+                self.device.screen_shot(Config.logo_test_screen0_path)
+                log.info("主屏桌面截图完成")
 
                 score = cnns.generateScore(Config.logo_expect_screen0_path, Config.logo_test_screen0_path)
                 log.info("当前相似度分数为：%s" % str(score))
@@ -450,282 +450,282 @@ class TestLXStability:
                 raise Exception
 
             # 检查各网络模块是否上电状态
-            if is_eth:
-                log.info("********检查以太网状态")
-                if not self.device.eth0_is_enable():
-                    log.error("启动后的以太网不是上电状态， 请检查！！！")
-                    time.sleep(3)
-                    raise Exception
-                log.info("启动后以太网为上电状态")
-
-            if is_wifi:
-                log.info("********检查以wifi态")
-                if not self.device.wifi_is_enable():
-                    log.error("启动后的以wifi不是上电状态， 请检查！！！")
-                    time.sleep(3)
-                    raise Exception
-                log.info("启动后wifi为上电状态")
-
-            if is_mobile:
-                log.info("********检查以流量数据态")
-                if not self.device.mobile_is_enable():
-                    log.error("启动后的移动数据网络不是上电状态， 请检查！！！")
-                    time.sleep(3)
-                    raise Exception
-                log.info("启动后移动网络为上电状态")
-
-            if is_eth:
-                log.info("*****检查以太网上网情况")
-                if self.device.is_eth0_internet():
-                    log.info("当前以太网可上网")
-                else:
-                    log.error("当前以太网不可以上网，请检查！！！")
-                    time.sleep(3)
-                    raise Exception
-
-            if int(is_eth) and int(is_wifi) and int(is_mobile):
-                # 禁用wifi
-                self.device.disable_wifi_btn()
-                time.sleep(3)
-                if self.device.wifi_is_enable():
-                    self.device.disable_wifi_btn()
-                    time.sleep(3)
-                if self.device.wifi_is_enable():
-                    log.error("wifi模块无法下电，请检查！！！")
-                    time.sleep(3)
-                    raise Exception
-
-                log.info("wifi下电")
-                # 禁用4G
-                self.device.disable_mobile_btn()
-                time.sleep(3)
-                if self.device.mobile_is_enable():
-                    self.device.disable_mobile_btn()
-                    time.sleep(3)
-                if self.device.mobile_is_enable():
-                    log.error("移动数据模块无法下电，请检查！！！")
-                    time.sleep(3)
-                    raise Exception
-                log.info("移动数据下电成功")
-                if not self.device.ping_network(5, 35):
-                    log.error("启动后以太网无法上网， 请检查！！！")
-                    time.sleep(3)
-                    raise Exception
-                log.info("启动后以太网可正常上网")
-
-                # 禁用以太网
-                self.device.disable_eth0_btn()
-                time.sleep(3)
-                if self.device.eth0_is_enable():
-                    self.device.disable_eth0_btn()
-                    time.sleep(3)
-                if self.device.eth0_is_enable():
-                    log.error("以太网模块无法下电，请检查！！！")
-                    time.sleep(3)
-                    raise Exception
-                log.info("以太网下电成功")
-                # 上电
-                self.device.enable_eth0_btn()
-                time.sleep(3)
-                if not self.device.eth0_is_enable():
-                    self.device.enable_eth0_btn()
-                    time.sleep(3)
-                if not self.device.eth0_is_enable():
-                    log.error("以太网模块无法上电，请检查！！！")
-                    time.sleep(3)
-                    raise Exception
-                log.info("以太网模块上电成功")
-                # 检查网络
-                if not self.device.ping_network(5, 35):
-                    log.error("以太网无法上网， 请检查！！！")
-                    time.sleep(3)
-                    raise Exception
-                log.info("以太网可正常上网")
-
-                # 以太网下电
-                self.device.disable_eth0_btn()
-                time.sleep(3)
-                if self.device.eth0_is_enable():
-                    self.device.disable_eth0_btn()
-                    time.sleep(3)
-                if self.device.eth0_is_enable():
-                    log.error("以太网模块无法下电，请检查！！！")
-                    time.sleep(3)
-                    raise Exception
-
-                # wifi上电
-                # 上电
-                self.device.enable_wifi_btn()
-                time.sleep(3)
-                if not self.device.wifi_is_enable():
-                    self.device.enable_wifi_btn()
-                    time.sleep(3)
-                if not self.device.wifi_is_enable():
-                    log.error("wifi模块无法上电，请检查！！！")
-                    time.sleep(3)
-                    raise Exception
-                log.info("wifi模块上电成功")
-                # 检查网络
-                if not self.device.ping_network(5, 35):
-                    log.error("wifi无法上网， 请检查！！！")
-                    time.sleep(3)
-                    raise Exception
-                log.info("wifi可正常上网")
-
-                # wifi下电
-                self.device.disable_wifi_btn()
-                time.sleep(3)
-                if self.device.wifi_is_enable():
-                    self.device.disable_wifi_btn()
-                    time.sleep(3)
-                if self.device.wifi_is_enable():
-                    log.error("wifi模块无法下电，请检查！！！")
-                    time.sleep(3)
-                    raise Exception
-
-                # 移动数据上电
-                # 上电
-                self.device.enable_mobile_btn()
-                time.sleep(3)
-                if not self.device.mobile_is_enable():
-                    self.device.enable_mobile_btn()
-                    time.sleep(3)
-                if not self.device.mobile_is_enable():
-                    log.error("移动数据模块无法上电，请检查！！！")
-                    time.sleep(3)
-                    raise Exception
-                log.info("移动数据模块上电成功")
-                # 检查网络
-                if not self.device.ping_network(5, 35):
-                    log.error("移动数据无法上网， 请检查！！！")
-                    time.sleep(3)
-                    raise Exception
-                log.info("移动数据可正常上网")
-
-                # 以太网上电，wifi上电
-                # wifi上电
-                # 上电
-                self.device.enable_wifi_btn()
-                time.sleep(3)
-                if not self.device.wifi_is_enable():
-                    self.device.enable_wifi_btn()
-                    time.sleep(3)
-                if not self.device.wifi_is_enable():
-                    log.error("wifi模块无法上电，请检查！！！")
-                    time.sleep(3)
-                    raise Exception
-                log.info("wifi模块上电成功")
-                # 检查网络
-                if not self.device.ping_network(5, 35):
-                    log.error("wifi无法上网， 请检查！！！")
-                    time.sleep(3)
-                    raise Exception
-                log.info("wifi可正常上网")
-
-                # 以太网上电
-                self.device.enable_eth0_btn()
-                time.sleep(3)
-                if not self.device.eth0_is_enable():
-                    self.device.enable_eth0_btn()
-                    time.sleep(3)
-                if not self.device.eth0_is_enable():
-                    log.error("以太网模块无法上电，请检查！！！")
-                    time.sleep(3)
-                    raise Exception
-                log.info("以太网模块上电成功")
-                # 检查网络
-                if not self.device.ping_network(5, 35):
-                    log.error("以太网无法上网， 请检查！！！")
-                    time.sleep(3)
-                    raise Exception
-                log.info("以太网可正常上网")
-
-            if not int(is_eth) and int(is_wifi) and int(is_mobile):
-                # 禁用4G
-                self.device.disable_mobile_btn()
-                time.sleep(3)
-                if self.device.mobile_is_enable():
-                    self.device.disable_mobile_btn()
-                    time.sleep(3)
-                if self.device.mobile_is_enable():
-                    log.error("移动数据模块无法下电，请检查！！！")
-                    time.sleep(3)
-                    raise Exception
-                log.info("移动数据下电")
-
-                if not self.device.ping_network(5, 60):
-                    log.error("wifi无法上网， 请检查！！！")
-                    time.sleep(3)
-                    raise Exception
-                log.info("wifi可正常上网")
-
-                # wifi下电
-                self.device.disable_wifi_btn()
-                time.sleep(3)
-                if self.device.wifi_is_enable():
-                    self.device.disable_wifi_btn()
-                    time.sleep(3)
-                if self.device.wifi_is_enable():
-                    log.error("wifi模块无法下电，请检查！！！")
-                    time.sleep(3)
-                    raise Exception
-
-                # 移动数据上电
-                # 上电
-                self.device.enable_mobile_btn()
-                time.sleep(3)
-                if not self.device.mobile_is_enable():
-                    self.device.enable_mobile_btn()
-                    time.sleep(3)
-                if not self.device.mobile_is_enable():
-                    log.error("移动数据模块无法上电，请检查！！！")
-                    raise Exception
-                log.info("移动数据模块上电成功")
-                # 检查网络
-                if not self.device.ping_network(5, 35):
-                    log.error("移动数据无法上网， 请检查！！！")
-                    time.sleep(3)
-                    raise Exception
-
-                log.info("移动数据可正常上网")
-
-                # 以太网上电，wifi上电
-                # wifi上电
-                # 上电
-                log.info("移动数据下电")
-                if self.device.mobile_is_enable():
-                    self.device.disable_mobile_btn()
-                    time.sleep(3)
-                if self.device.mobile_is_enable():
-                    log.error("移动数据模块无法下电，请检查！！！")
-                    time.sleep(3)
-                    raise Exception
-                self.device.enable_wifi_btn()
-                time.sleep(3)
-                if not self.device.wifi_is_enable():
-                    self.device.enable_wifi_btn()
-                    time.sleep(3)
-                if not self.device.wifi_is_enable():
-                    log.error("wifi模块无法上电，请检查！！！")
-                    time.sleep(3)
-                    raise Exception
-                log.info("wifi模块上电成功")
-                # 检查网络
-                if not self.device.ping_network(5, 35):
-                    log.error("wifi无法上网， 请检查！！！")
-                    time.sleep(3)
-                    raise Exception
-                log.info("wifi可正常上网")
-
-                self.device.enable_mobile_btn()
-                time.sleep(3)
-                if not self.device.mobile_is_enable():
-                    self.device.enable_mobile_btn()
-                    time.sleep(3)
-                if not self.device.mobile_is_enable():
-                    log.error("移动数据模块无法上电，请检查！！！")
-                    raise Exception
-                log.info("移动数据模块上电成功")
+            # if is_eth:
+            #     log.info("********检查以太网状态")
+            #     if not self.device.eth0_is_enable():
+            #         log.error("启动后的以太网不是上电状态， 请检查！！！")
+            #         time.sleep(3)
+            #         raise Exception
+            #     log.info("启动后以太网为上电状态")
+            #
+            # if is_wifi:
+            #     log.info("********检查以wifi态")
+            #     if not self.device.wifi_is_enable():
+            #         log.error("启动后的以wifi不是上电状态， 请检查！！！")
+            #         time.sleep(3)
+            #         raise Exception
+            #     log.info("启动后wifi为上电状态")
+            #
+            # if is_mobile:
+            #     log.info("********检查以流量数据态")
+            #     if not self.device.mobile_is_enable():
+            #         log.error("启动后的移动数据网络不是上电状态， 请检查！！！")
+            #         time.sleep(3)
+            #         raise Exception
+            #     log.info("启动后移动网络为上电状态")
+            #
+            # if is_eth:
+            #     log.info("*****检查以太网上网情况")
+            #     if self.device.is_eth0_internet():
+            #         log.info("当前以太网可上网")
+            #     else:
+            #         log.error("当前以太网不可以上网，请检查！！！")
+            #         time.sleep(3)
+            #         raise Exception
+            #
+            # if int(is_eth) and int(is_wifi) and int(is_mobile):
+            #     # 禁用wifi
+            #     self.device.disable_wifi_btn()
+            #     time.sleep(3)
+            #     if self.device.wifi_is_enable():
+            #         self.device.disable_wifi_btn()
+            #         time.sleep(3)
+            #     if self.device.wifi_is_enable():
+            #         log.error("wifi模块无法下电，请检查！！！")
+            #         time.sleep(3)
+            #         raise Exception
+            #
+            #     log.info("wifi下电")
+            #     # 禁用4G
+            #     self.device.disable_mobile_btn()
+            #     time.sleep(3)
+            #     if self.device.mobile_is_enable():
+            #         self.device.disable_mobile_btn()
+            #         time.sleep(3)
+            #     if self.device.mobile_is_enable():
+            #         log.error("移动数据模块无法下电，请检查！！！")
+            #         time.sleep(3)
+            #         raise Exception
+            #     log.info("移动数据下电成功")
+            #     if not self.device.ping_network(5, 35):
+            #         log.error("启动后以太网无法上网， 请检查！！！")
+            #         time.sleep(3)
+            #         raise Exception
+            #     log.info("启动后以太网可正常上网")
+            #
+            #     # 禁用以太网
+            #     self.device.disable_eth0_btn()
+            #     time.sleep(3)
+            #     if self.device.eth0_is_enable():
+            #         self.device.disable_eth0_btn()
+            #         time.sleep(3)
+            #     if self.device.eth0_is_enable():
+            #         log.error("以太网模块无法下电，请检查！！！")
+            #         time.sleep(3)
+            #         raise Exception
+            #     log.info("以太网下电成功")
+            #     # 上电
+            #     self.device.enable_eth0_btn()
+            #     time.sleep(3)
+            #     if not self.device.eth0_is_enable():
+            #         self.device.enable_eth0_btn()
+            #         time.sleep(3)
+            #     if not self.device.eth0_is_enable():
+            #         log.error("以太网模块无法上电，请检查！！！")
+            #         time.sleep(3)
+            #         raise Exception
+            #     log.info("以太网模块上电成功")
+            #     # 检查网络
+            #     if not self.device.ping_network(5, 35):
+            #         log.error("以太网无法上网， 请检查！！！")
+            #         time.sleep(3)
+            #         raise Exception
+            #     log.info("以太网可正常上网")
+            #
+            #     # 以太网下电
+            #     self.device.disable_eth0_btn()
+            #     time.sleep(3)
+            #     if self.device.eth0_is_enable():
+            #         self.device.disable_eth0_btn()
+            #         time.sleep(3)
+            #     if self.device.eth0_is_enable():
+            #         log.error("以太网模块无法下电，请检查！！！")
+            #         time.sleep(3)
+            #         raise Exception
+            #
+            #     # wifi上电
+            #     # 上电
+            #     self.device.enable_wifi_btn()
+            #     time.sleep(3)
+            #     if not self.device.wifi_is_enable():
+            #         self.device.enable_wifi_btn()
+            #         time.sleep(3)
+            #     if not self.device.wifi_is_enable():
+            #         log.error("wifi模块无法上电，请检查！！！")
+            #         time.sleep(3)
+            #         raise Exception
+            #     log.info("wifi模块上电成功")
+            #     # 检查网络
+            #     if not self.device.ping_network(5, 35):
+            #         log.error("wifi无法上网， 请检查！！！")
+            #         time.sleep(3)
+            #         raise Exception
+            #     log.info("wifi可正常上网")
+            #
+            #     # wifi下电
+            #     self.device.disable_wifi_btn()
+            #     time.sleep(3)
+            #     if self.device.wifi_is_enable():
+            #         self.device.disable_wifi_btn()
+            #         time.sleep(3)
+            #     if self.device.wifi_is_enable():
+            #         log.error("wifi模块无法下电，请检查！！！")
+            #         time.sleep(3)
+            #         raise Exception
+            #
+            #     # 移动数据上电
+            #     # 上电
+            #     self.device.enable_mobile_btn()
+            #     time.sleep(3)
+            #     if not self.device.mobile_is_enable():
+            #         self.device.enable_mobile_btn()
+            #         time.sleep(3)
+            #     if not self.device.mobile_is_enable():
+            #         log.error("移动数据模块无法上电，请检查！！！")
+            #         time.sleep(3)
+            #         raise Exception
+            #     log.info("移动数据模块上电成功")
+            #     # 检查网络
+            #     if not self.device.ping_network(5, 35):
+            #         log.error("移动数据无法上网， 请检查！！！")
+            #         time.sleep(3)
+            #         raise Exception
+            #     log.info("移动数据可正常上网")
+            #
+            #     # 以太网上电，wifi上电
+            #     # wifi上电
+            #     # 上电
+            #     self.device.enable_wifi_btn()
+            #     time.sleep(3)
+            #     if not self.device.wifi_is_enable():
+            #         self.device.enable_wifi_btn()
+            #         time.sleep(3)
+            #     if not self.device.wifi_is_enable():
+            #         log.error("wifi模块无法上电，请检查！！！")
+            #         time.sleep(3)
+            #         raise Exception
+            #     log.info("wifi模块上电成功")
+            #     # 检查网络
+            #     if not self.device.ping_network(5, 35):
+            #         log.error("wifi无法上网， 请检查！！！")
+            #         time.sleep(3)
+            #         raise Exception
+            #     log.info("wifi可正常上网")
+            #
+            #     # 以太网上电
+            #     self.device.enable_eth0_btn()
+            #     time.sleep(3)
+            #     if not self.device.eth0_is_enable():
+            #         self.device.enable_eth0_btn()
+            #         time.sleep(3)
+            #     if not self.device.eth0_is_enable():
+            #         log.error("以太网模块无法上电，请检查！！！")
+            #         time.sleep(3)
+            #         raise Exception
+            #     log.info("以太网模块上电成功")
+            #     # 检查网络
+            #     if not self.device.ping_network(5, 35):
+            #         log.error("以太网无法上网， 请检查！！！")
+            #         time.sleep(3)
+            #         raise Exception
+            #     log.info("以太网可正常上网")
+            #
+            # if not int(is_eth) and int(is_wifi) and int(is_mobile):
+            #     # 禁用4G
+            #     self.device.disable_mobile_btn()
+            #     time.sleep(3)
+            #     if self.device.mobile_is_enable():
+            #         self.device.disable_mobile_btn()
+            #         time.sleep(3)
+            #     if self.device.mobile_is_enable():
+            #         log.error("移动数据模块无法下电，请检查！！！")
+            #         time.sleep(3)
+            #         raise Exception
+            #     log.info("移动数据下电")
+            #
+            #     if not self.device.ping_network(5, 60):
+            #         log.error("wifi无法上网， 请检查！！！")
+            #         time.sleep(3)
+            #         raise Exception
+            #     log.info("wifi可正常上网")
+            #
+            #     # wifi下电
+            #     self.device.disable_wifi_btn()
+            #     time.sleep(3)
+            #     if self.device.wifi_is_enable():
+            #         self.device.disable_wifi_btn()
+            #         time.sleep(3)
+            #     if self.device.wifi_is_enable():
+            #         log.error("wifi模块无法下电，请检查！！！")
+            #         time.sleep(3)
+            #         raise Exception
+            #
+            #     # 移动数据上电
+            #     # 上电
+            #     self.device.enable_mobile_btn()
+            #     time.sleep(3)
+            #     if not self.device.mobile_is_enable():
+            #         self.device.enable_mobile_btn()
+            #         time.sleep(3)
+            #     if not self.device.mobile_is_enable():
+            #         log.error("移动数据模块无法上电，请检查！！！")
+            #         raise Exception
+            #     log.info("移动数据模块上电成功")
+            #     # 检查网络
+            #     if not self.device.ping_network(5, 35):
+            #         log.error("移动数据无法上网， 请检查！！！")
+            #         time.sleep(3)
+            #         raise Exception
+            #
+            #     log.info("移动数据可正常上网")
+            #
+            #     # 以太网上电，wifi上电
+            #     # wifi上电
+            #     # 上电
+            #     log.info("移动数据下电")
+            #     if self.device.mobile_is_enable():
+            #         self.device.disable_mobile_btn()
+            #         time.sleep(3)
+            #     if self.device.mobile_is_enable():
+            #         log.error("移动数据模块无法下电，请检查！！！")
+            #         time.sleep(3)
+            #         raise Exception
+            #     self.device.enable_wifi_btn()
+            #     time.sleep(3)
+            #     if not self.device.wifi_is_enable():
+            #         self.device.enable_wifi_btn()
+            #         time.sleep(3)
+            #     if not self.device.wifi_is_enable():
+            #         log.error("wifi模块无法上电，请检查！！！")
+            #         time.sleep(3)
+            #         raise Exception
+            #     log.info("wifi模块上电成功")
+            #     # 检查网络
+            #     if not self.device.ping_network(5, 35):
+            #         log.error("wifi无法上网， 请检查！！！")
+            #         time.sleep(3)
+            #         raise Exception
+            #     log.info("wifi可正常上网")
+            #
+            #     self.device.enable_mobile_btn()
+            #     time.sleep(3)
+            #     if not self.device.mobile_is_enable():
+            #         self.device.enable_mobile_btn()
+            #         time.sleep(3)
+            #     if not self.device.mobile_is_enable():
+            #         log.error("移动数据模块无法上电，请检查！！！")
+            #         raise Exception
+            #     log.info("移动数据模块上电成功")
 
             t_ser.logoutSer()
             log.info("*******************压测完成%d次********************" % flag)
@@ -1165,7 +1165,7 @@ class TestLXStability:
         times = 0
         fail_flag = 0
         slave_fail_flag = 0
-        t_ser.loginSer(com_port)
+        # t_ser.loginSer(com_port)
         while times < total_times:
             times += 1
             log.info("**********************第%d次测试开始********************" % times)
