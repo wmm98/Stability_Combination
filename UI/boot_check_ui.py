@@ -271,10 +271,19 @@ class Boot_Check_MainWindow(config_path.UIConfigPath):
         self.test_times_label = QLabel("用例压测次数设置")
         self.test_times = QComboBox()
         self.test_times.setEditable(True)
+
+        # 是否测概率测试
+        probability_test_label = QLabel("是否进行失败概率性统计")
+        self.is_probability_test = QCheckBox()
+
         layout_test_times_info.addWidget(self.test_times_label)
         layout_test_times_info.addWidget(self.test_times)
+        layout_test_times_info.addWidget(probability_test_label)
+        layout_test_times_info.addWidget(self.is_probability_test)
         layout_test_times_info.addStretch(1)
         self.verticalLayout_left.addLayout(layout_test_times_info)
+
+
 
         # 间隔
         self.verticalLayout_left.addWidget(QLabel())
@@ -356,7 +365,14 @@ class BootCheckDisplay(QtWidgets.QMainWindow, Boot_Check_MainWindow):
     def get_logo_finished_handle(self):
         # self.file_timer.stop()
         if self.double_screen.isChecked():
-            pass
+            if os.path.exists(self.logo_expect_screen0_path) and os.path.exists(self.logo_expect_screen1_path):
+                self.logo_image_tips.setText("已经获取到预期参照图片！")
+                self.logo_image_tips.setStyleSheet("color: read;")
+                self.add_logo_image(self.logo_expect_screen0_path)
+                self.add_logo_image(self.logo_expect_screen1_path)
+            else:
+                self.logo_image_tips.setText("未获取到预期参照照片！！！")
+                self.logo_image_tips.setStyleSheet("color: gray;")
         else:
             if os.path.exists(self.logo_expect_screen0_path):
                 self.logo_image_tips.setText("已经获取到预期参照图片！")
@@ -613,8 +629,6 @@ class BootCheckDisplay(QtWidgets.QMainWindow, Boot_Check_MainWindow):
         elif self.abnormal_boot.isChecked():
             config.add_config_option(section, config.ui_option_logo_cases, "3")
 
-        # 保存用例压测次数设置
-        config.add_config_option(section, "logo_test_times", self.test_times.currentText())
         # 保存测试点配置信息
         if self.is_wifi_test.isChecked():
             config.add_config_option(section, config.option_wifi_test, "1")
@@ -645,6 +659,14 @@ class BootCheckDisplay(QtWidgets.QMainWindow, Boot_Check_MainWindow):
             config.add_config_option(section, config.option_usb_test, "1")
         else:
             config.add_config_option(section, config.option_usb_test, "0")
+
+        # 保存用例压测次数设置
+        config.add_config_option(section, "logo_test_times", self.test_times.currentText())
+        # 保存是否进行概率性统计
+        if self.is_probability_test.isChecked():
+            config.add_config_option(section, config.is_probability_test, "1")
+        else:
+            config.add_config_option(section, config.is_probability_test, "0")
 
     def copy_file(self, origin, des):
         shutil.copy(origin, des)

@@ -11,6 +11,9 @@ class publicInterface:
     def remove_info_space(self, info):
         return info.replace('\r', '').replace('\t', '').replace(' ', '').replace('\n', '')
 
+    def deal_string(self, info):
+        return self.remove_info_space(info).upper()
+
     def return_end_time(self, now_time, timeout=180):
         timedelta = 1
         end_time = now_time + timeout

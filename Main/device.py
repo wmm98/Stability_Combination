@@ -27,6 +27,13 @@ class Device(publicInterface):
         else:
             return False
 
+    def network_is_unreachable(self, net_card):
+        res = self.send_adb_shell_command("ping -c 4 -I wlan0 www.baidu.com")
+        if self.deal_string("Network is unreachable") in self.deal_string(res):
+            return True
+        else:
+            return False
+
     def is_screen_on(self):
         res = self.send_adb_shell_command("dumpsys window | grep mAwake")
         if "mAwake=true" in res:
@@ -34,22 +41,32 @@ class Device(publicInterface):
         else:
             return False
 
-    def eth0_internet(self, times=4):
+    def is_eth0_internet(self, times=4):
         res = self.send_adb_shell_command("ping -c %d -I eht0 www.baidu.com" % times)
-        # 处理下wifi的情况
-        if self.remove_info_space("Destination Host Unreachable") in self.remove_info_space(res):
-            return False
-        else:
+        # "%d packets transmitted, %d received, 0% packet loss" % (times, times)
+        if self.deal_string("%d packets transmitted, %d received, 0%%  packet loss" % (times, times)) in self.deal_string(res):
             return True
+        else:
+            return False
         # 处理下以太网的情况
 
     def is_wifi_internet(self, times=4):
         res = self.send_adb_shell_command("ping -c %d -I wlan0 www.baidu.com" % times)
         # 处理下wifi的情况
-        if self.remove_info_space("Destination Host Unreachable") in self.remove_info_space(res):
-            return False
-        else:
+        if self.deal_string("%d packets transmitted, %d received, 0%%  packet loss" % (times, times)) in self.deal_string(res):
             return True
+        else:
+            return False
+
+    def is_mobile_internet(self, card_name, times):
+        cmd = "ping -c %d -I %s www.baidu.com" % (card_name, times)
+        res = self.send_adb_shell_command("ping -c 4 -I rmnet_data2 www.baidu.com")
+        # 处理下wifi的情况
+        if self.deal_string(
+                "%d packets transmitted, %d received, 0%%  packet loss" % (times, times)) in self.deal_string(res):
+            return True
+        else:
+            return False
 
     def back_home(self):
         self.send_adb_shell_command("input keyevent KEYCODE_BACK")
