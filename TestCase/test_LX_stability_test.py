@@ -347,7 +347,7 @@ class TestLXStability:
                         break
 
                 # 截图主屏
-                print("截图照片：%s" % Config.logo_test_screen0_path)
+                # print("截图照片：%s" % Config.logo_test_screen0_path)
                 self.device.screen_shot(Config.logo_test_screen0_path)
                 log.info("主屏桌面截图完成")
 
@@ -727,7 +727,7 @@ class TestLXStability:
             #         raise Exception
             #     log.info("移动数据模块上电成功")
 
-            t_ser.logoutSer()
+            # t_ser.logoutSer()
             log.info("*******************压测完成%d次********************" % flag)
             time.sleep(3)
 

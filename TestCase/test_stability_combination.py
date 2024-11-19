@@ -84,6 +84,7 @@ class TestStabilityCombination:
     def test_wifi_btn_stability_test(self):
         log.info("****************开关wifi压测开始******************")
         test_times = int(self.ui_conf_file.get(Config.section_wifi_check, Config.option_wifi_btn_test_times))
+        is_probability_test = int(self.ui_conf_file.get(Config.section_wifi_check, Config.is_probability_test))
         # 删除已存在的logcat文件
         if os.path.exists(Config.wifi_btn_sta_test_log_path):
             os.remove(Config.wifi_btn_sta_test_log_path)
@@ -124,6 +125,10 @@ class TestStabilityCombination:
             self.device.adb_pull_file(log_path, os.path.dirname(Config.wifi_btn_sta_test_log_path))
             raise
 
+        disable_fail_flag = 0
+        enable_fail_flag = 0
+        network_enable_fail_flag = 0
+        network_disable_fail_flag = 0
         times = 0
         while times < test_times:
             times += 1
@@ -134,17 +139,25 @@ class TestStabilityCombination:
                 time.sleep(2)
             if self.device.wifi_is_enable():
                 log.error("wifi按钮无法下电，请检查！！！")
-                time.sleep(3)
-                self.device.kill_process(logcat_process_id)
-                self.device.adb_pull_file(log_path, os.path.dirname(Config.wifi_btn_sta_test_log_path))
-                raise
+                if is_probability_test:
+                    disable_fail_flag += 1
+                    continue
+                else:
+                    time.sleep(3)
+                    self.device.kill_process(logcat_process_id)
+                    self.device.adb_pull_file(log_path, os.path.dirname(Config.wifi_btn_sta_test_log_path))
+                    raise
             log.info("wifi下电")
             if not self.device.is_no_network():
                 log.error("wifi下电后还可上网请检查！！！")
-                time.sleep(3)
-                self.device.kill_process(logcat_process_id)
-                self.device.adb_pull_file(log_path, os.path.dirname(Config.wifi_btn_sta_test_log_path))
-                raise
+                if is_probability_test:
+                    network_disable_fail_flag += 1
+                    continue
+                else:
+                    time.sleep(3)
+                    self.device.kill_process(logcat_process_id)
+                    self.device.adb_pull_file(log_path, os.path.dirname(Config.wifi_btn_sta_test_log_path))
+                    raise
 
             self.device.enable_wifi_btn()
             time.sleep(2)
@@ -153,20 +166,45 @@ class TestStabilityCombination:
                 time.sleep(2)
             if not self.device.wifi_is_enable():
                 log.error("wifi按钮无法上电，请检查！！！")
-                time.sleep(3)
-                self.device.kill_process(logcat_process_id)
-                self.device.adb_pull_file(log_path, os.path.dirname(Config.wifi_btn_sta_test_log_path))
-                raise
+                if is_probability_test:
+                    enable_fail_flag += 1
+                    continue
+                else:
+                    time.sleep(3)
+                    self.device.kill_process(logcat_process_id)
+                    self.device.adb_pull_file(log_path, os.path.dirname(Config.wifi_btn_sta_test_log_path))
+                    raise
+
             log.info("wifi上电")
             if not self.device.ping_network():
                 log.error("wifi上电后5分钟内无法上网！！！")
-                time.sleep(3)
-                self.device.kill_process(logcat_process_id)
-                self.device.adb_pull_file(log_path, os.path.dirname(Config.wifi_btn_sta_test_log_path))
-                raise
-
+                if is_probability_test:
+                    network_enable_fail_flag += 1
+                    continue
+                else:
+                    time.sleep(3)
+                    self.device.kill_process(logcat_process_id)
+                    self.device.adb_pull_file(log_path, os.path.dirname(Config.wifi_btn_sta_test_log_path))
+                    raise
+            log.info("当前可上网")
             log.info("***********wifi开关压测完成%d次" % times)
             time.sleep(3)
+
+        if is_probability_test:
+            if disable_fail_flag > 0:
+                log.error("WIFI模块无法下电得次数为：%d" % enable_fail_flag)
+                log.error("WIFI模块无法下电得概率为： %s" % str(enable_fail_flag / test_times))
+            if enable_fail_flag > 0:
+                log.error("WIFI模块无法上电得次数为：%d" % enable_fail_flag)
+                log.error("WIFI模块无法上电得概率为： %s" % str(enable_fail_flag / test_times))
+            if network_enable_fail_flag > 0:
+                log.error("WIFI模块上电后无法上网得次数为：%d" % network_enable_fail_flag)
+                log.error("WIFI模块上电后无法上网得概率为： %s" % str(network_enable_fail_flag / test_times))
+            if network_disable_fail_flag > 0:
+                log.error("WIFI模块下电后无法上网得次数为：%d" % network_disable_fail_flag)
+                log.error("WIFI模块下电后无后无法上网得概率为： %s" % str(network_disable_fail_flag / test_times))
+            if disable_fail_flag == 0 and enable_fail_flag == 0 and network_enable_fail_flag == 0 and network_disable_fail_flag == 0:
+                log.info("压测未发发现异常")
 
         self.device.kill_process(logcat_process_id)
         self.device.adb_pull_file(log_path, os.path.dirname(Config.wifi_btn_sta_test_log_path))
@@ -174,9 +212,10 @@ class TestStabilityCombination:
 
     @allure.feature("mt-mobile_btn_stability")
     @allure.title("4G开关压测")
-    def test_wifi_btn_stability_test(self):
+    def test_mobile_btn_stability_test(self):
         log.info("****************开关4G压测开始******************")
         test_times = int(self.ui_conf_file.get(Config.section_mobile_check, Config.option_mobile_btn_test_times))
+        is_probability_test = int(self.ui_conf_file.get(Config.section_mobile_check, Config.is_probability_test))
         # 删除已存在的logcat文件
         if os.path.exists(Config.mobile_btn_sta_test_log_path):
             os.remove(Config.mobile_btn_sta_test_log_path)
@@ -217,6 +256,11 @@ class TestStabilityCombination:
             self.device.adb_pull_file(log_path, os.path.dirname(Config.mobile_btn_sta_test_log_path))
             raise
 
+        disable_fail_flag = 0
+        enable_fail_flag = 0
+        network_enable_fail_flag = 0
+        network_disable_fail_flag = 0
+
         times = 0
         while times < test_times:
             times += 1
@@ -227,17 +271,25 @@ class TestStabilityCombination:
                 time.sleep(2)
             if self.device.mobile_is_enable():
                 log.error("移动流量按钮无法下电，请检查！！！")
-                time.sleep(3)
-                self.device.kill_process(logcat_process_id)
-                self.device.adb_pull_file(log_path, os.path.dirname(Config.mobile_btn_sta_test_log_path))
-                raise
-            log.info("wifi下电")
+                if is_probability_test:
+                    disable_fail_flag += 1
+                    continue
+                else:
+                    time.sleep(3)
+                    self.device.kill_process(logcat_process_id)
+                    self.device.adb_pull_file(log_path, os.path.dirname(Config.mobile_btn_sta_test_log_path))
+                    raise
+            log.info("移动流量模块下电")
             if not self.device.is_no_network():
                 log.error("移动流量下电后还可上网请检查！！！")
-                time.sleep(3)
-                self.device.kill_process(logcat_process_id)
-                self.device.adb_pull_file(log_path, os.path.dirname(Config.mobile_btn_sta_test_log_path))
-                raise
+                if self.device.mobile_is_enable():
+                    network_disable_fail_flag += 1
+                else:
+                    time.sleep(3)
+                    self.device.kill_process(logcat_process_id)
+                    self.device.adb_pull_file(log_path, os.path.dirname(Config.mobile_btn_sta_test_log_path))
+                    raise
+            log.info("设备当前无法上网")
 
             self.device.enable_mobile_btn()
             time.sleep(2)
@@ -246,20 +298,43 @@ class TestStabilityCombination:
                 time.sleep(2)
             if not self.device.mobile_is_enable():
                 log.error("移动流量按钮无法上电，请检查！！！")
-                time.sleep(3)
-                self.device.kill_process(logcat_process_id)
-                self.device.adb_pull_file(log_path, os.path.dirname(Config.mobile_btn_sta_test_log_path))
-                raise
+                if is_probability_test:
+                    enable_fail_flag += 1
+                else:
+                    time.sleep(3)
+                    self.device.kill_process(logcat_process_id)
+                    self.device.adb_pull_file(log_path, os.path.dirname(Config.mobile_btn_sta_test_log_path))
+                    raise
+
             log.info("移动流量上电")
             if not self.device.ping_network():
                 log.error("移动流量上电后5分钟内无法上网！！！")
-                time.sleep(3)
-                self.device.kill_process(logcat_process_id)
-                self.device.adb_pull_file(log_path, os.path.dirname(Config.mobile_btn_sta_test_log_path))
-                raise
-
+                if is_probability_test:
+                    network_enable_fail_flag += 1
+                else:
+                    time.sleep(3)
+                    self.device.kill_process(logcat_process_id)
+                    self.device.adb_pull_file(log_path, os.path.dirname(Config.mobile_btn_sta_test_log_path))
+                    raise
+            log.info("设备当前可上网")
             log.info("***********4G开关压测完成%d次" % times)
             time.sleep(3)
+
+        if is_probability_test:
+            if disable_fail_flag > 0:
+                log.error("4G模块无法下电得次数为：%d" % enable_fail_flag)
+                log.error("4G模块无法下电得概率为： %s" % str(enable_fail_flag / test_times))
+            if enable_fail_flag > 0:
+                log.error("4G模块无法上电得次数为：%d" % enable_fail_flag)
+                log.error("4G模块无法上电得概率为： %s" % str(enable_fail_flag / test_times))
+            if network_enable_fail_flag:
+                log.error("4G模块上电后无法上网得次数为：%d" % network_enable_fail_flag)
+                log.error("4G模块上电后无法上网得概率为： %s" % str(network_enable_fail_flag / test_times))
+            if network_disable_fail_flag:
+                log.error("4G模块下电后无法上网得次数为：%d" % network_disable_fail_flag)
+                log.error("4G模块下电后无后无法上网得概率为： %s" % str(network_disable_fail_flag / test_times))
+            if disable_fail_flag == 0 and enable_fail_flag == 0 and network_enable_fail_flag == 0 and network_disable_fail_flag == 0:
+                log.info("压测未发发现异常")
 
         self.device.kill_process(logcat_process_id)
         self.device.adb_pull_file(log_path, os.path.dirname(Config.mobile_btn_sta_test_log_path))

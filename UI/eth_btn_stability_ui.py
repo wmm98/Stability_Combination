@@ -28,8 +28,12 @@ class Eth_Btn_Check_MainWindow(config_path.UIConfigPath):
         self.test_times_label = QLabel("用例压测次数设置")
         self.test_times = QComboBox()
         self.test_times.setEditable(True)
+        probability_test_label = QLabel("是否进行失败概率性统计")
+        self.is_probability_test = QCheckBox()
         layout_test_times_info.addWidget(self.test_times_label)
         layout_test_times_info.addWidget(self.test_times)
+        layout_test_times_info.addWidget(probability_test_label)
+        layout_test_times_info.addWidget(self.is_probability_test)
         layout_test_times_info.addStretch(1)
         self.verticalLayout_left.addLayout(layout_test_times_info)
 
@@ -91,6 +95,10 @@ class EthBtnCheckDisplay(QtWidgets.QMainWindow, Eth_Btn_Check_MainWindow):
 
         # 保存用例压测次数设置
         config.add_config_option(section, config.option_eth_btn_test_times, self.test_times.currentText())
+        if self.is_probability_test.isChecked():
+            config.add_config_option(section, config.is_probability_test, "1")
+        else:
+            config.add_config_option(section, config.is_probability_test, "0")
 
     def list_case_test_cases(self):
         self.test_times.addItems([str(i * 50) for i in range(1, 101)])
