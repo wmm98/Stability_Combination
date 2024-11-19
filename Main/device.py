@@ -9,6 +9,7 @@ log = MyLog()
 shell = Shell()
 
 
+
 class Device(publicInterface):
     def __init__(self, device):
         self.device_name = device
