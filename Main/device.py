@@ -8,7 +8,6 @@ import time
 log = MyLog()
 shell = Shell()
 
-print("调试")
 
 class Device(publicInterface):
     def __init__(self, device):
@@ -45,7 +44,8 @@ class Device(publicInterface):
     def is_eth0_internet(self, times=4):
         res = self.send_adb_shell_command("ping -c %d -I eht0 www.baidu.com" % times)
         # "%d packets transmitted, %d received, 0% packet loss" % (times, times)
-        if self.deal_string("%d packets transmitted, %d received, 0%%  packet loss" % (times, times)) in self.deal_string(res):
+        if self.deal_string(
+                "%d packets transmitted, %d received, 0%%  packet loss" % (times, times)) in self.deal_string(res):
             return True
         else:
             return False
@@ -54,7 +54,8 @@ class Device(publicInterface):
     def is_wifi_internet(self, times=4):
         res = self.send_adb_shell_command("ping -c %d -I wlan0 www.baidu.com" % times)
         # 处理下wifi的情况
-        if self.deal_string("%d packets transmitted, %d received, 0%%  packet loss" % (times, times)) in self.deal_string(res):
+        if self.deal_string(
+                "%d packets transmitted, %d received, 0%%  packet loss" % (times, times)) in self.deal_string(res):
             return True
         else:
             return False
