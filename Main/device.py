@@ -8,7 +8,7 @@ import time
 log = MyLog()
 shell = Shell()
 
-
+print("调试")
 
 class Device(publicInterface):
     def __init__(self, device):
