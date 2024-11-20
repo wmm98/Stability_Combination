@@ -49,6 +49,12 @@ class Photograph:
 
     def save_img(self):
 
+        if not self.is_screen_on():
+            self.press_power_button()
+        time.sleep(1)
+        self.unlock()
+        self.back_home()
+
         is_double = ui_conf_file.get_option_value(ui_conf_file.section_ui_camera_check,
                                                   ui_conf_file.option_front_and_rear)
 
@@ -387,6 +393,22 @@ class Photograph:
         length = info[1].replace("\n", "").replace("\r", "").replace("\t", "")
         center_position = [int(width) / 2, int(length) / 2]
         return center_position
+
+    def is_screen_on(self):
+        res = shell.invoke("adb -s %s shell \"dumpsys window | grep mAwake\"" % self.device_name)
+        if "mAwake=true" in res:
+            return True
+        else:
+            return False
+
+    def back_home(self):
+        shell.invoke("adb -s %s shell input keyevent KEYCODE_BACK" % self.device_name)
+
+    def unlock(self):
+        shell.invoke("adb -s %s shell input swipe 300 500 300 0" % self.device_name)
+
+    def press_power_button(self):
+        shell.invoke("adb -s %s shell input keyevent KEYCODE_POWER" % self.device_name)
 
 
 if __name__ == '__main__':

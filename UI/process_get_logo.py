@@ -33,6 +33,7 @@ class BootLogo:
 
         if not self.is_screen_on():
             self.press_power_button()
+        time.sleep(1)
         self.unlock()
         self.back_home()
         time.sleep(1)

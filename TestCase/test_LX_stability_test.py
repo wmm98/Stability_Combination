@@ -214,104 +214,104 @@ class TestLXStability:
         while flag < int(self.ui_conf_file.get(Config.section_ui_boot_check, Config.ui_option_logo_test_times)):
             flag += 1
             # 上下电启动
-            # t_ser.loginSer(self.ui_conf_file.get(Config.section_ui_boot_check, Config.option_logo_COM))
+            t_ser.loginSer(self.ui_conf_file.get(Config.section_ui_boot_check, Config.option_logo_COM))
             log.info("关机")
 
-            # if self.ui_conf_file.get(Config.section_ui_boot_check, Config.ui_option_logo_cases) == "1":
-            #     num = int(
-            #         self.ui_conf_file.get(Config.section_ui_boot_check,
-            #                               Config.option_logo_adapter_power_config).split(
-            #             "_")[1])
-            #     t_ser.open_relay(num)
-            #     log.info("适配器开路")
-            #     time.sleep(1)
-            #     if device_check.device_is_online():
-            #         raise Exception("设备关机失败，请接线是否正确！！！")
-            #     t_ser.close_relay(num)
-            #     log.info("适配器通路")
-            # elif self.ui_conf_file.get(Config.section_ui_boot_check, Config.ui_option_logo_cases) == "2":
-            #     # 关机
-            #     device_check.device_shutdown()
-            #     time.sleep(10)
-            #     device_check.restart_adb()
-            #     if device_check.device_is_online():
-            #         raise Exception("指令设备关机失败，请检查！！！")
-            #     log.info("指令关机")
-            #     # 开机
-            #     num = int(
-            #         self.ui_conf_file.get(Config.section_ui_boot_check, Config.option_power_button_config).split(
-            #             "_")[1])
-            #     t_ser.open_relay(num)
-            #     log.info("按下电源按键")
-            #     time.sleep(int(self.ui_conf_file.get(Config.section_ui_boot_check, Config.option_logo_boot_time)))
-            #     t_ser.close_relay(num)
-            #     log.info("松开电源按键")
-            # # 适配器异常下电
-            # elif self.ui_conf_file.get(Config.section_ui_boot_check, Config.ui_option_logo_cases) == "3":
-            #     num_adapter_power = int(
-            #         self.ui_conf_file.get(Config.section_ui_boot_check,
-            #                               Config.option_logo_adapter_power_config).split(
-            #             "_")[1])
-            #     num_power_button = int(
-            #         self.ui_conf_file[Config.section_ui_boot_check][Config.option_power_button_config].split("_")[
-            #             1])
-            #     # 断开适配器/电池
-            #     t_ser.open_relay(num_adapter_power)
-            #     log.info("电池/适配器开路")
-            #     time.sleep(1)
-            #     if device_check.device_is_online():
-            #         raise Exception("设备关机失败，请检查接线是否正确！！！")
-            #     # 闭合适配器 / 电池
-            #     t_ser.close_relay(num_adapter_power)
-            #     log.info("电池/适配器通路")
-            #     # 按下电源按键开机
-            #     time.sleep(1)
-            #     t_ser.open_relay(num_power_button)
-            #     log.info("按下电源健")
-            #     time.sleep(int(self.ui_conf_file.get(Config.section_ui_boot_check, Config.option_logo_boot_time)))
-            #     t_ser.close_relay(num_power_button)
-            #     log.info("松开电源按键")
+            if self.ui_conf_file.get(Config.section_ui_boot_check, Config.ui_option_logo_cases) == "1":
+                num = int(
+                    self.ui_conf_file.get(Config.section_ui_boot_check,
+                                          Config.option_logo_adapter_power_config).split(
+                        "_")[1])
+                t_ser.open_relay(num)
+                log.info("适配器开路")
+                time.sleep(1)
+                if device_check.device_is_online():
+                    raise Exception("设备关机失败，请接线是否正确！！！")
+                t_ser.close_relay(num)
+                log.info("适配器通路")
+            elif self.ui_conf_file.get(Config.section_ui_boot_check, Config.ui_option_logo_cases) == "2":
+                # 关机
+                device_check.device_shutdown()
+                time.sleep(10)
+                device_check.restart_adb()
+                if device_check.device_is_online():
+                    raise Exception("指令设备关机失败，请检查！！！")
+                log.info("指令关机")
+                # 开机
+                num = int(
+                    self.ui_conf_file.get(Config.section_ui_boot_check, Config.option_power_button_config).split(
+                        "_")[1])
+                t_ser.open_relay(num)
+                log.info("按下电源按键")
+                time.sleep(int(self.ui_conf_file.get(Config.section_ui_boot_check, Config.option_logo_boot_time)))
+                t_ser.close_relay(num)
+                log.info("松开电源按键")
+            # 适配器异常下电
+            elif self.ui_conf_file.get(Config.section_ui_boot_check, Config.ui_option_logo_cases) == "3":
+                num_adapter_power = int(
+                    self.ui_conf_file.get(Config.section_ui_boot_check,
+                                          Config.option_logo_adapter_power_config).split(
+                        "_")[1])
+                num_power_button = int(
+                    self.ui_conf_file[Config.section_ui_boot_check][Config.option_power_button_config].split("_")[
+                        1])
+                # 断开适配器/电池
+                t_ser.open_relay(num_adapter_power)
+                log.info("电池/适配器开路")
+                time.sleep(1)
+                if device_check.device_is_online():
+                    raise Exception("设备关机失败，请检查接线是否正确！！！")
+                # 闭合适配器 / 电池
+                t_ser.close_relay(num_adapter_power)
+                log.info("电池/适配器通路")
+                # 按下电源按键开机
+                time.sleep(1)
+                t_ser.open_relay(num_power_button)
+                log.info("按下电源健")
+                time.sleep(int(self.ui_conf_file.get(Config.section_ui_boot_check, Config.option_logo_boot_time)))
+                t_ser.close_relay(num_power_button)
+                log.info("松开电源按键")
 
             # 调试代码
 
             # 调试代码
             # 重启代替硬开、关机
-            self.device.reboot()
-            log.info("重启...")
-            if check_adb_online_with_thread(
-                    self.ui_conf_file.get(Config.section_ui_to_background, Config.ui_option_device_name)):
-                if check_boot_complete_with_thread(
-                        self.ui_conf_file.get(Config.section_ui_to_background, Config.ui_option_device_name),
-                        timeout=120):
-                    log.info("设备完全启动")
-                    # 后续查看是否要等待时间
-                    time.sleep(5)
-                else:
-                    log.info("设备无法完全启动, 请检查!!!")
-                    if self.ui_conf_file[Config.section_ui_boot_check][Config.option_only_boot_config] == "1":
-                        log.error("当前认为复现了卡logo情景，请检查！！！")
-                        time.sleep(3)
-                        raise Exception
-
-            # log.info("正在开机，请等待...")
+            # self.device.reboot()
+            # log.info("重启...")
             # if check_adb_online_with_thread(
             #         self.ui_conf_file.get(Config.section_ui_to_background, Config.ui_option_device_name)):
             #     if check_boot_complete_with_thread(
             #             self.ui_conf_file.get(Config.section_ui_to_background, Config.ui_option_device_name),
             #             timeout=120):
             #         log.info("设备完全启动")
+            #         # 后续查看是否要等待时间
+            #         time.sleep(5)
             #     else:
             #         log.info("设备无法完全启动, 请检查!!!")
             #         if self.ui_conf_file[Config.section_ui_boot_check][Config.option_only_boot_config] == "1":
             #             log.error("当前认为复现了卡logo情景，请检查！！！")
             #             time.sleep(3)
-            #             break
-            # else:
-            #     log.error("没检测到设备在线!!!")
-            #     if self.ui_conf_file[Config.section_ui_boot_check][Config.option_only_boot_config] == "1":
-            #         log.error("当前认为复现了卡logo情景，请检查！！！")
-            #         time.sleep(3)
-            #         break
+            #             raise Exception
+
+            log.info("正在开机，请等待...")
+            if check_adb_online_with_thread(
+                    self.ui_conf_file.get(Config.section_ui_to_background, Config.ui_option_device_name)):
+                if check_boot_complete_with_thread(
+                        self.ui_conf_file.get(Config.section_ui_to_background, Config.ui_option_device_name),
+                        timeout=120):
+                    log.info("设备完全启动")
+                else:
+                    log.info("设备无法完全启动, 请检查!!!")
+                    if self.ui_conf_file[Config.section_ui_boot_check][Config.option_only_boot_config] == "1":
+                        log.error("当前认为复现了卡logo情景，请检查！！！")
+                        time.sleep(3)
+                        break
+            else:
+                log.error("没检测到设备在线!!!")
+                if self.ui_conf_file[Config.section_ui_boot_check][Config.option_only_boot_config] == "1":
+                    log.error("当前认为复现了卡logo情景，请检查！！！")
+                    time.sleep(3)
+                    break
             if self.ui_conf_file[Config.section_ui_boot_check][Config.option_only_boot_config] == "0":
                 # 拍照
                 time.sleep(30)
@@ -320,6 +320,7 @@ class TestLXStability:
                 time.sleep(1)
                 if not self.device.is_screen_on():
                     self.device.press_power_button()
+                time.sleep(1)
                 self.device.unlock()
                 time.sleep(1)
 
@@ -727,7 +728,7 @@ class TestLXStability:
             #         raise Exception
             #     log.info("移动数据模块上电成功")
 
-            # t_ser.logoutSer()
+            t_ser.logoutSer()
             log.info("*******************压测完成%d次********************" % flag)
             time.sleep(3)
 
@@ -761,6 +762,15 @@ class TestLXStability:
         clear_directory(front_photograph_file_names)
         clear_directory(rear_photograph_file_names)
         clear_directory(rear_preview_file_names)
+
+        # 亮屏
+
+        if not self.device.is_screen_on():
+            print("111111111111111111111111111111111")
+            self.device.press_power_button()
+            time.sleep(1)
+        self.device.unlock()
+        self.device.back_home()
 
         # 删除已存在的logcat文件
         if os.path.exists(Config.camera_sta_test_log_path):
@@ -1165,7 +1175,7 @@ class TestLXStability:
         times = 0
         fail_flag = 0
         slave_fail_flag = 0
-        # t_ser.loginSer(com_port)
+        t_ser.loginSer(com_port)
         while times < total_times:
             times += 1
             log.info("**********************第%d次测试开始********************" % times)
@@ -1180,7 +1190,7 @@ class TestLXStability:
                 continue
 
             log.info("已关主设备闭蓝牙")
-            time.sleep(30)
+            time.sleep(10)
             if not self.device.bt_is_connected():
                 log.info("主设备显示已断开连接蓝牙设备(从)")
             else:
@@ -1215,7 +1225,7 @@ class TestLXStability:
                 continue
 
             log.info("已打开主设备蓝牙")
-            time.sleep(30)
+            time.sleep(10)
             if self.device.bt_is_connected():
                 log.info("主设备显示已经连接上蓝牙设备（从）")
             else:
@@ -1243,7 +1253,7 @@ class TestLXStability:
             # 关闭蓝牙设备操作
             t_ser.open_relay(line_num)
             log.info("断开蓝牙设备（从）")
-            time.sleep(30)
+            time.sleep(10)
             if not self.device.bt_is_connected():
                 log.error("主设备显示已经断连接蓝牙设备（从）")
             else:
@@ -1271,7 +1281,7 @@ class TestLXStability:
             # 打开蓝牙操作
             t_ser.close_relay(line_num)
             log.info("打开蓝牙设备（从）")
-            time.sleep(30)
+            time.sleep(10)
             if self.device.bt_is_connected():
                 log.info("主设备显示已经连接上蓝牙设备（从）")
             else:

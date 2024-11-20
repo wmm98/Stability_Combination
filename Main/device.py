@@ -15,13 +15,12 @@ class Device(publicInterface):
         self.camera_package_name = ""
 
     def get_connected_bt_mac(self):
-        res = self.send_adb_shell_command("dumpsys bluetooth_manager |grep mCurrentDevice")
+        res = self.send_adb_shell_command("\"dumpsys bluetooth_manager |grep mCurrentDevice\"")
         connected_mac = res.split(":", 1)[1].strip()
         return connected_mac
 
     def bt_is_connected(self):
         res = self.send_adb_shell_command("\"dumpsys bluetooth_manager |grep ConnectionState\"")
-        # print(res)
         if "STATE_CONNECTED" in res:
             return True
         else:
@@ -35,8 +34,8 @@ class Device(publicInterface):
             return False
 
     def is_screen_on(self):
-        res = self.send_adb_shell_command("dumpsys window | grep mAwake")
-        if "mAwake=true" in res:
+        res = self.send_adb_shell_command("\"dumpsys window | grep mAwake\"")
+        if "mAwake=true".upper() in self.deal_string(res):
             return True
         else:
             return False
