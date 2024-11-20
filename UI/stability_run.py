@@ -701,6 +701,8 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
                     self.transfer_cases.append("Factory-Reset-stability")
                 if "蓝牙连接测试" in case:
                     self.transfer_cases.append("bt_connect_test")
+                if "boot_logo" in case:
+                    self.transfer_cases.append("boot_logo")
 
             self.ui_config.add_config_option(self.ui_config.section_ui_to_background,
                                              self.ui_config.ui_option_device_name,

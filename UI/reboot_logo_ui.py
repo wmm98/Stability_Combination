@@ -1,7 +1,7 @@
 import os
 from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtWidgets import QHBoxLayout, QCheckBox, QComboBox, QButtonGroup, QWidget, QSplitter, QTextEdit
-from PyQt5.QtCore import pyqtSlot
+from PyQt5.QtCore import pyqtSlot, QProcess
 import subprocess
 import sys
 from PyQt5 import QtWidgets, QtCore
@@ -9,7 +9,7 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtCore import QTimer, Qt, pyqtSlot
 import os
 import shutil
-from PyQt5.QtGui import QPixmap
+from PyQt5.QtGui import QPixmap, QTextImageFormat, QTextDocument, QTextCursor
 import serial.tools.list_ports
 from PIL import Image
 import rembg
@@ -19,29 +19,12 @@ import time
 from configfile import ConfigP
 import config_path
 
+conf_path = config_path.UIConfigPath()
+
 
 class Reboot_Logo_MainWindow(config_path.UIConfigPath):
     options = QtWidgets.QFileDialog.Options()
     options |= QtWidgets.QFileDialog.ReadOnly
-
-    # project_path = path_dir = str(os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir)))
-    # config_file_path = os.path.join(project_path, "UI", "config.ini")
-    # logo_take_path = os.path.join(project_path, "Photo", "Logo", "Logo", "Logo.png")
-    # logo_key_path = os.path.join(project_path, "Photo", "Logo", "Key", "Key.png")
-    # camera_key_path = os.path.join(project_path, "Photo", "CameraPhoto", "Key", "Key.png")
-    # camera2_key_path = os.path.join(project_path, "Photo", "CameraPhoto", "Key", "Key2.png")
-    # debug_log_path = os.path.join(project_path, "Log", "Debug", "debug_log.txt")
-    # # failed_logcat.txt
-    # adb_log_path = os.path.join(project_path, "Log", "Logcat", "failed_logcat.txt")
-    # run_bat_path = os.path.join(project_path, "Run", "bat_run.bat")
-    # failed_image_key_path = os.path.join(project_path, "Photo", "CameraPhoto", "Key", "Failed.png")
-    # 测试前先清除
-    # if os.path.exists(debug_log_path):
-    #     os.remove(debug_log_path)
-    # if os.path.exists(adb_log_path):
-    #     os.remove(adb_log_path)
-    # if os.path.exists(logo_key_path):
-    #     os.remove(logo_key_path)
 
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
@@ -59,6 +42,10 @@ class Reboot_Logo_MainWindow(config_path.UIConfigPath):
         self.verticalLayout_left = QtWidgets.QVBoxLayout(left_widget)
 
         layout_device_info = QHBoxLayout()
+
+        self.label_device_name = QtWidgets.QLabel("设备名称:")
+        self.edit_device_name = QComboBox()
+
         # 测试COM
         self.COM_tips = QtWidgets.QLabel("测试COM口:")
         self.test_COM = QComboBox()
@@ -66,6 +53,8 @@ class Reboot_Logo_MainWindow(config_path.UIConfigPath):
         self.adb_log_lable = QtWidgets.QLabel("Logcat时长(min):")
         self.adb_log_duration = QComboBox()
 
+        layout_device_info.addWidget(self.label_device_name)
+        layout_device_info.addWidget(self.edit_device_name)
         layout_device_info.addWidget(self.COM_tips)
         layout_device_info.addWidget(self.test_COM)
         layout_device_info.addWidget(self.adb_log_lable)
@@ -95,11 +84,11 @@ class Reboot_Logo_MainWindow(config_path.UIConfigPath):
         self.verticalLayout_left.addWidget(QtWidgets.QLabel())
 
         layout_COM_config = QHBoxLayout()
-        self.config_label = QtWidgets.QLabel("接线配置:")
+        self.ui_config_label = QtWidgets.QLabel("接线配置:")
         self.adapter_label = QtWidgets.QLabel("适配器/电池:")
         self.adapter_config = QComboBox()
         self.adapter_config.setDisabled(True)
-        layout_COM_config.addWidget(self.config_label)
+        layout_COM_config.addWidget(self.ui_config_label)
         layout_COM_config.addWidget(self.adapter_label)
         layout_COM_config.addWidget(self.adapter_config)
 
@@ -112,13 +101,13 @@ class Reboot_Logo_MainWindow(config_path.UIConfigPath):
         self.usb_label = QtWidgets.QLabel("USB:")
         self.usb_config = QComboBox()
         self.usb_config.setDisabled(True)
-        self.config_tips = QtWidgets.QLabel("接线提示:电源按键接常开端(COM,N0）,其他接常闭端(COM,NC)")
-        self.config_tips.setStyleSheet("color: blue;")
+        self.ui_config_tips = QtWidgets.QLabel("接线提示:电源按键接常开端(COM,N0）,其他接常闭端(COM,NC)")
+        self.ui_config_tips.setStyleSheet("color: blue;")
         layout_COM_config.addWidget(self.usb_label)
         layout_COM_config.addWidget(self.usb_config)
         layout_COM_config.addStretch(1)
         self.verticalLayout_left.addLayout(layout_COM_config)
-        self.verticalLayout_left.addWidget(self.config_tips)
+        self.verticalLayout_left.addWidget(self.ui_config_tips)
         # 间隔
         self.verticalLayout_left.addWidget(QtWidgets.QLabel())
 
@@ -143,6 +132,26 @@ class Reboot_Logo_MainWindow(config_path.UIConfigPath):
         self.button_boot_tips.setStyleSheet("color: blue;")
         self.verticalLayout_left.addWidget(self.button_boot_tips)
 
+        # 点击获取预期照片
+        layout_get_image_info = QHBoxLayout()
+        self.get_logo_image_button = QPushButton("点击获取预期照片")
+        self.logo_image_tips = QLabel("未保存预期照片，请点击获取！")
+        self.logo_image_tips.setStyleSheet("color: blue;")
+        layout_get_image_info.addWidget(self.get_logo_image_button)
+        layout_get_image_info.addWidget(self.logo_image_tips)
+        self.verticalLayout_left.addLayout(layout_get_image_info)
+
+        self.image_edit = ScrollablePlainTextEdit()
+        self.image_edit.setFixedHeight(300)
+        width = self.image_edit.viewport().width()
+        height = self.image_edit.viewport().height()
+        self.image_width = width
+        self.image_height = 500
+        # self.image_width = width
+        # self.image_height = height
+        self.document = self.image_edit.document()
+        self.verticalLayout_left.addWidget(self.image_edit)
+
         # 间隔
         self.verticalLayout_left.addWidget(QtWidgets.QLabel())
 
@@ -158,30 +167,6 @@ class Reboot_Logo_MainWindow(config_path.UIConfigPath):
 
         # 间隔
         self.verticalLayout_left.addWidget(QtWidgets.QLabel())
-
-        # 上传图片
-        self.reboot_logo_info = QtWidgets.QLabel("上传开机logo照片：")
-        self.verticalLayout_left.addWidget(self.reboot_logo_info)
-        layout_upload_logo = QHBoxLayout()
-        self.logo_path_edit = QtWidgets.QLineEdit()
-        layout_upload_logo.addWidget(self.logo_path_edit)
-        self.logo_upload_button = QtWidgets.QPushButton("点击上传")
-        layout_upload_logo.addWidget(self.logo_upload_button)
-        self.verticalLayout_left.addLayout(layout_upload_logo)
-
-        # 创建 QLabel 用于显示照片
-        # 显示图片
-        self.show_keying_button = QtWidgets.QPushButton("显示抠图")
-        self.verticalLayout_left.addWidget(self.show_keying_button)
-
-        self.exp_image_label = QtWidgets.QLabel()
-        self.exp_image_label.setScaledContents(True)
-        self.verticalLayout_left.addWidget(self.exp_image_label)
-
-        self.test_image_label = QtWidgets.QLabel()
-        self.test_image_label.setScaledContents(True)
-        self.verticalLayout_left.addWidget(self.test_image_label)
-        self.verticalLayout_left.setSpacing(10)
 
         # 提交按钮
         self.submit_button = QtWidgets.QPushButton("保存配置")
@@ -216,34 +201,88 @@ class Reboot_Logo_MainWindow(config_path.UIConfigPath):
 class LogoDisplay(QtWidgets.QMainWindow, Reboot_Logo_MainWindow):
     def __init__(self):
         super(LogoDisplay, self).__init__()
+        self.bg_config = ConfigP(self.background_config_file_path)
+        self.ui_config = ConfigP(self.ui_config_file_path)
         self.setupUi(self)
         self.intiui()
         self.submit_flag = False
 
     def intiui(self):
         # 初始化进程
+        self.get_exp_logo_process = QProcess()
         self.list_COM()
+        self.select_devices_name()
         self.list_logcat_duration()
         self.list_test_times_settings()
         self.is_adapter.clicked.connect(self.adapter_checkbox_change)
         self.is_power_button.clicked.connect(self.power_button_checkbox_change)
         self.is_usb.clicked.connect(self.usb_checkbox_change)
-        self.logo_upload_button.clicked.connect(self.upload_reboot_logo)
-        self.show_keying_button.clicked.connect(self.show_keying_image)
         self.submit_button.clicked.connect(self.handle_submit)
         # 进程完成
         self.only_boot.clicked.connect(self.only_boot_checkbox_change)
+        self.get_exp_logo_process.finished.connect(self.get_logo_finished_handle)
+        self.get_logo_image_button.clicked.connect(self.get_logo_image_button_change)
+
+        # 初始化图片cursor
+        self.cursor = QTextCursor(self.document)
+
+    def get_logo_image_button_change(self):
+        if self.double_screen.isChecked():
+            self.ui_config.add_config_option(self.ui_config.section_ui_logo, self.ui_config.option_logo_double_screen,
+                                             "1")
+        else:
+            self.ui_config.add_config_option(self.ui_config.section_ui_logo, self.ui_config.option_logo_double_screen,
+                                             "0")
+        self.ui_config.add_config_option(self.ui_config.section_ui_logo, self.ui_config.ui_option_device_name,
+                                         self.edit_device_name.currentText())
+        if os.path.exists(conf_path.logo_expect_screen0_path):
+            os.remove(conf_path.logo_expect_screen0_path)
+        if self.double_screen.isChecked():
+            if os.path.exists(conf_path.logo_expect_screen1_path):
+                os.remove(conf_path.logo_expect_screen1_path)
+        # 调起来进程， 获取预期照片
+        self.get_exp_logo_process.start(self.bat_logo_wh_stability_path)
+        self.logo_image_tips.setText("正在拍照保存，请等待...")
+        self.logo_image_tips.setStyleSheet("color: green;")
+        self.document.clear()
+
+    def add_logo_image(self, img_path):
+        image_format = QTextImageFormat()
+        image_url = QUrl.fromLocalFile(img_path)
+        # 添加图片资源到 QTextDocument
+        self.document.addResource(QTextDocument.ImageResource, image_url, image_url)
+        # 设置图片格式的 ID
+        image_format.setName(image_url.toString())
+        # 设置图片的大小
+        image_format.setWidth(200)
+        image_format.setHeight(200)
+        # # 插入图片到 QTextDocument
+        self.cursor.insertImage(image_format)
+
+    def get_logo_finished_handle(self):
+        # self.file_timer.stop()
+        if self.double_screen.isChecked():
+            if os.path.exists(self.logo_expect_screen0_path) and os.path.exists(self.logo_expect_screen1_path):
+                self.logo_image_tips.setText("已经获取到预期参照图片！")
+                self.logo_image_tips.setStyleSheet("color: read;")
+                self.add_logo_image(self.logo_expect_screen0_path)
+                self.add_logo_image(self.logo_expect_screen1_path)
+            else:
+                self.logo_image_tips.setText("未获取到预期参照照片！！！")
+                self.logo_image_tips.setStyleSheet("color: gray;")
+        else:
+            if os.path.exists(self.logo_expect_screen0_path):
+                self.logo_image_tips.setText("已经获取到预期参照图片！")
+                self.logo_image_tips.setStyleSheet("color: read;")
+                self.add_logo_image(self.logo_expect_screen0_path)
+            else:
+                self.logo_image_tips.setText("未获取到预期参照照片！！！")
+                self.logo_image_tips.setStyleSheet("color: gray;")
 
     def get_message_box(self, text):
         QMessageBox.warning(self, "错误提示", text)
 
     def handle_submit(self):
-        # 先删除原来存在的key图片
-        if os.path.exists(self.camera_key_path):
-            os.remove(self.camera_key_path)
-        if os.path.exists(self.camera2_key_path):
-            os.remove(self.camera2_key_path)
-
         if len(self.test_COM.currentText()) == 0:
             self.get_message_box("没检测到可用的串口，请检查或者重启界面！！！")
             return
@@ -263,33 +302,15 @@ class LogoDisplay(QtWidgets.QMainWindow, Reboot_Logo_MainWindow):
         if len(config_list) != len(set(config_list)):
             self.get_message_box("接线配置有相同，请检查！！！")
             return
-        # 如果只测开关机，不进行图片比对
-        if not self.only_boot.isChecked():
-            if len(self.logo_path_edit.text()) == 0:
-                self.get_message_box("请上传开机logo！！！")
-                return
-            # # 检查文件是否存在
-            reboot_logo_path = self.logo_path_edit.text().strip()
-            if not os.path.exists(reboot_logo_path):
-                self.get_message_box("文件路径：%s不存在" % reboot_logo_path)
-                return
 
         if len(self.test_times.currentText()) == 0:
             self.get_message_box("请设置压测次数")
-            return
-
-        # 检查是否抠图了
-        if not os.path.exists(self.logo_key_path):
-            self.get_message_box("请抠图检查图片是否完整！！！")
             return
 
         # 检查完保存配置
         self.save_config()
         self.submit_flag = True
         self.get_message_box("开机卡logo用例配置保存成功")
-        # 每次提交先删除失败的照片，避免检错误
-        if os.path.exists(self.failed_image_key_path):
-            os.remove(self.failed_image_key_path)
 
     def list_test_times_settings(self):
         times = [str(j * 50) for j in range(1, 500)]
@@ -343,74 +364,74 @@ class LogoDisplay(QtWidgets.QMainWindow, Reboot_Logo_MainWindow):
         return ["1路", "2路", "3路", "4路"]
 
     def save_config(self):
-        config = ConfigP(self.ui_config_file_path)
-        section = config.section_ui_logo
-        config.add_config_section(section)
+        # config = ConfigP(self.ui_config_file_path)
+        section = self.ui_config.section_ui_logo
+        self.ui_config.add_config_section(section)
 
-        config.add_config_option(section, "COM", self.test_COM.currentText())
-        config.add_config_option(section, "logcat_duration", self.adb_log_duration.currentText())
+        self.ui_config.add_config_option(section, "COM", self.test_COM.currentText())
+        self.ui_config.add_config_option(section, "logcat_duration", self.adb_log_duration.currentText())
 
         # 接线方式
         if self.is_adapter.isChecked():
-            config.add_config_option(section, "is_adapter", "1")
+            self.ui_config.add_config_option(section, "is_adapter", "1")
         else:
-            config.add_config_option(section, "is_adapter", "0")
+            self.ui_config.add_config_option(section, "is_adapter", "0")
         if self.is_power_button.isChecked():
-            config.add_config_option(section, "is_power_button", "1")
+            self.ui_config.add_config_option(section, "is_power_button", "1")
         else:
-            config.add_config_option(section, "is_power_button", "0")
+            self.ui_config.add_config_option(section, "is_power_button", "0")
         if self.is_usb.isChecked():
-            config.add_config_option(section, "is_usb", "1")
+            self.ui_config.add_config_option(section, "is_usb", "1")
         else:
-            config.add_config_option(section, "is_usb", "0")
+            self.ui_config.add_config_option(section, "is_usb", "0")
 
         # 接线配置
         if self.adapter_config.isEnabled():
             if self.adapter_config.currentText() == "1路":
-                config.add_config_option(section, "adapter_power_config", "relay_1")
+                self.ui_config.add_config_option(section, "adapter_power_config", "relay_1")
             elif self.adapter_config.currentText() == "2路":
-                config.add_config_option(section, "adapter_power_config", "relay_2")
+                self.ui_config.add_config_option(section, "adapter_power_config", "relay_2")
             elif self.adapter_config.currentText() == "3路":
-                config.add_config_option(section, "adapter_power_config", "relay_3")
+                self.ui_config.add_config_option(section, "adapter_power_config", "relay_3")
             else:
-                config.add_config_option(section, "adapter_power_config", "relay_4")
+                self.ui_config.add_config_option(section, "adapter_power_config", "relay_4")
 
         if self.power_button_config.isEnabled():
             if self.power_button_config.currentText() == "1路":
-                config.add_config_option(section, "power_button_config", "relay_1")
+                self.ui_config.add_config_option(section, "power_button_config", "relay_1")
             elif self.power_button_config.currentText() == "2路":
-                config.add_config_option(section, "power_button_config", "relay_2")
+                self.ui_config.add_config_option(section, "power_button_config", "relay_2")
             elif self.power_button_config.currentText() == "3路":
-                config.add_config_option(section, "power_button_config", "relay_3")
+                self.ui_config.add_config_option(section, "power_button_config", "relay_3")
             else:
-                config.add_config_option(section, "power_button_config", "relay_4")
+                self.ui_configconfig.add_config_option(section, "power_button_config", "relay_4")
 
         if self.usb_config.isEnabled():
             if self.usb_config.currentText() == "1路":
-                config.add_config_option(section, "usb_config", "relay_1")
+                self.ui_config.add_config_option(section, "usb_config", "relay_1")
             elif self.usb_config.currentText() == "2路":
-                config.add_config_option(section, "usb_config", "relay_2")
+                self.ui_config.add_config_option(section, "usb_config", "relay_2")
             elif self.usb_config.currentText() == "3路":
-                config.add_config_option(section, "usb_config", "relay_3")
+                self.ui_config.add_config_option(section, "usb_config", "relay_3")
             else:
-                config.add_config_option(section, "usb_config", "relay_4")
+                self.ui_config.add_config_option(section, "usb_config", "relay_4")
 
         # 其他配置信息
         if self.only_boot.isChecked():
-            config.add_config_option(section, "only_boot_config", "1")
+            self.ui_config.add_config_option(section, "only_boot_config", "1")
         else:
-            config.add_config_option(section, "only_boot_config", "0")
+            self.ui_config.add_config_option(section, "only_boot_config", "0")
 
         if self.double_screen.isChecked():
-            config.add_config_option(section, "double_screen_config", "1")
+            self.ui_config.add_config_option(section, "double_screen_config", "1")
         else:
-            config.add_config_option(section, "double_screen_config", "0")
+            self.ui_config.add_config_option(section, "double_screen_config", "0")
 
         if self.button_boot_time.isEnabled():
-            config.add_config_option(section, "button_boot_time", self.button_boot_time.currentText())
+            self.ui_config.add_config_option(section, "button_boot_time", self.button_boot_time.currentText())
 
         # 保存用例压测次数设置
-        config.add_config_option(section, "logo_test_times", self.test_times.currentText())
+        self.ui_config.add_config_option(section, "logo_test_times", self.test_times.currentText())
 
     def copy_file(self, origin, des):
         shutil.copy(origin, des)
@@ -428,10 +449,11 @@ class LogoDisplay(QtWidgets.QMainWindow, Reboot_Logo_MainWindow):
         else:
             return False
 
-    def upload_reboot_logo(self):
-        file_name, _ = QFileDialog.getOpenFileName(self, '选择图片', '', 'Images (*.png *.jpg *.jpeg)')
-        if file_name:
-            self.logo_path_edit.setText(file_name)
+    def select_devices_name(self):
+        devices = self.bg_config.get_option_value(self.bg_config.section_background_to_ui,
+                                                  self.bg_config.bg_option_devices_name).split(",")
+        for device in devices:
+            self.edit_device_name.addItem(str(device))
 
     def list_COM(self):
         ports = self.get_current_COM()

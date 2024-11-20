@@ -323,6 +323,8 @@ class TestLXStability:
                 time.sleep(1)
                 self.device.unlock()
                 time.sleep(1)
+                self.device.back_home()
+                time.sleep(1)
 
                 # 单双屏情况
                 if self.ui_conf_file[Config.section_ui_boot_check][Config.option_logo_double_screen] == "1":
@@ -766,7 +768,6 @@ class TestLXStability:
         # 亮屏
 
         if not self.device.is_screen_on():
-            print("111111111111111111111111111111111")
             self.device.press_power_button()
             time.sleep(1)
         self.device.unlock()

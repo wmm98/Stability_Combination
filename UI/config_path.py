@@ -28,6 +28,7 @@ class UIConfigPath:
     logo_test_screen0_path = os.path.join(logo_expect_path, "screen0", "test.png")
     logo_test_screen1_path = os.path.join(logo_expect_path, "screen1", "test.png")
     bat_logo_stability_path = os.path.join(project_path, "UI", "bat_pre_logo.bat")
+    bat_logo_wh_stability_path = os.path.join(project_path, "UI", "bat_wh_pre_logo.bat")
     # logo_take_path = os.path.join(project_path, "Photo", "BootLogo", "Logo", "Logo", "Logo.png")
     # logo_key_path = os.path.join(project_path, "Photo", "BootLogo", "Logo", "Key", "Key.png")
     # camera_key_path = os.path.join(project_path, "Photo", "BootLogo", "CameraPhoto", "Key", "Key.png")

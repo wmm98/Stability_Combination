@@ -163,21 +163,6 @@ class Boot_Check_MainWindow(config_path.UIConfigPath):
         # 间隔
         self.verticalLayout_left.addWidget(QLabel())
 
-        # 上传图片
-        # self.reboot_logo_info = QLabel("上传设备开机后第一个画面的照片：")
-        # self.verticalLayout_left.addWidget(self.reboot_logo_info)
-        # layout_upload_logo = QHBoxLayout()
-        # self.logo_path_edit = QtWidgets.QLineEdit()
-        # layout_upload_logo.addWidget(self.logo_path_edit)
-        # self.logo_upload_button = QtWidgets.QPushButton("点击上传")
-        # layout_upload_logo.addWidget(self.logo_upload_button)
-        # self.verticalLayout_left.addLayout(layout_upload_logo)
-
-        # 创建 QLabel 用于显示照片
-        # 显示图片
-        # self.show_keying_button = QtWidgets.QPushButton("显示抠图")
-        # self.verticalLayout_left.addWidget(self.show_keying_button)
-
         # 点击获取预期照片
         layout_get_image_info = QHBoxLayout()
         self.get_logo_image_button = QPushButton("点击获取预期照片")
