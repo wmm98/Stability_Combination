@@ -1369,6 +1369,38 @@ class TestLXStability:
                 log.error("以太网上电后上网失败次数为： %d次" % eth_enable_no_network_fail)
                 log.error("以太网上电后上网失败的概率： %f" % (eth_enable_no_network_fail / flag))
 
+            if wifi_boot_not_existent > 0:
+                log.error("WIFI启动前后状态不一致的次数为： %d次" % wifi_boot_not_existent)
+                log.error("WIFI启动前后状态不一致的概率： %f" % (wifi_boot_not_existent / flag))
+
+            if wifi_disable_fail_flag > 0:
+                log.error("WIFI下电失败次数为： %d次" % wifi_disable_fail_flag)
+                log.error("WIFI下电失败的概率： %f" % (wifi_disable_fail_flag / flag))
+
+            if wifi_enable_fail_flag > 0:
+                log.error("WIFI上电失败次数为： %d次" % wifi_enable_fail_flag)
+                log.error("WIFI上电失败的概率： %f" % (wifi_enable_fail_flag / flag))
+
+            if wifi_enable_no_network_fail > 0:
+                log.error("WIFI上电后上网失败次数为： %d次" % wifi_enable_no_network_fail)
+                log.error("WIFI上电后上网失败的概率： %f" % (wifi_enable_no_network_fail / flag))
+
+            if mobile_boot_not_existent > 0:
+                log.error("4G启动前后状态不一致的次数为： %d次" % mobile_boot_not_existent)
+                log.error("4G启动前后状态不一致的概率： %f" % (mobile_boot_not_existent / flag))
+
+            if mobile_disable_fail_flag > 0:
+                log.error("4G下电失败次数为： %d次" % mobile_disable_fail_flag)
+                log.error("4G下电失败的概率： %f" % (mobile_disable_fail_flag / flag))
+
+            if mobile_enable_fail_flag > 0:
+                log.error("4G上电失败次数为： %d次" % mobile_enable_fail_flag)
+                log.error("4G上电失败的概率： %f" % (mobile_enable_fail_flag / flag))
+
+            if mobile_no_network_fail > 0:
+                log.error("4G上电后上网失败次数为： %d次" % mobile_no_network_fail)
+                log.error("4G上电后上网失败的概率： %f" % (mobile_no_network_fail / flag))
+
         log.info("****************立项测试-开关机检查基本功能用例结束******************")
 
     @allure.feature("front_rear_camera_stability")
