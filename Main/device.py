@@ -106,6 +106,9 @@ class Device(publicInterface):
         # log.info(cmd)
         return shell.invoke(cmd)
 
+    def get_file_md5_value(self, file_path):
+        return self.send_adb_shell_command("md5sum %s | awk '{print $1}'" % file_path).strip()
+
     def send_adb_standalone_command(self, cmd):
         return shell.invoke("adb -s %s %s" % (self.device_name, cmd))
 

@@ -251,6 +251,23 @@ class Boot_Check_MainWindow(config_path.UIConfigPath):
 
         self.verticalLayout_left.addWidget(QtWidgets.QLabel())
 
+        # 填入root方式
+        root_layout_tips = QHBoxLayout()
+        self.root_lable = QtWidgets.QLabel("请填入root步骤：")
+        self.root_step_tips = QtWidgets.QLabel("步骤之间请以逗号隔开，例如：adb root,adb remount")
+        self.root_steps_edit = QtWidgets.QComboBox()
+        self.root_steps_edit.setEditable(True)
+        # 添加原本存在的root方式
+        self.root_steps_edit.addItem("adb root,adb remount")
+        self.root_steps_edit.addItem("adb shell setprop persist.debuggable 1,adb reboot")
+        self.root_step_tips.setStyleSheet("color: blue;")
+        root_layout_tips.addWidget(self.root_lable)
+        root_layout_tips.addWidget(self.root_step_tips)
+        root_layout_tips.addStretch(1)
+        self.verticalLayout_left.addLayout(root_layout_tips)
+        self.verticalLayout_left.addWidget(self.root_steps_edit)
+        self.verticalLayout_left.addWidget(QtWidgets.QLabel())
+
         # 压测次数
         layout_test_times_info = QHBoxLayout()
         self.test_times_label = QLabel("用例压测次数设置")
@@ -630,6 +647,34 @@ class BootCheckDisplay(QtWidgets.QMainWindow, Boot_Check_MainWindow):
             config.add_config_option(section, config.is_probability_test, "1")
         else:
             config.add_config_option(section, config.is_probability_test, "0")
+
+        self.deal_root_step()
+
+    def deal_root_step(self):
+        # adb shell setprop persist.debuggable 1,adb reboot
+        cmd = self.root_steps_edit.currentText()
+        cmd_split = []
+        if len(cmd) != 0:
+            if "," in cmd:
+                cmd_split = cmd.split(",")
+            elif "，" in cmd:
+                cmd_split = cmd.split("，")
+            else:
+                cmd_split.append(cmd)
+
+            # 给指令加上设备区别 ['adb -s 5eea0becf3b0f513 root', 'adb -s 5eea0becf3b0f513 remount']
+            self.new_cmds = []
+            for s_p in cmd_split:
+                add_d = "-s %s" % self.edit_device_name.currentText()
+                cmd_list = s_p.split(" ")
+                cmd_list.insert(1, add_d)
+                self.new_cmds.append(" ".join(cmd_list))
+            self.ui_config.add_config_option(self.ui_config.section_ui_boot_check,
+                                             self.ui_config.ui_option_root_steps,
+                                             ",".join(self.new_cmds))
+        else:
+            self.ui_config.add_config_option(self.ui_config.section_ui_boot_check,
+                                             self.ui_config.ui_option_root_steps, "")
 
     def copy_file(self, origin, des):
         shutil.copy(origin, des)
