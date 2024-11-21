@@ -64,6 +64,15 @@ def check_boot_complete_with_thread(device, timeout=120):
     return False
 
 
+def clear_directory(dir_path):
+    file_names = os.listdir(dir_path)
+    if len(file_names) != 0:
+        # 遍历文件名列表并删除文件
+        for file_name in file_names:
+            file_path = os.path.join(dir_path, file_name)  # 文件路径
+            os.remove(file_path)
+
+
 class TestLXStability:
 
     def setup_class(self):
@@ -81,6 +90,58 @@ class TestLXStability:
     @allure.title("开关机检查基本功能")
     def test_lx_boot_check_stability_test(self):
         log.info("****立项测试-开关机检查基本功能用例开始******")
+        # 拍照相关
+        # 删除异常照片
+        # 获取文件夹中的所有文件名
+        default_photograph_file_names = conf.camera_sta_err_default_photograph_path
+        default_preview_file_names = conf.camera_sta_err_default_preview_path
+        front_photograph_file_names = conf.camera_sta_err_front_photograph_path
+        front_preview_file_names = conf.camera_sta_err_front_preview_path
+        rear_photograph_file_names = conf.camera_sta_err_rear_photograph_path
+        rear_preview_file_names = conf.camera_sta_err_rear_preview_path
+
+        clear_directory(default_preview_file_names)
+        clear_directory(default_photograph_file_names)
+        clear_directory(front_preview_file_names)
+        clear_directory(front_photograph_file_names)
+        clear_directory(rear_photograph_file_names)
+        clear_directory(rear_preview_file_names)
+
+        open_fail_flag = 0
+        compare_fail_flag = 0
+        photograph_fail_flag = 0
+
+        is_double = self.ui_conf_file.get(Config.section_ui_boot_check, Config.option_front_and_rear)
+
+        wifi_boot_not_existent = 0
+        wifi_disable_fail_flag = 0
+        wifi_enable_fail_flag = 0
+        wifi_enable_no_network_fail = 0
+        wifi_disable_network_fail = 0
+
+        eth_boot_not_existent = 0
+        eth_disable_fail_flag = 0
+        eth_enable_fail_flag = 0
+        eth_enable_no_network_fail = 0
+        eth_disable_network_fail = 0
+
+        mobile_boot_not_existent = 0
+        mobile_disable_fail_flag = 0
+        mobile_enable_fail_flag = 0
+        mobile_no_network_fail = 0
+        mobile_disable_network_fail = 0
+
+        bt_boot_not_existent = 0
+        bt_disable_fail_flag = 0
+        bt_enable_fail_flag = 0
+        bt_salve_fail_flag = 0
+
+        nfc_boot_not_existent = 0
+        nfc_disable_fail_flag = 0
+        nfc_enable_fail_flag = 0
+
+        usb_recognize_fail_flag = 0
+
         # 获取测试点的配置信息
         test_times = int(self.ui_conf_file.get(Config.section_ui_boot_check, Config.ui_option_logo_test_times))
         is_wifi = int(self.ui_conf_file.get(Config.section_ui_boot_check, Config.option_wifi_test))
@@ -232,7 +293,7 @@ class TestLXStability:
         """
 
         flag = 0
-        while flag < int(self.ui_conf_file.get(Config.section_ui_boot_check, Config.ui_option_logo_test_times)):
+        while flag < test_times:
             flag += 1
             # 上下电启动
             t_ser.loginSer(self.ui_conf_file.get(Config.section_ui_boot_check, Config.option_logo_COM))
@@ -438,13 +499,20 @@ class TestLXStability:
                 log.info("********检查蓝牙开关状态")
                 if not self.device.bt_is_enable():
                     log.error("重启后蓝牙不是上电状态，请检查！！！")
-                    failed_flag += 1
+                    if is_probability_test:
+                        bt_boot_not_existent += 1
+                    else:
+                        failed_flag += 1
                 log.info("启动后蓝牙当前为上电状态")
                 # 检查蓝牙设备是否连接上
                 if self.device.bt_is_connected():
                     log.info("当前显示已连接上蓝牙设备（从）")
                 else:
-                    log.info("当前显示没连接上蓝牙设备，请检查！！！")
+                    log.error("当前显示没连接上蓝牙设备，请检查！！！")
+                    if is_probability_test:
+                        bt_salve_fail_flag += 1
+                    else:
+                        failed_flag += 1
 
                 # 对蓝牙进行关开操作
                 log.info("给蓝牙下电")
@@ -455,13 +523,21 @@ class TestLXStability:
                     time.sleep(3)
                 if self.device.bt_is_enable():
                     log.error("蓝牙无法下电，请检查！！！")
-                    failed_flag += 1
+                    if is_probability_test:
+                        bt_disable_fail_flag += 1
+                    else:
+                        failed_flag += 1
                 log.info("蓝牙下电成功")
                 # 检查从机蓝牙设备连接情况
+                time.sleep(3)
                 if self.device.bt_is_connected():
                     log.error("显示连接上蓝牙设备，蓝牙未断开，请检查！！！")
-                    time.sleep(3)
-                    raise Exception
+                    if is_probability_test:
+                        bt_salve_fail_flag += 1
+                    else:
+                        failed_flag += 1
+                    # time.sleep(3)
+                    # raise Exception
                 else:
                     log.info("已断开蓝牙设备（从）")
 
@@ -473,7 +549,11 @@ class TestLXStability:
                     time.sleep(3)
                 if not self.device.bt_is_enable():
                     log.error("蓝牙无法上电，请检查！！！")
-                    failed_flag += 1
+                    if is_probability_test:
+                        bt_enable_fail_flag += 1
+                    else:
+                        failed_flag += 1
+
                 log.info("蓝牙上电成功")
                 # 检查蓝牙设备（从）连接情况
                 time.sleep(10)
@@ -481,11 +561,19 @@ class TestLXStability:
                     log.info("已经连接上蓝牙设备，请检查！！！")
                 else:
                     log.error("无法自动重连蓝牙设备，请检查！！！")
+                    if is_probability_test:
+                        bt_salve_fail_flag += 1
+                    else:
+                        failed_flag += 1
+
             if is_nfc:
                 log.info("********检查NFC开关状态")
                 if not self.device.nfc_is_enable():
                     log.error("启动后nfc不是上电状态，请检查！！！")
-                    failed_flag += 1
+                    if is_probability_test:
+                        nfc_boot_not_existent += 1
+                    else:
+                        failed_flag += 1
                 log.info("启动后nfc当前为上电状态")
                 # 对蓝牙进行关开操作
                 log.info("给nfc下电")
@@ -496,7 +584,10 @@ class TestLXStability:
                     time.sleep(3)
                 if self.device.nfc_is_enable():
                     log.error("nfc无法下电，请检查！！！")
-                    failed_flag += 1
+                    if is_probability_test:
+                        nfc_disable_fail_flag += 1
+                    else:
+                        failed_flag += 1
                 log.info("nfc下电成功")
                 log.info("给nfc上电")
                 self.device.enable_nfc_btn()
@@ -506,36 +597,55 @@ class TestLXStability:
                     time.sleep(3)
                 if not self.device.nfc_is_enable():
                     log.error("nfc无法上电，请检查！！！")
-                    failed_flag += 1
+                    if is_probability_test:
+                        nfc_enable_fail_flag += 1
+                    else:
+                        failed_flag += 1
                 log.info("nfc上电成功")
-
-            if failed_flag > 1:
-                raise Exception
 
             # 检查各网络模块是否上电状态
             if is_eth:
                 log.info("********检查以太网状态")
                 if not self.device.eth0_is_enable():
                     log.error("启动后的以太网不是上电状态， 请检查！！！")
-                    time.sleep(3)
-                    raise Exception
+                    if is_probability_test:
+                        eth_boot_not_existent += 1
+                    else:
+                        failed_flag += 1
+                        # time.sleep(3)
+                        # raise Exception
                 log.info("启动后以太网为上电状态")
 
             if is_wifi:
                 log.info("********检查以wifi态")
                 if not self.device.wifi_is_enable():
                     log.error("启动后的以wifi不是上电状态， 请检查！！！")
-                    time.sleep(3)
-                    raise Exception
+                    if is_probability_test:
+                        wifi_boot_not_existent += 1
+                    else:
+                        failed_flag += 1
+                    # time.sleep(3)
+                    # raise Exception
                 log.info("启动后wifi为上电状态")
 
             if is_mobile:
                 log.info("********检查以流量数据态")
                 if not self.device.mobile_is_enable():
                     log.error("启动后的移动数据网络不是上电状态， 请检查！！！")
-                    time.sleep(3)
-                    raise Exception
+                    if is_probability_test:
+                        mobile_boot_not_existent += 1
+                    else:
+                        failed_flag += 1
+                    # time.sleep(3)
+                    # raise Exception
                 log.info("启动后移动网络为上电状态")
+
+            # 停止测试
+            if not is_probability_test:
+                if failed_flag > 1:
+                    raise Exception
+            else:
+                continue
 
             # if is_eth:
             #     log.info("*****检查以太网上网情况")
@@ -555,8 +665,11 @@ class TestLXStability:
                     time.sleep(3)
                 if self.device.wifi_is_enable():
                     log.error("wifi模块无法下电，请检查！！！")
-                    time.sleep(3)
-                    raise Exception
+                    if is_probability_test:
+                        wifi_disable_fail_flag += 1
+                    else:
+                        time.sleep(3)
+                        raise Exception
 
                 log.info("wifi下电")
                 # 禁用4G
@@ -567,13 +680,20 @@ class TestLXStability:
                     time.sleep(3)
                 if self.device.mobile_is_enable():
                     log.error("移动数据模块无法下电，请检查！！！")
-                    time.sleep(3)
-                    raise Exception
+                    if is_probability_test:
+                        mobile_disable_fail_flag += 1
+                    else:
+                        time.sleep(3)
+                        raise Exception
+
                 log.info("移动数据下电成功")
                 if not self.device.ping_network(5, 35):
                     log.error("启动后以太网无法上网， 请检查！！！")
-                    time.sleep(3)
-                    raise Exception
+                    if is_probability_test:
+                        eth_enable_no_network_fail += 1
+                    else:
+                        time.sleep(3)
+                        raise Exception
                 log.info("启动后以太网可正常上网")
 
                 # 禁用以太网
@@ -584,8 +704,11 @@ class TestLXStability:
                     time.sleep(3)
                 if self.device.eth0_is_enable():
                     log.error("以太网模块无法下电，请检查！！！")
-                    time.sleep(3)
-                    raise Exception
+                    if is_probability_test:
+                        eth_disable_fail_flag += 1
+                    else:
+                        time.sleep(3)
+                        raise Exception
                 log.info("以太网下电成功")
                 # 上电
                 self.device.enable_eth0_btn()
@@ -595,14 +718,20 @@ class TestLXStability:
                     time.sleep(3)
                 if not self.device.eth0_is_enable():
                     log.error("以太网模块无法上电，请检查！！！")
-                    time.sleep(3)
-                    raise Exception
+                    if is_probability_test:
+                        eth_enable_fail_flag += 1
+                    else:
+                        time.sleep(3)
+                        raise Exception
                 log.info("以太网模块上电成功")
                 # 检查网络
                 if not self.device.ping_network(5, 35):
                     log.error("以太网无法上网， 请检查！！！")
-                    time.sleep(3)
-                    raise Exception
+                    if is_probability_test:
+                        eth_enable_no_network_fail += 1
+                    else:
+                        time.sleep(3)
+                        raise Exception
                 log.info("以太网可正常上网")
 
                 # 以太网下电
@@ -613,8 +742,11 @@ class TestLXStability:
                     time.sleep(3)
                 if self.device.eth0_is_enable():
                     log.error("以太网模块无法下电，请检查！！！")
-                    time.sleep(3)
-                    raise Exception
+                    if is_probability_test:
+                        eth_disable_fail_flag += 1
+                    else:
+                        time.sleep(3)
+                        raise Exception
 
                 # wifi上电
                 # 上电
@@ -625,14 +757,20 @@ class TestLXStability:
                     time.sleep(3)
                 if not self.device.wifi_is_enable():
                     log.error("wifi模块无法上电，请检查！！！")
-                    time.sleep(3)
-                    raise Exception
+                    if is_probability_test:
+                        wifi_enable_fail_flag += 1
+                    else:
+                        time.sleep(3)
+                        raise Exception
                 log.info("wifi模块上电成功")
                 # 检查网络
                 if not self.device.ping_network(5, 35):
                     log.error("wifi无法上网， 请检查！！！")
-                    time.sleep(3)
-                    raise Exception
+                    if is_probability_test:
+                        wifi_enable_no_network_fail += 1
+                    else:
+                        time.sleep(3)
+                        raise Exception
                 log.info("wifi可正常上网")
 
                 # wifi下电
@@ -643,8 +781,11 @@ class TestLXStability:
                     time.sleep(3)
                 if self.device.wifi_is_enable():
                     log.error("wifi模块无法下电，请检查！！！")
-                    time.sleep(3)
-                    raise Exception
+                    if is_probability_test:
+                        wifi_disable_fail_flag += 1
+                    else:
+                        time.sleep(3)
+                        raise Exception
 
                 # 移动数据上电
                 # 上电
@@ -655,14 +796,20 @@ class TestLXStability:
                     time.sleep(3)
                 if not self.device.mobile_is_enable():
                     log.error("移动数据模块无法上电，请检查！！！")
-                    time.sleep(3)
-                    raise Exception
+                    if is_probability_test:
+                        mobile_disable_fail_flag += 1
+                    else:
+                        time.sleep(3)
+                        raise Exception
                 log.info("移动数据模块上电成功")
                 # 检查网络
                 if not self.device.ping_network(5, 35):
                     log.error("移动数据无法上网， 请检查！！！")
-                    time.sleep(3)
-                    raise Exception
+                    if is_probability_test:
+                        mobile_no_network_fail += 1
+                    else:
+                        time.sleep(3)
+                        raise Exception
                 log.info("移动数据可正常上网")
 
                 # 以太网上电，wifi上电
@@ -675,14 +822,20 @@ class TestLXStability:
                     time.sleep(3)
                 if not self.device.wifi_is_enable():
                     log.error("wifi模块无法上电，请检查！！！")
-                    time.sleep(3)
-                    raise Exception
+                    if is_probability_test:
+                        wifi_enable_fail_flag += 1
+                    else:
+                        time.sleep(3)
+                        raise Exception
                 log.info("wifi模块上电成功")
                 # 检查网络
                 if not self.device.ping_network(5, 35):
                     log.error("wifi无法上网， 请检查！！！")
-                    time.sleep(3)
-                    raise Exception
+                    if is_probability_test:
+                        wifi_enable_no_network_fail += 1
+                    else:
+                        time.sleep(3)
+                        raise Exception
                 log.info("wifi可正常上网")
 
                 # 以太网上电
@@ -693,14 +846,20 @@ class TestLXStability:
                     time.sleep(3)
                 if not self.device.eth0_is_enable():
                     log.error("以太网模块无法上电，请检查！！！")
-                    time.sleep(3)
-                    raise Exception
+                    if is_probability_test:
+                        eth_enable_fail_flag += 1
+                    else:
+                        time.sleep(3)
+                        raise Exception
                 log.info("以太网模块上电成功")
                 # 检查网络
                 if not self.device.ping_network(5, 35):
                     log.error("以太网无法上网， 请检查！！！")
-                    time.sleep(3)
-                    raise Exception
+                    if is_probability_test:
+                        eth_enable_no_network_fail += 1
+                    else:
+                        time.sleep(3)
+                        raise Exception
                 log.info("以太网可正常上网")
 
             if not int(is_eth) and int(is_wifi) and int(is_mobile):
@@ -712,14 +871,20 @@ class TestLXStability:
                     time.sleep(3)
                 if self.device.mobile_is_enable():
                     log.error("移动数据模块无法下电，请检查！！！")
-                    time.sleep(3)
-                    raise Exception
+                    if is_probability_test:
+                        mobile_disable_fail_flag += 1
+                    else:
+                        time.sleep(3)
+                        raise Exception
                 log.info("移动数据下电")
 
                 if not self.device.ping_network(5, 60):
                     log.error("wifi无法上网， 请检查！！！")
-                    time.sleep(3)
-                    raise Exception
+                    if is_probability_test:
+                        wifi_enable_no_network_fail += 1
+                    else:
+                        time.sleep(3)
+                        raise Exception
                 log.info("wifi可正常上网")
 
                 # wifi下电
@@ -730,8 +895,11 @@ class TestLXStability:
                     time.sleep(3)
                 if self.device.wifi_is_enable():
                     log.error("wifi模块无法下电，请检查！！！")
-                    time.sleep(3)
-                    raise Exception
+                    if is_probability_test:
+                        wifi_disable_fail_flag += 1
+                    else:
+                        time.sleep(3)
+                        raise Exception
 
                 # 移动数据上电
                 # 上电
@@ -742,11 +910,17 @@ class TestLXStability:
                     time.sleep(3)
                 if not self.device.mobile_is_enable():
                     log.error("移动数据模块无法上电，请检查！！！")
-                    raise Exception
+                    if is_probability_test:
+                        mobile_enable_fail_flag += 1
+                    else:
+                        time.sleep(3)
+                        raise Exception
                 log.info("移动数据模块上电成功")
                 # 检查网络
                 if not self.device.ping_network(5, 35):
                     log.error("移动数据无法上网， 请检查！！！")
+                    if is_probability_test:
+                        mobile_no_network_fail += 1
                     time.sleep(3)
                     raise Exception
 
@@ -761,8 +935,12 @@ class TestLXStability:
                     time.sleep(3)
                 if self.device.mobile_is_enable():
                     log.error("移动数据模块无法下电，请检查！！！")
-                    time.sleep(3)
-                    raise Exception
+                    if is_probability_test:
+                        mobile_disable_fail_flag += 1
+                    else:
+                        time.sleep(3)
+                        raise Exception
+
                 self.device.enable_wifi_btn()
                 time.sleep(3)
                 if not self.device.wifi_is_enable():
@@ -770,14 +948,20 @@ class TestLXStability:
                     time.sleep(3)
                 if not self.device.wifi_is_enable():
                     log.error("wifi模块无法上电，请检查！！！")
-                    time.sleep(3)
-                    raise Exception
+                    if is_probability_test:
+                        wifi_enable_fail_flag += 1
+                    else:
+                        time.sleep(3)
+                        raise Exception
                 log.info("wifi模块上电成功")
                 # 检查网络
                 if not self.device.ping_network(5, 35):
                     log.error("wifi无法上网， 请检查！！！")
-                    time.sleep(3)
-                    raise Exception
+                    if is_probability_test:
+                        wifi_enable_no_network_fail += 1
+                    else:
+                        time.sleep(3)
+                        raise Exception
                 log.info("wifi可正常上网")
 
                 self.device.enable_mobile_btn()
@@ -787,12 +971,403 @@ class TestLXStability:
                     time.sleep(3)
                 if not self.device.mobile_is_enable():
                     log.error("移动数据模块无法上电，请检查！！！")
-                    raise Exception
+                    if is_probability_test:
+                        mobile_enable_fail_flag += 1
+                    else:
+                        time.sleep(3)
+                        raise Exception
                 log.info("移动数据模块上电成功")
+
+            # 测试前删除已存在的照片
+            if int(is_double):
+                if os.path.exists(Config.camera_sta_test_front_preview_path):
+                    os.remove(Config.camera_sta_test_front_preview_path)
+                if os.path.exists(Config.camera_sta_test_front_photograph_path):
+                    os.remove(Config.camera_sta_test_front_photograph_path)
+                if os.path.exists(Config.camera_sta_test_rear_photograph_path):
+                    os.remove(Config.camera_sta_test_rear_photograph_path)
+                if os.path.exists(Config.camera_sta_test_rear_preview_path):
+                    os.remove(Config.camera_sta_test_rear_preview_path)
+            else:
+                if os.path.exists(Config.camera_sta_test_default_preview_path):
+                    os.remove(Config.camera_sta_test_default_preview_path)
+                if os.path.exists(Config.camera_sta_test_default_photograph_path):
+                    os.remove(Config.camera_sta_test_default_photograph_path)
+
+            if int(is_double):
+                # get x, y position for switch btn
+                x = self.ui_conf_file.get(Config.section_ui_boot_check, Config.option_switch_x_value)
+                y = self.ui_conf_file.get(Config.section_ui_boot_check, Config.option_switch_y_value)
+                # clear img in device
+                self.device.remove_img()
+                time.sleep(1)
+                if len(self.device.get_latest_img()) != 0:
+                    self.device.remove_img()
+
+                # front and rear camera
+                # 1 open camera
+                time.sleep(1)
+                self.device.open_camera()
+                time.sleep(2)
+                if self.device.get_camera_id() == 3:
+                    self.device.open_camera()
+                time.sleep(2)
+                if self.device.get_camera_id() == 3:
+                    log.error("打开相机失败，请检查！！！")
+                    time.sleep(3)
+                    raise Exception
+                log.info("打开相机")
+                # switch front camera
+                if not self.device.is_first_camera():
+                    self.device.click_btn(x, y)
+                # get camera app package name
+                self.device.get_camera_package_name()
+                # click center clear other button
+                pos = self.device.get_screen_center_position()
+                self.device.click_btn(str(pos[0]), str(pos[1]))
+                time.sleep(3)
+                log.info("当前为后镜头")
+                # screenshot preview
+                self.device.screen_shot(Config.camera_sta_test_rear_preview_path)
+                time.sleep(1)
+                if not os.path.exists(Config.camera_sta_test_rear_preview_path):
+                    self.device.screen_shot(Config.camera_sta_test_rear_preview_path)
+                log.info("后镜头预览界面截图完成")
+                # clear img
+                self.device.remove_img()
+                time.sleep(3)
+                if len(self.device.get_latest_img()) != 0:
+                    self.device.remove_img()
+                # # take photo
+                self.device.take_photo()
+                time.sleep(3)
+
+                if len(self.device.get_latest_img()) == 0:
+                    self.device.take_photo()
+                    time.sleep(3)
+
+                if len(self.device.get_latest_img()) == 0:
+                    log.info("拍照失败，请检查！！！")
+                    time.sleep(3)
+                    raise
+
+                log.info("后镜头拍照完成")
+                self.device.pull_img(Config.camera_sta_test_rear_photograph_path)
+                time.sleep(1)
+                if not os.path.exists(Config.camera_sta_test_rear_photograph_path):
+                    self.device.pull_img(Config.camera_sta_test_rear_photograph_path)
+
+                # clear img
+                self.device.remove_img()
+                time.sleep(1)
+                if len(self.device.get_latest_img()) != 0:
+                    self.device.remove_img()
+                #
+                # switch front camera
+                self.device.click_btn(x, y)
+                time.sleep(2)
+                if self.device.is_first_camera():
+                    self.device.click_btn(x, y)
+                log.info("切换镜头")
+                # wait 2 sec
+                time.sleep(3)
+                # screenshot preview
+                self.device.screen_shot(Config.camera_sta_test_front_preview_path)
+                log.info("当前预览界面截图完成")
+                time.sleep(1)
+                if not os.path.exists(Config.camera_sta_test_front_preview_path):
+                    self.device.screen_shot(Config.camera_sta_test_front_preview_path)
+                # clear img
+                self.device.remove_img()
+                time.sleep(1)
+                if len(self.device.get_latest_img()) != 0:
+                    self.device.remove_img()
+                # take photo
+                time.sleep(3)
+                self.device.take_photo()
+                time.sleep(3)
+                if len(self.device.get_latest_img()) == 0:
+                    self.device.take_photo()
+                    time.sleep(3)
+
+                if len(self.device.get_latest_img()) == 0:
+                    log.info("拍照失败，请检查！！！")
+                    time.sleep(3)
+                    raise
+
+                log.info("前镜头拍照完成")
+                self.device.pull_img(Config.camera_sta_test_front_photograph_path)
+                time.sleep(1)
+                if not os.path.exists(Config.camera_sta_test_front_photograph_path):
+                    self.device.pull_img(Config.camera_sta_test_front_photograph_path)
+
+                # 对比前镜头
+                front_preview_score = cnns.generateScore(Config.camera_sta_test_front_preview_path,
+                                                         Config.camera_sta_exp_front_preview_path)
+                log.info("前镜头预览画面预期和测试截图相似度分数为：%s" % str(front_preview_score))
+                if front_preview_score < 90:
+                    log.error("前镜头预览画面预期和测试截图差异过大，请检查！！！")
+                    if is_probability_test:
+                        # 复制测试中异常的照片到Error文件夹地址
+                        preview_file_name1 = os.path.basename(Config.camera_sta_test_front_preview_path)
+                        preview_file_new_path1 = Config.camera_sta_err_front_preview_path
+                        shutil.copy(Config.camera_sta_test_front_preview_path, preview_file_new_path1)
+                        os.rename(os.path.join(preview_file_new_path1, preview_file_name1),
+                                  os.path.join(preview_file_new_path1, "%d_%s" % (flag, preview_file_name1)))
+                        compare_fail_flag += 1
+                    else:
+                        time.sleep(3)
+                        raise
+
+                front_photograph_score = cnns.generateScore(Config.camera_sta_test_front_photograph_path,
+                                                            Config.camera_sta_exp_front_photograph_path)
+                log.info("前镜头拍照预期和测试拍照相似度分数为：%s" % str(front_photograph_score))
+                if front_photograph_score < 90:
+                    log.error("前镜头拍照预期和测试拍照差异过大，请检查！！！")
+                    if is_probability_test:
+                        photograph_file_name1 = os.path.basename(Config.camera_sta_test_front_photograph_path)
+                        photograph_file_new_path1 = Config.camera_sta_err_front_photograph_path
+                        shutil.copy(Config.camera_sta_test_front_photograph_path, photograph_file_new_path1)
+                        os.rename(os.path.join(photograph_file_new_path1, photograph_file_name1),
+                                  os.path.join(photograph_file_new_path1, "%d_%s" % (flag, photograph_file_name1)))
+                        compare_fail_flag += 1
+                    else:
+                        time.sleep(3)
+                        raise
+                # 对比后镜头
+                rear_preview_score = cnns.generateScore(Config.camera_sta_test_rear_preview_path,
+                                                        Config.camera_sta_exp_rear_preview_path)
+                log.info("后镜头预览画面预期和测试截图相似度分数为：%s" % str(rear_preview_score))
+                if rear_preview_score < 90:
+                    log.error("后镜头预览画面预期和测试截图差异过大，请检查！！！")
+                    if is_probability_test:
+                        preview_file_name2 = os.path.basename(Config.camera_sta_test_rear_preview_path)
+                        preview_file_new_path2 = Config.camera_sta_err_rear_preview_path
+                        shutil.copy(Config.camera_sta_test_rear_preview_path, preview_file_new_path2)
+                        os.rename(os.path.join(preview_file_new_path2, preview_file_name2),
+                                  os.path.join(preview_file_new_path2, "%d_%s" % (flag, preview_file_name2)))
+                        compare_fail_flag += 1
+                    else:
+                        time.sleep(3)
+                        raise
+                rear_photograph_score = cnns.generateScore(Config.camera_sta_test_rear_photograph_path,
+                                                           Config.camera_sta_exp_rear_photograph_path)
+                log.info("后镜头拍照预期和测试拍照相似度分数为：%s" % str(rear_photograph_score))
+                if rear_photograph_score < 90:
+                    if is_probability_test:
+                        photograph_file_name2 = os.path.basename(Config.camera_sta_test_rear_photograph_path)
+                        photograph_file_new_path2 = Config.camera_sta_err_rear_photograph_path
+                        shutil.copy(Config.camera_sta_test_rear_photograph_path, photograph_file_new_path2)
+                        os.rename(os.path.join(photograph_file_new_path2, photograph_file_name2),
+                                  os.path.join(photograph_file_new_path2, "%d_%s" % (flag, photograph_file_name2)))
+                        compare_fail_flag += 1
+                    else:
+                        log.error("后镜头拍照预期和测试拍照差异过大，请检查！！！")
+                        time.sleep(3)
+                        raise
+            else:
+                # 测试前删除已存在的照片
+                if os.path.exists(Config.camera_sta_test_default_preview_path):
+                    os.remove(Config.camera_sta_test_default_preview_path)
+                if os.path.exists(Config.camera_sta_test_default_photograph_path):
+                    os.remove(Config.camera_sta_test_default_photograph_path)
+                self.device.remove_img()
+                time.sleep(1)
+                if len(self.device.get_latest_img()) != 0:
+                    self.device.remove_img()
+
+                # 后台启动捕捉log
+                log_path = os.path.join("/sdcard/%s" % os.path.basename(Config.camera_sta_test_log_path))  # log名称
+                # self.device.rm_file(log_path)  # 清除已存在的
+                # self.device.logcat_thread(log_path)
+                # log.info("捕捉设备log")
+                # # 获取后台logcat进程id
+                # logcat_process_id = self.device.get_current_logcat_process_id()
+
+                # 1 open camera
+                time.sleep(1)
+                self.device.open_camera()
+                time.sleep(2)
+                log.info("打开相机")
+                if self.device.get_camera_id() == 3:
+                    self.device.open_camera()
+                time.sleep(2)
+                if self.device.get_camera_id() == 3:
+                    log.error("打开相机失败，请检查！！！")
+                    if is_probability_test:
+                        open_fail_flag += 1
+                        self.device.force_stop_app()
+                        self.device.clear_app()
+                        continue
+                    else:
+                        time.sleep(3)
+                        raise Exception
+
+                # get camera app package name
+                self.device.get_camera_package_name()
+                # click center clear other button
+                pos = self.device.get_screen_center_position()
+                self.device.click_btn(str(pos[0]), str(pos[1]))
+                time.sleep(3)
+                # screenshot preview
+                self.device.screen_shot(Config.camera_sta_test_default_preview_path)
+                time.sleep(1)
+                if not os.path.exists(Config.camera_sta_test_default_preview_path):
+                    self.device.screen_shot(Config.camera_sta_test_default_preview_path)
+                log.info("当前预览界面截图完成")
+                # clear img
+                self.device.remove_img()
+                time.sleep(3)
+                if len(self.device.get_latest_img()) != 0:
+                    self.device.remove_img()
+                    time.sleep(1)
+                # # take photo
+                self.device.take_photo()
+                time.sleep(3)
+                if len(self.device.get_latest_img()) == 0:
+                    self.device.take_photo()
+                    time.sleep(3)
+
+                if len(self.device.get_latest_img()) == 0:
+                    log.info("拍照失败，请检查！！！")
+                    if is_probability_test:
+                        photograph_fail_flag += 1
+                        self.device.force_stop_app()
+                        self.device.clear_app()
+                        continue
+                    else:
+                        time.sleep(3)
+                        # self.device.kill_process(logcat_process_id)
+                        # self.device.adb_pull_file(log_path, os.path.dirname(Config.camera_sta_test_log_path))
+                        raise
+
+                log.info("拍照完成")
+                self.device.pull_img(Config.camera_sta_test_default_photograph_path)
+                time.sleep(1)
+                if not os.path.exists(Config.camera_sta_test_default_photograph_path):
+                    self.device.pull_img(Config.camera_sta_test_default_photograph_path)
+                # 对比照片
+                default_preview_score = cnns.generateScore(Config.camera_sta_test_default_preview_path,
+                                                           Config.camera_sta_exp_default_preview_path)
+                log.info("镜头预览画面预期和测试截图相似度分数为：%s" % str(default_preview_score))
+                if default_preview_score < 90:
+                    log.error("镜头预览画面预期和测试截图差异过大，请检查！！！")
+                    if is_probability_test:
+                        compare_fail_flag += 1
+                        self.device.force_stop_app()
+                        self.device.clear_app()
+                        # 复制测试中异常的照片到Error文件夹地址
+                        preview_file_name = os.path.basename(Config.camera_sta_test_default_preview_path)
+                        preview_file_new_path = Config.camera_sta_err_default_preview_path
+                        shutil.copy(Config.camera_sta_test_default_preview_path, preview_file_new_path)
+                        os.rename(os.path.join(preview_file_new_path, preview_file_name),
+                                  os.path.join(preview_file_new_path, "%d_%s" % (flag, preview_file_name)))
+                        # continue
+                    else:
+                        time.sleep(3)
+                        # self.device.kill_process(logcat_process_id)
+                        # self.device.adb_pull_file(log_path, os.path.dirname(Config.camera_sta_test_log_path))
+                        raise
+                default_photograph_score = cnns.generateScore(Config.camera_sta_test_default_photograph_path,
+                                                              Config.camera_sta_exp_default_photograph_path)
+                log.info("镜头拍照预期和测试拍照相似度分数为：%s" % str(default_photograph_score))
+                if default_photograph_score < 90:
+                    log.error("镜头拍照预期和测试拍照差异过大，请检查！！！")
+                    if is_probability_test:
+                        compare_fail_flag += 1
+                        self.device.force_stop_app()
+                        self.device.clear_app()
+                        photograph_file_name = os.path.basename(Config.camera_sta_test_default_photograph_path)
+                        photograph_file_new_path = Config.camera_sta_err_default_photograph_path
+                        shutil.copy(Config.camera_sta_test_default_photograph_path, photograph_file_new_path)
+                        os.rename(os.path.join(photograph_file_new_path, photograph_file_name),
+                                  os.path.join(photograph_file_new_path, "%d_%s" % (flag, photograph_file_name)))
+                        # continue
+                    else:
+                        time.sleep(3)
+                        # self.device.kill_process(logcat_process_id)
+                        self.device.adb_pull_file(log_path, os.path.dirname(Config.camera_sta_test_log_path))
+                        raise
+
+            # close and clear data to camera
+            self.device.force_stop_app()
+            self.device.clear_app()
+            if self.device.get_camera_id() != 3:
+                self.device.force_stop_app()
+                self.device.clear_app()
+            log.info("关闭相机")
+            # clear img
+            self.device.remove_img()
+            time.sleep(1)
+            if len(self.device.get_latest_img()) != 0:
+                self.device.remove_img()
 
             t_ser.logoutSer()
             log.info("*******************压测完成%d次********************" % flag)
             time.sleep(3)
+
+        if is_probability_test:
+            # 相机概率问题显示
+            if open_fail_flag > 0:
+                log.error("打开相机失败的次数为： %d次" % open_fail_flag)
+                log.error("打开相机失败的概率为： %f" % (open_fail_flag / flag))
+
+            if photograph_fail_flag > 0:
+                log.error("拍照失败的次数为： %d次" % photograph_fail_flag)
+                log.error("拍照失败的概率为： %f" % (photograph_fail_flag / flag))
+
+            if compare_fail_flag > 0:
+                log.error("预期图片和实际图片差异过大的次数： %d次" % compare_fail_flag)
+                log.error("预期图片和实际图片差异过大的概率为： %f" % (compare_fail_flag / flag))
+
+            if bt_boot_not_existent > 0:
+                log.error("蓝牙启动前后状态不一致的次数为： %d次" % bt_boot_not_existent)
+                log.error("蓝牙启动前后状态不一致的概率： %f" % (bt_boot_not_existent / flag))
+
+            if bt_enable_fail_flag > 0:
+                log.error("蓝牙上电失败次数为： %d次" % bt_enable_fail_flag)
+                log.error("蓝牙上电失败的概率： %f" % (bt_enable_fail_flag / flag))
+
+            if bt_disable_fail_flag > 0:
+                log.error("蓝牙下电失败次数为： %d次" % bt_disable_fail_flag)
+                log.error("蓝牙下电失败的概率： %f" % (bt_disable_fail_flag / flag))
+
+            if bt_salve_fail_flag > 0:
+                log.error("设备无法自动重连蓝牙次数为： %d次" % bt_salve_fail_flag)
+                log.error("设备无法自动重连蓝牙的概率： %f" % (bt_salve_fail_flag / flag))
+
+            if nfc_boot_not_existent > 0:
+                log.error("NFC启动前后状态不一致的次数为： %d次" % nfc_boot_not_existent)
+                log.error("NFC启动前后状态不一致的概率： %f" % (nfc_boot_not_existent / flag))
+
+            if nfc_enable_fail_flag > 0:
+                log.error("NFC上电失败次数为： %d次" % nfc_enable_fail_flag)
+                log.error("NFC上电失败的概率： %f" % (nfc_enable_fail_flag / flag))
+
+            if nfc_enable_fail_flag > 0:
+                log.error("NFC下电失败次数为： %d次" % nfc_disable_fail_flag)
+                log.error("NFC下电失败的概率： %f" % (nfc_disable_fail_flag / flag))
+
+            eth_boot_not_existent = 0
+            eth_disable_fail_flag = 0
+            eth_enable_fail_flag = 0
+            eth_enable_no_network_fail = 0
+
+            if eth_boot_not_existent > 0:
+                log.error("以太网启动前后状态不一致的次数为： %d次" % eth_boot_not_existent)
+                log.error("以太网启动前后状态不一致的概率： %f" % (eth_boot_not_existent / flag))
+
+            if eth_disable_fail_flag > 0:
+                log.error("以太网下电失败次数为： %d次" % eth_disable_fail_flag)
+                log.error("以太网下电失败的概率： %f" % (eth_disable_fail_flag / flag))
+
+            if eth_enable_fail_flag > 0:
+                log.error("以太网上电失败次数为： %d次" % eth_enable_fail_flag)
+                log.error("以太网上电失败的概率： %f" % (eth_enable_fail_flag / flag))
+
+            if eth_enable_no_network_fail > 0:
+                log.error("以太网上电后上网失败次数为： %d次" % eth_enable_no_network_fail)
+                log.error("以太网上电后上网失败的概率： %f" % (eth_enable_no_network_fail / flag))
 
         log.info("****************立项测试-开关机检查基本功能用例结束******************")
 
@@ -800,15 +1375,6 @@ class TestLXStability:
     @allure.title("前后摄像头拍照问题对比")
     def test_lx_front_rear_camera_test(self):
         log.info("************前后摄像头拍照问题对比用例开始*******")
-
-        def clear_directory(dir_path):
-            file_names = os.listdir(dir_path)
-            if len(file_names) != 0:
-                # 遍历文件名列表并删除文件
-                for file_name in file_names:
-                    file_path = os.path.join(dir_path, file_name)  # 文件路径
-                    os.remove(file_path)
-
         # 删除异常照片
         # 获取文件夹中的所有文件名
         default_photograph_file_names = conf.camera_sta_err_default_photograph_path
