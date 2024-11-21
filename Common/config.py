@@ -218,4 +218,6 @@ class Config:
 
     # 休眠唤醒
     section_sleep_wake = "Sleep-Awake"
+    option_sleep_duration = "sleep_duration"
+    option_sleep_config = "usb_config"
 

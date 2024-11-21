@@ -248,6 +248,17 @@ class SleepAwakeDisplay(QtWidgets.QMainWindow, Sleep_Awake_MainWindow):
         # else:
         #     config.add_config_option(section, config.option_usb_test, "0")
 
+        if self.usb_config.currentText() == "1路":
+            config.add_config_option(section, config.option_sleep_config, "relay_1")
+        elif self.usb_config.currentText() == "2路":
+            config.add_config_option(section, config.option_sleep_config, "relay_2")
+        elif self.usb_config.currentText() == "3路":
+            config.add_config_option(section, config.option_sleep_config, "relay_3")
+        else:
+            config.add_config_option(section, config.option_sleep_config, "relay_4")
+
+        config.add_config_option(section, config.option_sleep_duration, self.sleep_duration.currentText())
+
 
 class ScrollablePlainTextEdit(QTextEdit):
     def __init__(self, parent=None):
