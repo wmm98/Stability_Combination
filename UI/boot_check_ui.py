@@ -165,7 +165,7 @@ class Boot_Check_MainWindow(config_path.UIConfigPath):
 
         # 点击获取预期照片
         layout_get_image_info = QHBoxLayout()
-        self.get_logo_image_button = QPushButton("点击获取预期照片")
+        self.get_logo_image_button = QPushButton("点击获取卡logo预期参照照片")
         self.logo_image_tips = QLabel("未保存预期照片，请点击获取！")
         self.logo_image_tips.setStyleSheet("color: blue;")
         layout_get_image_info.addWidget(self.get_logo_image_button)
@@ -284,8 +284,6 @@ class Boot_Check_MainWindow(config_path.UIConfigPath):
         layout_test_times_info.addWidget(self.is_probability_test)
         layout_test_times_info.addStretch(1)
         self.verticalLayout_left.addLayout(layout_test_times_info)
-
-
 
         # 间隔
         self.verticalLayout_left.addWidget(QLabel())

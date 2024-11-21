@@ -12,7 +12,7 @@ from PyQt5.QtCore import QUrl, QFileInfo
 conf_path = config_path.UIConfigPath()
 
 
-class PreviewPhotoGraph_MainWindow(config_path.UIConfigPath):
+class BootCheckCameraSub_MainWindow(config_path.UIConfigPath):
     options = QtWidgets.QFileDialog.Options()
     options |= QtWidgets.QFileDialog.ReadOnly
 
@@ -85,22 +85,6 @@ class PreviewPhotoGraph_MainWindow(config_path.UIConfigPath):
 
         self.verticalLayout_left.addWidget(QLabel())
 
-        layout_test_times_info = QHBoxLayout()
-        self.test_times_label = QLabel("用例压测次数设置")
-        self.test_times = QComboBox()
-        self.test_times.setEditable(True)
-        layout_test_times_info.addWidget(self.test_times_label)
-        layout_test_times_info.addWidget(self.test_times)
-
-        # 是否测概率测试
-        probability_test_label = QLabel("是否进行失败概率性统计")
-        self.is_probability_test = QCheckBox()
-        layout_test_times_info.addWidget(probability_test_label)
-        layout_test_times_info.addWidget(self.is_probability_test)
-
-        layout_test_times_info.addStretch(1)
-        self.verticalLayout_left.addLayout(layout_test_times_info)
-
         self.submit_button = QtWidgets.QPushButton("保存配置")
         self.verticalLayout_left.addWidget(self.submit_button)
 
@@ -132,10 +116,10 @@ class PreviewPhotoGraph_MainWindow(config_path.UIConfigPath):
         MainWindow.setWindowTitle(_translate("MainWindow", "摄像头前/后镜头预览拍照压测配置"))
 
 
-class CameraStabilityDisplay(QtWidgets.QMainWindow, PreviewPhotoGraph_MainWindow):
+class BootCameraStabilityDisplay(QtWidgets.QMainWindow, BootCheckCameraSub_MainWindow):
 
     def __init__(self):
-        super(CameraStabilityDisplay, self).__init__()
+        super(BootCameraStabilityDisplay, self).__init__()
         self.last_position = 0
         self.exp_front_preview_last_modify_time = 0
         self.exp_front_photograph_last_modify_time = 0
@@ -161,9 +145,8 @@ class CameraStabilityDisplay(QtWidgets.QMainWindow, PreviewPhotoGraph_MainWindow
 
     def intiui(self):
         # 初始化进程
-        self.get_exp_imag_process = QProcess()
         self.list_devices_name()
-        self.list_test_times_settings()
+        self.get_exp_imag_process = QProcess()
         self.submit_button.clicked.connect(self.handle_submit)
         self.is_front_and_rear_camera.clicked.connect(self.click_camera_change)
         self.is_front_or_rear_camera.clicked.connect(self.click_camera_change)
@@ -174,9 +157,6 @@ class CameraStabilityDisplay(QtWidgets.QMainWindow, PreviewPhotoGraph_MainWindow
         self.cursor = QTextCursor(self.document)
 
     def handle_submit(self):
-        if len(self.device_name.currentText()) == 0:
-            self.get_message_box("没检测到可用的设备，请重启界面！！！")
-            return
 
         if not self.is_front_and_rear_camera.isChecked() and not self.is_front_or_rear_camera.isChecked():
             self.get_message_box("请勾选摄像头信息！！！")
@@ -190,30 +170,17 @@ class CameraStabilityDisplay(QtWidgets.QMainWindow, PreviewPhotoGraph_MainWindow
                 print(e)
                 self.get_message_box("坐标请填入数字！！！")
                 return
-        try:
-            case_test_times = int(self.test_times.currentText().strip())
-        except:
-            self.get_message_box("测试次数请填入整数！！！")
-            return
         # if self.is_front_and_rear_camera.isChecked():
-        #     self.ui_config.add_config_option(self.ui_config.section_ui_camera_check,
+        #     self.ui_config.add_config_option(self.ui_config.section_ui_boot_check,
         #                                      self.ui_config.option_front_and_rear, "1")
         # else:
-        #     self.ui_config.add_config_option(self.ui_config.section_ui_camera_check,
+        #     self.ui_config.add_config_option(self.ui_config.section_ui_boot_check,
         #                                      self.ui_config.option_front_and_rear, "0")
         # if self.is_front_and_rear_camera.isChecked():
-        #     self.ui_config.add_config_option(self.ui_config.section_ui_camera_check, self.ui_config.option_switch_x_value, self.X_info.text())
-        #     self.ui_config.add_config_option(self.ui_config.section_ui_camera_check, self.ui_config.option_switch_y_value, self.Y_info.text())
-        self.ui_config.add_config_option(self.ui_config.section_ui_camera_check,
-                                         self.ui_config.option_camera_test_times, str(case_test_times))
+        #     self.ui_config.add_config_option(self.ui_config.section_ui_boot_check, self.ui_config.option_switch_x_value, self.X_info.text())
+        #     self.ui_config.add_config_option(self.ui_config.section_ui_boot_check, self.ui_config.option_switch_y_value, self.Y_info.text())
 
-        if self.is_probability_test.isChecked():
-            self.ui_config.add_config_option(self.ui_config.section_ui_camera_check, self.ui_config.is_probability_test, "1")
-        else:
-            self.ui_config.add_config_option(self.ui_config.section_ui_camera_check, self.ui_config.is_probability_test, "0")
-
-        self.submit_flag = True
-        self.get_message_box("相机压测用例保存成功")
+        self.get_message_box("相机压测配置保存成功")
 
     def camera_finished_handle(self):
         self.file_timer.stop()
@@ -256,20 +223,20 @@ class CameraStabilityDisplay(QtWidgets.QMainWindow, PreviewPhotoGraph_MainWindow
                 self.get_message_box("坐标请填入数字！！！")
                 return
 
-        self.ui_config.add_config_option(self.ui_config.section_ui_camera_check, self.ui_config.ui_option_device_name,
+        self.ui_config.add_config_option(self.ui_config.section_ui_boot_check, self.ui_config.ui_option_device_name,
                                          self.device_name.currentText())
 
         if self.is_front_and_rear_camera.isChecked():
-            self.ui_config.add_config_option(self.ui_config.section_ui_camera_check,
+            self.ui_config.add_config_option(self.ui_config.section_ui_boot_check,
                                              self.ui_config.option_front_and_rear, "1")
 
-            self.ui_config.add_config_option(self.ui_config.section_ui_camera_check,
+            self.ui_config.add_config_option(self.ui_config.section_ui_boot_check,
                                              self.ui_config.option_switch_x_value, self.X_info.text())
-            self.ui_config.add_config_option(self.ui_config.section_ui_camera_check,
+            self.ui_config.add_config_option(self.ui_config.section_ui_boot_check,
                                              self.ui_config.option_switch_y_value, self.Y_info.text())
 
         else:
-            self.ui_config.add_config_option(self.ui_config.section_ui_camera_check,
+            self.ui_config.add_config_option(self.ui_config.section_ui_boot_check,
                                              self.ui_config.option_front_and_rear, "0")
 
         # 删除预期之前的照片
@@ -289,7 +256,7 @@ class CameraStabilityDisplay(QtWidgets.QMainWindow, PreviewPhotoGraph_MainWindow
                 os.remove(self.camera_sta_exp_default_photograph_path)
 
         # 调起来进程， 获取预期照片
-        self.get_exp_imag_process.start(self.bat_camera_stability_path)
+        self.get_exp_imag_process.start(self.bat_camera_sub_stability_path)
         self.photograph_tips.setText("正在拍照保存，请等待...")
         self.photograph_tips.setStyleSheet("color: green;")
         self.document.clear()
@@ -302,7 +269,6 @@ class CameraStabilityDisplay(QtWidgets.QMainWindow, PreviewPhotoGraph_MainWindow
     def check_image_modification(self):
         """检查图片文件是否有修改"""
         # 检查双镜头
-
         if self.is_front_and_rear_camera.isChecked():
             exp_front_preview = os.path.exists(self.camera_sta_exp_front_preview_path)
             exp_front_photograph = os.path.exists(self.camera_sta_exp_front_photograph_path)
@@ -402,10 +368,6 @@ class CameraStabilityDisplay(QtWidgets.QMainWindow, PreviewPhotoGraph_MainWindow
     def get_message_box(self, text):
         QMessageBox.warning(self, "错误提示", text)
 
-    def list_test_times_settings(self):
-        times = [str(j * 50) for j in range(1, 500)]
-        self.test_times.addItems(times)
-
 
 class ScrollablePlainTextEdit(QTextEdit):
     def __init__(self, parent=None):
@@ -421,8 +383,7 @@ class ScrollablePlainTextEdit(QTextEdit):
 
 if __name__ == '__main__':
     import sys
-
     app = QtWidgets.QApplication(sys.argv)
-    myshow = CameraStabilityDisplay()
+    myshow = BootCameraStabilityDisplay()
     myshow.show()
     app.exec_()

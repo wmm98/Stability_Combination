@@ -16,6 +16,7 @@ from usb_recognition_ui import USBFlashTestDisplay
 from storage_read_write_speeds_ui import StorageTestDisplay
 from factory_reset_ui import FactoryResetDisplay
 from bt_connect_stability_ui import BtConnectDisplay
+from boot_check_camera_sub_ui import BootCameraStabilityDisplay
 import os
 import shutil
 from PyQt5.QtGui import QPixmap
@@ -131,6 +132,7 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
         self.storage_read_write_speed_window = StorageTestDisplay()
         self.factory_reset_window = FactoryResetDisplay()
         self.bt_connect_test_window = BtConnectDisplay()
+        self.boot_camera_sub_window = BootCameraStabilityDisplay()
         self.setupUi(self)
         self.AllTestCase = None
         self.intiui()
@@ -508,6 +510,9 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
             if item.checkState(0) == 2:
                 if not self.lx_boot_check_window.isVisible():
                     self.lx_boot_check_window.show()
+                # 相机窗口
+                if not self.boot_camera_sub_window.isVisible():
+                    self.boot_camera_sub_window.show()
 
         if item == self.item_L_X_STA_child_camera_compare:
             if item.checkState(0) == 2:

@@ -39,6 +39,8 @@ class UIConfigPath:
 
     # 摄像头压测
     bat_camera_stability_path = os.path.join(project_path, "UI", "bat_pre_camera.bat")
+    # 开关机摄像头压测
+    bat_camera_sub_stability_path = os.path.join(project_path, "UI", "bat_pre_sub_camera.bat")
 
     camera_stability_path = os.path.join(project_path, "Photo", "CameraStability")
     camera_sta_exp_path = os.path.join(camera_stability_path, "Expect")
