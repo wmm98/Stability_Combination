@@ -17,6 +17,7 @@ from storage_read_write_speeds_ui import StorageTestDisplay
 from factory_reset_ui import FactoryResetDisplay
 from bt_connect_stability_ui import BtConnectDisplay
 from boot_check_camera_sub_ui import BootCameraStabilityDisplay
+from device_sleep_awake_ui import SleepAwakeDisplay
 import os
 import shutil
 from PyQt5.QtGui import QPixmap
@@ -133,6 +134,7 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
         self.factory_reset_window = FactoryResetDisplay()
         self.bt_connect_test_window = BtConnectDisplay()
         self.boot_camera_sub_window = BootCameraStabilityDisplay()
+        self.sleep_awake_window = SleepAwakeDisplay()
         self.setupUi(self)
         self.AllTestCase = None
         self.intiui()
@@ -175,11 +177,12 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
         self.lx_preview_photograph_window.submit_button.clicked.connect(self.display_lx_camera_compare_test_times)
         self.mt_wifi_btn_check_window.submit_button.clicked.connect(self.display_wifi_btn_check_test_times)
         self.mt_mobile_btn_check_window.submit_button.clicked.connect(self.display_mobile_btn_check_test_times)
-        self.mt_eth_btn_check_window.submit_button.clicked.connect(self.display_eth_btn_check_test_times)
+        # self.mt_eth_btn_check_window.submit_button.clicked.connect(self.display_eth_btn_check_test_times)
         self.usb_recognition_window.submit_button.clicked.connect(self.display_usb_recognize_test_times)
         self.storage_read_write_speed_window.submit_button.clicked.connect(self.display_storage_write_read_speed_test_times)
         self.factory_reset_window.submit_button.clicked.connect(self.display_factory_reset_test_times)
         self.bt_connect_test_window.submit_button.clicked.connect(self.display_bt_connect_test_times)
+        self.sleep_awake_window.submit_button.clicked.connect(self.display_sleep_wake_test_times)
         # 初始化图片cursor
         # self.cursor = QTextCursor(self.document)
 
@@ -321,13 +324,13 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
         self.item_M_T_STA_mobile_btn.setFlags(
             self.item_M_T_STA_mobile_btn.flags() | Qt.ItemIsSelectable | Qt.ItemIsUserCheckable | Qt.ItemIsEditable)
 
-        self.item_M_T_STA_eth_btn = QTreeWidgetItem(self.item_M_T_STA)
-        self.item_M_T_STA_eth_btn.setText(0, "开关以太网ping包压测")
-        self.item_M_T_STA_eth_btn.setCheckState(0, Qt.Unchecked)
-        self.item_M_T_STA_eth_btn.setText(1, "")
-        self.item_M_T_STA_eth_btn.setText(2, "次")
-        self.item_M_T_STA_eth_btn.setFlags(
-            self.item_M_T_STA_eth_btn.flags() | Qt.ItemIsSelectable | Qt.ItemIsUserCheckable | Qt.ItemIsEditable)
+        self.item_M_T_STA_sleep_wake = QTreeWidgetItem(self.item_M_T_STA)
+        self.item_M_T_STA_sleep_wake.setText(0, "休眠唤醒检查基本功能")
+        self.item_M_T_STA_sleep_wake.setCheckState(0, Qt.Unchecked)
+        self.item_M_T_STA_sleep_wake.setText(1, "")
+        self.item_M_T_STA_sleep_wake.setText(2, "次")
+        self.item_M_T_STA_sleep_wake.setFlags(
+            self.item_M_T_STA_sleep_wake.flags() | Qt.ItemIsSelectable | Qt.ItemIsUserCheckable | Qt.ItemIsEditable)
 
         self.item_M_T_STA_usb_recognize = QTreeWidgetItem(self.item_M_T_STA)
         self.item_M_T_STA_usb_recognize.setText(0, "U盘拔插识别压测")
@@ -352,6 +355,18 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
         self.item_M_T_STA_factory_reset.setText(2, "次")
         self.item_M_T_STA_factory_reset.setFlags(
             self.item_M_T_STA_factory_reset.flags() | Qt.ItemIsSelectable | Qt.ItemIsUserCheckable | Qt.ItemIsEditable)
+
+    def display_sleep_wake_test_times(self):
+        time.sleep(1)
+        if self.sleep_awake_window.submit_flag:
+            print("1111111111111111111111111111111111111111")
+            if self.item_M_T_STA_sleep_wake.checkState(0) == 2:
+                print("222222222222222222222222222222")
+                times = self.ui_config.get_option_value(self.ui_config.section_sleep_wake,
+                                                        self.ui_config.option_sleep_test_times)
+                print("3333333333333333333333333333")
+                self.item_M_T_STA_sleep_wake.setText(1, times)
+                self.item_M_T_STA_sleep_wake.setTextAlignment(1, Qt.AlignRight)  # 设置第二列文本右对齐
 
     def display_bt_connect_test_times(self):
         time.sleep(1)
@@ -386,13 +401,13 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
                 self.item_M_T_STA_usb_recognize.setText(1, times)
                 self.item_M_T_STA_usb_recognize.setTextAlignment(1, Qt.AlignRight)  # 设置第二列文本右对齐
 
-    def display_eth_btn_check_test_times(self):
-        time.sleep(1)
-        if self.mt_eth_btn_check_window.submit_flag:
-            if self.item_M_T_STA_eth_btn.checkState(0) == 2:
-                times = self.ui_config.get_option_value(self.ui_config.section_eth_check, self.ui_config.option_eth_btn_test_times)
-                self.item_M_T_STA_eth_btn.setText(1, times)
-                self.item_M_T_STA_eth_btn.setTextAlignment(1, Qt.AlignRight)  # 设置第二列文本右对齐
+    # def display_eth_btn_check_test_times(self):
+    #     time.sleep(1)
+    #     if self.mt_eth_btn_check_window.submit_flag:
+    #         if self.item_M_T_STA_eth_btn.checkState(0) == 2:
+    #             times = self.ui_config.get_option_value(self.ui_config.section_eth_check, self.ui_config.option_eth_btn_test_times)
+    #             self.item_M_T_STA_eth_btn.setText(1, times)
+    #             self.item_M_T_STA_eth_btn.setTextAlignment(1, Qt.AlignRight)  # 设置第二列文本右对齐
 
     def display_mobile_btn_check_test_times(self):
         time.sleep(1)
@@ -529,10 +544,10 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
                 if not self.mt_mobile_btn_check_window.isVisible():
                     self.mt_mobile_btn_check_window.show()
 
-        if item == self.item_M_T_STA_eth_btn:
+        if item == self.item_M_T_STA_sleep_wake:
             if item.checkState(0) == 2:
-                if not self.mt_eth_btn_check_window.isVisible():
-                    self.mt_eth_btn_check_window.show()
+                if not self.sleep_awake_window.isVisible():
+                    self.sleep_awake_window.show()
 
         if item == self.item_M_T_STA_usb_recognize:
             if item.checkState(0) == 2:

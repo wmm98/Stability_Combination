@@ -216,7 +216,7 @@ class SleepAwakeDisplay(QtWidgets.QMainWindow, Sleep_Awake_MainWindow):
         config.add_config_section(section)
 
         # 保存用例压测次数设置
-        config.add_config_option(section, config.section_sleep_wake, self.test_times.currentText())
+        config.add_config_option(section, config.option_sleep_test_times, self.test_times.currentText())
         # 保存测试点配置信息
         if self.is_wifi_test.isChecked():
             config.add_config_option(section, config.option_wifi_test, "1")

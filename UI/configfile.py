@@ -108,6 +108,7 @@ class ConfigP(UIConfigPath):
     section_sleep_wake = "Sleep-Awake"
     option_sleep_duration = "sleep_duration"
     option_sleep_config = "usb_config"
+    option_sleep_test_times = "sleep_test_times"
 
     def __init__(self, ini_path):
         self.ini_path = ini_path
