@@ -104,6 +104,9 @@ class ConfigP(UIConfigPath):
     option_bt_connect_test_com = "bt_connect_com"
     option_bt_com_config = "com_config"
 
+    # 休眠唤醒
+    section_sleep_wake = "Sleep-Awake"
+
     def __init__(self, ini_path):
         self.ini_path = ini_path
         self.config = configparser.ConfigParser()

@@ -216,3 +216,6 @@ class Config:
     option_bt_connect_test_com = "bt_connect_com"
     option_bt_com_config = "com_config"
 
+    # 休眠唤醒
+    section_sleep_wake = "Sleep-Awake"
+

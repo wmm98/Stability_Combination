@@ -293,10 +293,10 @@ class TestLXStability:
         """
 
         flag = 0
+        t_ser.loginSer(self.ui_conf_file.get(Config.section_ui_boot_check, Config.option_logo_COM))
         while flag < test_times:
             flag += 1
             # 上下电启动
-            t_ser.loginSer(self.ui_conf_file.get(Config.section_ui_boot_check, Config.option_logo_COM))
             log.info("关机")
 
             if self.ui_conf_file.get(Config.section_ui_boot_check, Config.ui_option_logo_cases) == "1":
