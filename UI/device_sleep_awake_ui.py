@@ -95,6 +95,18 @@ class Sleep_Awake_MainWindow(config_path.UIConfigPath):
         #
         # self.verticalLayout_left.addWidget(QLabel())
 
+        layout_sleep = QHBoxLayout()
+        self.sleep_lable = QLabel("休眠时长(分钟)：")
+        self.sleep_duration = QComboBox()
+        self.sleep_duration.setEditable(True)
+        layout_sleep.addWidget(self.sleep_lable)
+        layout_sleep.addWidget(self.sleep_duration)
+        layout_sleep.addStretch(1)
+        self.verticalLayout_left.addLayout(layout_sleep)
+
+        # 间隔
+        self.verticalLayout_left.addWidget(QLabel())
+
         # 压测次数
         layout_test_times_info = QHBoxLayout()
         self.test_times_label = QLabel("用例压测次数设置")
@@ -150,6 +162,7 @@ class SleepAwakeDisplay(QtWidgets.QMainWindow, Sleep_Awake_MainWindow):
         self.submit_button.clicked.connect(self.handle_submit)
         self.list_COM()
         self.get_COM_config()
+        self.list_sleep_duration()
 
     def get_message_box(self, text):
         QMessageBox.warning(self, "错误提示", text)
@@ -165,8 +178,16 @@ class SleepAwakeDisplay(QtWidgets.QMainWindow, Sleep_Awake_MainWindow):
         return COM_list.split(",")
 
     def handle_submit(self):
+        if len(self.test_COM.currentText()) == 0:
+            self.get_message_box("没有可用的COM口，请检查并重启界面！！！")
+            return
+
         if not self.is_wifi_test.isChecked() and not self.is_bt_test.isChecked() and not self.is_eth_test.isChecked() and not self.is_mobile_test.isChecked() and not self.is_nfc_test.isChecked():
             self.get_message_box("请勾选配置！！！")
+            return
+
+        if len(self.sleep_duration.currentText()) == 0:
+            self.get_message_box("休眠时长为空，请写入！！")
             return
 
         if len(self.test_times.currentText()) == 0:
@@ -176,10 +197,14 @@ class SleepAwakeDisplay(QtWidgets.QMainWindow, Sleep_Awake_MainWindow):
         # 检查完保存配置
         self.save_config()
         self.submit_flag = True
-        self.get_message_box("恢复出厂设置压测检测用例配置保存成功")
+        self.get_message_box("休眠唤醒压测例配置保存成功")
 
     def get_COM_config(self):
         self.usb_config.addItems(["1路", "2路", "3路", "4路"])
+
+    def list_sleep_duration(self):
+        times = [str(j * 5) for j in range(1, 200)]
+        self.sleep_duration.addItems(times)
 
     def list_test_times_settings(self):
         times = [str(j * 50) for j in range(1, 500)]
@@ -187,11 +212,11 @@ class SleepAwakeDisplay(QtWidgets.QMainWindow, Sleep_Awake_MainWindow):
 
     def save_config(self):
         config = ConfigP(self.ui_config_file_path)
-        section = config.section_factory_reset_stability
+        section = config.section_sleep_wake
         config.add_config_section(section)
 
         # 保存用例压测次数设置
-        config.add_config_option(section, config.option_factory_reset_test_times, self.test_times.currentText())
+        config.add_config_option(section, config.section_sleep_wake, self.test_times.currentText())
         # 保存测试点配置信息
         if self.is_wifi_test.isChecked():
             config.add_config_option(section, config.option_wifi_test, "1")
