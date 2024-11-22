@@ -35,6 +35,8 @@ class WhBootLogo:
             self.press_power_button()
         time.sleep(1)
         self.unlock()
+        time.sleep(1)
+        self.back_home()
         self.back_home()
         time.sleep(1)
         self.screen_shot(logo_expect_screen0_path)

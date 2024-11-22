@@ -35,8 +35,10 @@ class BootLogo:
             self.press_power_button()
         time.sleep(1)
         self.unlock()
-        self.back_home()
         time.sleep(1)
+        self.back_home()
+        self.back_home()
+        time.sleep(2)
         self.screen_shot(logo_expect_screen0_path)
         if int(is_double):
             self.screen_shot(logo_expect_screen1_path, display_id=1)
@@ -49,7 +51,8 @@ class BootLogo:
             return False
 
     def back_home(self):
-        shell.invoke("adb -s %s shell input keyevent KEYCODE_BACK" % self.device_name)
+        # adb shell input keyevent KEYCODE_HOME
+        shell.invoke("adb -s %s shell \"input keyevent KEYCODE_HOME\"" % self.device_name)
 
     def unlock(self):
         shell.invoke("adb -s %s shell input swipe 300 500 300 0" % self.device_name)

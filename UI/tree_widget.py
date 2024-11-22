@@ -82,7 +82,8 @@ class Ui_MainWindow(config_path.UIConfigPath):
         self.verticalLayout_left.addWidget(self.tips_label2)
 
         # 添加左边部分
-        # 右侧部件
+        # 右侧部
+
         right_widget = QWidget()
         self.verticalLayout_right = QtWidgets.QVBoxLayout(right_widget)
         self.verticalLayout_right.addWidget(QtWidgets.QLabel("实时log打印:"))
@@ -91,10 +92,22 @@ class Ui_MainWindow(config_path.UIConfigPath):
         self.text_edit.setReadOnly(True)
         self.verticalLayout_right.addWidget(self.text_edit)
 
+
+        # 最右边的
+        final_widget = QWidget()
+        self.verticalLayout_final = QtWidgets.QVBoxLayout(final_widget)
+        self.verticalLayout_final.addWidget(QtWidgets.QLabel("照片显示:"))
+        # 展示log
+        self.text_edit_final = ScrollablePlainTextEdit()
+        self.text_edit_final.setReadOnly(True)
+        self.verticalLayout_final.addWidget(self.text_edit_final)
+
+
         self.verticalLayout_left.addStretch(1)
 
         splitter.addWidget(left_widget)
         splitter.addWidget(right_widget)
+        splitter.addWidget(final_widget)
         splitter.setStyleSheet("""
                                     QSplitter::handle {
                                         background: #f0f0f0;  /* 分割条的颜色为最浅的灰色 */
