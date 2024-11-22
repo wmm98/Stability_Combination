@@ -96,7 +96,7 @@ class Ui_MainWindow(config_path.UIConfigPath):
         # 最右边的
         final_widget = QWidget()
         self.verticalLayout_final = QtWidgets.QVBoxLayout(final_widget)
-        self.verticalLayout_final.addWidget(QtWidgets.QLabel("照片显示:"))
+        self.verticalLayout_final.addWidget(QtWidgets.QLabel("logo照片显示:"))
         # 展示log
         self.text_edit_final = ScrollablePlainTextEdit()
         self.text_edit_final.setReadOnly(True)
@@ -106,6 +106,16 @@ class Ui_MainWindow(config_path.UIConfigPath):
         self.image_height = height / 2
         self.document = self.text_edit_final.document()
         self.verticalLayout_final.addWidget(self.text_edit_final)
+
+        self.verticalLayout_final.addWidget(QtWidgets.QLabel("相机照片显示:"))
+        self.text_edit_final_camera = ScrollablePlainTextEdit()
+        self.text_edit_final_camera.setReadOnly(True)
+        width_camera = self.text_edit_final_camera.viewport().width()
+        height_camera = self.text_edit_final_camera.viewport().height()
+        self.image_width_camera = width / 2
+        self.image_height_camera = height / 2
+        self.document_camera = self.text_edit_final_camera.document()
+        self.verticalLayout_final.addWidget(self.text_edit_final_camera)
 
 
         self.verticalLayout_left.addStretch(1)

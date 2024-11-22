@@ -119,6 +119,9 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
         super(UIDisplay, self).__init__()
         self.last_position = 0
         self.last_modify_time = 0
+        self.last_modify_time_preview = 0
+        self.last_modify_time_photo = 0
+
         self.bg_config = configfile.ConfigP(self.background_config_file_path)
         self.ui_config = configfile.ConfigP(self.ui_config_file_path)
         # 初始化子界面
@@ -144,6 +147,7 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
         # 初始化
         # 初始化图片cursor
         self.cursor = QTextCursor(self.document)
+        self.cursor_camera = QTextCursor(self.document_camera)
 
         self.ui_config.init_config_file()
         self.ui_config.add_config_section(self.ui_config.section_ui_to_background)
@@ -740,15 +744,21 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
             self.timer = QTimer(self)
             self.timer.timeout.connect(self.update_debug_log)
             self.file_timer = QTimer(self)
+            self.file_camera_timer = QTimer(self)
             # 先删除之前测试的照片
             self.text_edit_final.clear()
             if os.path.exists(conf_path.logo_test_screen0_path):
                 os.remove(conf_path.logo_test_screen0_path)
             self.file_timer.timeout.connect(self.check_image_modification)
+            self.text_edit_final_camera.clear()
+            if os.path.exists(conf_path.camera_sta_test_default_photograph_path):
+                os.remove(conf_path.camera_sta_test_default_photograph_path)
+            self.file_camera_timer.timeout.connect(self.check_image_camera_modification)
 
             self.check_interval = 1000  # 定时器间隔，单位毫秒
             self.timer.start(self.check_interval)  # 启动定时器
             self.file_timer.start(self.check_interval)
+            self.file_camera_timer.start(self.check_interval)
             self.stop_process_button.setEnabled(True)
             self.submit_button.setDisabled(True)
             self.submit_button.setText("测试中...")
@@ -762,6 +772,15 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
             if current_mod_time != self.last_modify_time:
                 self.last_modify_time = current_mod_time  # 更新为新的修改时间
                 self.add_logo_image(conf_path.logo_test_screen0_path)
+
+    def check_image_camera_modification(self):
+        """检查图片文件是否有修改"""
+        if os.path.exists(conf_path.camera_sta_test_default_photograph_path):
+
+            current_mod_time_ph = self.get_file_modification_time(conf_path.camera_sta_test_default_photograph_path)
+            if current_mod_time_ph != self.last_modify_time_photo:
+                self.last_modify_time_photo = current_mod_time_ph  # 更新为新的修改时间
+                self.add_logo_image_camera(conf_path.camera_sta_test_default_photograph_path)
 
     def get_file_modification_time(self, file_path):
         """获取文件的最后修改时间"""
@@ -880,6 +899,21 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
         image_format.setWidth(self.image_width)
         image_format.setHeight(self.image_height)
         self.cursor.insertImage(image_format)
+
+    def add_logo_image_camera(self, file_path):
+        # self.cursor = QTextCursor(self.document)
+        # 将图片路径转为 QUrl
+        # 创建 QTextImageFormat 对象
+        self.text_edit_final_camera.clear()
+        image_format = QTextImageFormat()
+
+        # if self.double_screen.isChecked():
+        image2_url = QUrl.fromLocalFile(file_path)
+        self.document_camera.addResource(QTextDocument.ImageResource, image2_url, image2_url)
+        image_format.setName(image2_url.toString())
+        image_format.setWidth(self.image_width_camera)
+        image_format.setHeight(self.image_height_camera)
+        self.cursor_camera.insertImage(image_format)
 
     def download_adb_file(self):
         if not self.stop_process_button.isEnabled():

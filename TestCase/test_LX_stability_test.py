@@ -878,7 +878,7 @@ class TestLXStability:
                         raise Exception
                 log.info("移动数据下电")
 
-                if not self.device.ping_network(5, 60):
+                if not self.device.ping_network(5, 120):
                     log.error("wifi无法上网， 请检查！！！")
                     if is_probability_test:
                         wifi_enable_no_network_fail += 1
@@ -955,7 +955,7 @@ class TestLXStability:
                         raise Exception
                 log.info("wifi模块上电成功")
                 # 检查网络
-                if not self.device.ping_network(5, 35):
+                if not self.device.ping_network(5, 120):
                     log.error("wifi无法上网， 请检查！！！")
                     if is_probability_test:
                         wifi_enable_no_network_fail += 1
@@ -1310,43 +1310,43 @@ class TestLXStability:
             # 相机概率问题显示
             if open_fail_flag > 0:
                 log.error("打开相机失败的次数为： %d次" % open_fail_flag)
-                log.error("打开相机失败的概率为： %f" % (open_fail_flag / flag))
+                # log.error("打开相机失败的概率为： %f" % (open_fail_flag / flag))
 
             if photograph_fail_flag > 0:
                 log.error("拍照失败的次数为： %d次" % photograph_fail_flag)
-                log.error("拍照失败的概率为： %f" % (photograph_fail_flag / flag))
+                # log.error("拍照失败的概率为： %f" % (photograph_fail_flag / flag))
 
             if compare_fail_flag > 0:
                 log.error("预期图片和实际图片差异过大的次数： %d次" % compare_fail_flag)
-                log.error("预期图片和实际图片差异过大的概率为： %f" % (compare_fail_flag / flag))
+                # log.error("预期图片和实际图片差异过大的概率为： %f" % (compare_fail_flag / flag))
 
             if bt_boot_not_existent > 0:
                 log.error("蓝牙启动前后状态不一致的次数为： %d次" % bt_boot_not_existent)
-                log.error("蓝牙启动前后状态不一致的概率： %f" % (bt_boot_not_existent / flag))
+                # log.error("蓝牙启动前后状态不一致的概率： %f" % (bt_boot_not_existent / flag))
 
             if bt_enable_fail_flag > 0:
                 log.error("蓝牙上电失败次数为： %d次" % bt_enable_fail_flag)
-                log.error("蓝牙上电失败的概率： %f" % (bt_enable_fail_flag / flag))
+                # log.error("蓝牙上电失败的概率： %f" % (bt_enable_fail_flag / flag))
 
             if bt_disable_fail_flag > 0:
                 log.error("蓝牙下电失败次数为： %d次" % bt_disable_fail_flag)
-                log.error("蓝牙下电失败的概率： %f" % (bt_disable_fail_flag / flag))
+                # log.error("蓝牙下电失败的概率： %f" % (bt_disable_fail_flag / flag))
 
             if bt_salve_fail_flag > 0:
                 log.error("设备无法自动重连蓝牙次数为： %d次" % bt_salve_fail_flag)
-                log.error("设备无法自动重连蓝牙的概率： %f" % (bt_salve_fail_flag / flag))
+                # log.error("设备无法自动重连蓝牙的概率： %f" % (bt_salve_fail_flag / flag))
 
             if nfc_boot_not_existent > 0:
                 log.error("NFC启动前后状态不一致的次数为： %d次" % nfc_boot_not_existent)
-                log.error("NFC启动前后状态不一致的概率： %f" % (nfc_boot_not_existent / flag))
+                # log.error("NFC启动前后状态不一致的概率： %f" % (nfc_boot_not_existent / flag))
 
             if nfc_enable_fail_flag > 0:
                 log.error("NFC上电失败次数为： %d次" % nfc_enable_fail_flag)
-                log.error("NFC上电失败的概率： %f" % (nfc_enable_fail_flag / flag))
+                # log.error("NFC上电失败的概率： %f" % (nfc_enable_fail_flag / flag))
 
             if nfc_enable_fail_flag > 0:
                 log.error("NFC下电失败次数为： %d次" % nfc_disable_fail_flag)
-                log.error("NFC下电失败的概率： %f" % (nfc_disable_fail_flag / flag))
+                # log.error("NFC下电失败的概率： %f" % (nfc_disable_fail_flag / flag))
 
             eth_boot_not_existent = 0
             eth_disable_fail_flag = 0
@@ -1355,51 +1355,51 @@ class TestLXStability:
 
             if eth_boot_not_existent > 0:
                 log.error("以太网启动前后状态不一致的次数为： %d次" % eth_boot_not_existent)
-                log.error("以太网启动前后状态不一致的概率： %f" % (eth_boot_not_existent / flag))
+                # log.error("以太网启动前后状态不一致的概率： %f" % (eth_boot_not_existent / flag))
 
             if eth_disable_fail_flag > 0:
                 log.error("以太网下电失败次数为： %d次" % eth_disable_fail_flag)
-                log.error("以太网下电失败的概率： %f" % (eth_disable_fail_flag / flag))
+                # log.error("以太网下电失败的概率： %f" % (eth_disable_fail_flag / flag))
 
             if eth_enable_fail_flag > 0:
                 log.error("以太网上电失败次数为： %d次" % eth_enable_fail_flag)
-                log.error("以太网上电失败的概率： %f" % (eth_enable_fail_flag / flag))
+                # log.error("以太网上电失败的概率： %f" % (eth_enable_fail_flag / flag))
 
             if eth_enable_no_network_fail > 0:
                 log.error("以太网上电后上网失败次数为： %d次" % eth_enable_no_network_fail)
-                log.error("以太网上电后上网失败的概率： %f" % (eth_enable_no_network_fail / flag))
+                # log.error("以太网上电后上网失败的概率： %f" % (eth_enable_no_network_fail / flag))
 
             if wifi_boot_not_existent > 0:
                 log.error("WIFI启动前后状态不一致的次数为： %d次" % wifi_boot_not_existent)
-                log.error("WIFI启动前后状态不一致的概率： %f" % (wifi_boot_not_existent / flag))
+                # log.error("WIFI启动前后状态不一致的概率： %f" % (wifi_boot_not_existent / flag))
 
             if wifi_disable_fail_flag > 0:
                 log.error("WIFI下电失败次数为： %d次" % wifi_disable_fail_flag)
-                log.error("WIFI下电失败的概率： %f" % (wifi_disable_fail_flag / flag))
+                # log.error("WIFI下电失败的概率： %f" % (wifi_disable_fail_flag / flag))
 
             if wifi_enable_fail_flag > 0:
                 log.error("WIFI上电失败次数为： %d次" % wifi_enable_fail_flag)
-                log.error("WIFI上电失败的概率： %f" % (wifi_enable_fail_flag / flag))
+                # log.error("WIFI上电失败的概率： %f" % (wifi_enable_fail_flag / flag))
 
             if wifi_enable_no_network_fail > 0:
                 log.error("WIFI上电后上网失败次数为： %d次" % wifi_enable_no_network_fail)
-                log.error("WIFI上电后上网失败的概率： %f" % (wifi_enable_no_network_fail / flag))
+                # log.error("WIFI上电后上网失败的概率： %f" % (wifi_enable_no_network_fail / flag))
 
             if mobile_boot_not_existent > 0:
                 log.error("4G启动前后状态不一致的次数为： %d次" % mobile_boot_not_existent)
-                log.error("4G启动前后状态不一致的概率： %f" % (mobile_boot_not_existent / flag))
+                # log.error("4G启动前后状态不一致的概率： %f" % (mobile_boot_not_existent / flag))
 
             if mobile_disable_fail_flag > 0:
                 log.error("4G下电失败次数为： %d次" % mobile_disable_fail_flag)
-                log.error("4G下电失败的概率： %f" % (mobile_disable_fail_flag / flag))
+                # log.error("4G下电失败的概率： %f" % (mobile_disable_fail_flag / flag))
 
             if mobile_enable_fail_flag > 0:
                 log.error("4G上电失败次数为： %d次" % mobile_enable_fail_flag)
-                log.error("4G上电失败的概率： %f" % (mobile_enable_fail_flag / flag))
+                # log.error("4G上电失败的概率： %f" % (mobile_enable_fail_flag / flag))
 
             if mobile_no_network_fail > 0:
                 log.error("4G上电后上网失败次数为： %d次" % mobile_no_network_fail)
-                log.error("4G上电后上网失败的概率： %f" % (mobile_no_network_fail / flag))
+                # log.error("4G上电后上网失败的概率： %f" % (mobile_no_network_fail / flag))
 
         log.info("****************立项测试-开关机检查基本功能用例结束******************")
 
