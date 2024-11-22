@@ -740,8 +740,11 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
             self.timer = QTimer(self)
             self.timer.timeout.connect(self.update_debug_log)
             self.file_timer = QTimer(self)
+            # 先删除之前测试的照片
+            self.text_edit_final.clear()
+            if os.path.exists(conf_path.logo_test_screen0_path):
+                os.remove(conf_path.logo_test_screen0_path)
             self.file_timer.timeout.connect(self.check_image_modification)
-            print("0000000000000000000000000000")
 
             self.check_interval = 1000  # 定时器间隔，单位毫秒
             self.timer.start(self.check_interval)  # 启动定时器
