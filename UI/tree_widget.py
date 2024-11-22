@@ -100,6 +100,11 @@ class Ui_MainWindow(config_path.UIConfigPath):
         # 展示log
         self.text_edit_final = ScrollablePlainTextEdit()
         self.text_edit_final.setReadOnly(True)
+        width = self.text_edit_final.viewport().width()
+        height = self.text_edit_final.viewport().height()
+        self.image_width = width / 2
+        self.image_height = height / 2
+        self.document = self.text_edit_final.document()
         self.verticalLayout_final.addWidget(self.text_edit_final)
 
 

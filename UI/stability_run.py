@@ -142,6 +142,9 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
 
     def intiui(self):
         # 初始化
+        # 初始化图片cursor
+        self.cursor = QTextCursor(self.document)
+
         self.ui_config.init_config_file()
         self.ui_config.add_config_section(self.ui_config.section_ui_to_background)
         # 初始化进程
@@ -720,7 +723,7 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
                     self.transfer_cases.append("bt_connect_test")
                 if "boot_logo" in case:
                     self.transfer_cases.append("boot_logo")
-                if "休眠唤醒检查基本功能":
+                if "休眠唤醒检查基本功能" in case:
                     self.transfer_cases.append("Sleep-Awake-stability")
 
             self.ui_config.add_config_option(self.ui_config.section_ui_to_background,
@@ -736,20 +739,26 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
             self.start_qt_process(self.run_bat_path)
             self.timer = QTimer(self)
             self.timer.timeout.connect(self.update_debug_log)
-            # self.file_timer = QTimer(self)
-            # self.file_timer.timeout.connect(self.check_image_modification)
+            self.file_timer = QTimer(self)
+            self.file_timer.timeout.connect(self.check_image_modification)
+            print("0000000000000000000000000000")
 
             self.check_interval = 1000  # 定时器间隔，单位毫秒
             self.timer.start(self.check_interval)  # 启动定时器
-            # self.file_timer.start(self.check_interval)
+            self.file_timer.start(self.check_interval)
             self.stop_process_button.setEnabled(True)
             self.submit_button.setDisabled(True)
             self.submit_button.setText("测试中...")
         except Exception as e:
             print(e)
 
-    def get_COM_config(self):
-        return ["1路", "2路", "3路", "4路"]
+    def check_image_modification(self):
+        """检查图片文件是否有修改"""
+        if os.path.exists(conf_path.logo_test_screen0_path):
+            current_mod_time = self.get_file_modification_time(conf_path.logo_test_screen0_path)
+            if current_mod_time != self.last_modify_time:
+                self.last_modify_time = current_mod_time  # 更新为新的修改时间
+                self.add_logo_image(conf_path.logo_test_screen0_path)
 
     def get_file_modification_time(self, file_path):
         """获取文件的最后修改时间"""
@@ -757,13 +766,8 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
         last_modify = file_info.lastModified()
         return last_modify
 
-    def check_image_modification(self):
-        """检查图片文件是否有修改"""
-        if os.path.exists(self.camera_key_path):
-            current_mod_time = self.get_file_modification_time(self.camera_key_path)
-            if current_mod_time != self.last_modify_time:
-                self.last_modify_time = current_mod_time  # 更新为新的修改时间
-                self.add_logo_image()
+    def get_COM_config(self):
+        return ["1路", "2路", "3路", "4路"]
 
     def stop_process(self):
         # 文件位置初始化
@@ -773,7 +777,7 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
         self.submit_button.setEnabled(True)
         self.submit_button.setText("开始测试")
         self.timer.stop()
-        # self.file_timer.stop()
+        self.file_timer.stop()
 
     def start_qt_process(self, file):
         # 启动 外部 脚本
@@ -859,20 +863,20 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
         except Exception as e:
             self.log_edit.insertPlainText(str(e) + "\n")
 
-    def add_logo_image(self):
+    def add_logo_image(self, file_path):
         # self.cursor = QTextCursor(self.document)
         # 将图片路径转为 QUrl
         # 创建 QTextImageFormat 对象
-        self.image_edit.clear()
+        self.text_edit_final.clear()
         image_format = QTextImageFormat()
 
-        if self.double_screen.isChecked():
-            image2_url = QUrl.fromLocalFile(self.camera2_key_path)
-            self.document.addResource(QTextDocument.ImageResource, image2_url, image2_url)
-            image_format.setName(image2_url.toString())
-            image_format.setWidth(self.image_width)
-            image_format.setHeight(self.image_height)
-            self.cursor.insertImage(image_format)
+        # if self.double_screen.isChecked():
+        image2_url = QUrl.fromLocalFile(file_path)
+        self.document.addResource(QTextDocument.ImageResource, image2_url, image2_url)
+        image_format.setName(image2_url.toString())
+        image_format.setWidth(self.image_width)
+        image_format.setHeight(self.image_height)
+        self.cursor.insertImage(image_format)
 
     def download_adb_file(self):
         if not self.stop_process_button.isEnabled():
