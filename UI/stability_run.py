@@ -359,12 +359,9 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
     def display_sleep_wake_test_times(self):
         time.sleep(1)
         if self.sleep_awake_window.submit_flag:
-            print("1111111111111111111111111111111111111111")
             if self.item_M_T_STA_sleep_wake.checkState(0) == 2:
-                print("222222222222222222222222222222")
                 times = self.ui_config.get_option_value(self.ui_config.section_sleep_wake,
                                                         self.ui_config.option_sleep_test_times)
-                print("3333333333333333333333333333")
                 self.item_M_T_STA_sleep_wake.setText(1, times)
                 self.item_M_T_STA_sleep_wake.setTextAlignment(1, Qt.AlignRight)  # 设置第二列文本右对齐
 
@@ -723,6 +720,8 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
                     self.transfer_cases.append("bt_connect_test")
                 if "boot_logo" in case:
                     self.transfer_cases.append("boot_logo")
+                if "休眠唤醒检查基本功能":
+                    self.transfer_cases.append("Sleep-Awake-stability")
 
             self.ui_config.add_config_option(self.ui_config.section_ui_to_background,
                                              self.ui_config.ui_option_device_name,

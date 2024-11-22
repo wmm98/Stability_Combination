@@ -221,4 +221,5 @@ class Config:
     option_sleep_duration = "sleep_duration"
     option_sleep_config = "usb_config"
     option_sleep_test_times = "sleep_test_times"
+    option_sleep_com_port = "sleep_com_port"
 

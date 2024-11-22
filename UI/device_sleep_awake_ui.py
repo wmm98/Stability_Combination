@@ -257,6 +257,8 @@ class SleepAwakeDisplay(QtWidgets.QMainWindow, Sleep_Awake_MainWindow):
         else:
             config.add_config_option(section, config.option_sleep_config, "relay_4")
 
+        config.add_config_option(section, config.option_sleep_com_port, self.test_COM.currentText())
+
         config.add_config_option(section, config.option_sleep_duration, self.sleep_duration.currentText())
 
 
