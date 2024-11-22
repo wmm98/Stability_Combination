@@ -512,7 +512,7 @@ class TestStabilityCombination:
             if not self.device.device_is_online():
                 raise Exception("USB调试线下电失败，请检查！！！")
             log.info("15s后准备进入灭屏进入休眠")
-            time.sleep(20)
+            # time.sleep()
             time.sleep(sleep_duration * 60)
             t_ser.close_relay(com_line)
             log.info("USB调试线上电")
