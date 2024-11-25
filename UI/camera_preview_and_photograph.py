@@ -216,7 +216,6 @@ class CameraStabilityDisplay(QtWidgets.QMainWindow, PreviewPhotoGraph_MainWindow
         self.get_message_box("相机压测用例保存成功")
 
     def camera_finished_handle(self):
-        self.file_timer.stop()
         if self.is_front_and_rear_camera.isChecked():
             rear_pre_status = os.path.exists(self.camera_sta_exp_rear_preview_path)
             rear_photo_status = os.path.exists(self.camera_sta_exp_rear_photograph_path)
@@ -237,6 +236,7 @@ class CameraStabilityDisplay(QtWidgets.QMainWindow, PreviewPhotoGraph_MainWindow
             else:
                 self.photograph_tips.setText("未获取到预期参照照片！！！")
                 self.photograph_tips.setStyleSheet("color: gray;")
+        self.file_timer.stop()
 
     def preview_photograph_button_change(self):
         if len(self.device_name.currentText()) == 0:
@@ -290,19 +290,18 @@ class CameraStabilityDisplay(QtWidgets.QMainWindow, PreviewPhotoGraph_MainWindow
 
         # 调起来进程， 获取预期照片
         self.get_exp_imag_process.start(self.bat_camera_stability_path)
+        self.document.clear()
         self.photograph_tips.setText("正在拍照保存，请等待...")
         self.photograph_tips.setStyleSheet("color: green;")
-        self.document.clear()
         self.file_timer = QTimer(self)
         self.file_timer.timeout.connect(self.check_image_modification)
-        self.check_interval = 2000  # 定时器间隔，单位毫秒
+        self.check_interval = 1000  # 定时器间隔，单位毫秒
 
         self.file_timer.start(self.check_interval)
 
     def check_image_modification(self):
         """检查图片文件是否有修改"""
         # 检查双镜头
-
         if self.is_front_and_rear_camera.isChecked():
             exp_front_preview = os.path.exists(self.camera_sta_exp_front_preview_path)
             exp_front_photograph = os.path.exists(self.camera_sta_exp_front_photograph_path)

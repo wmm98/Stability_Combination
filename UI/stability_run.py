@@ -799,6 +799,9 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
                 self.file_camera_timer.timeout.connect(self.check_image_camera_modification)
                 self.file_camera_timer.start(self.check_interval)
 
+            self.camera_front_and_rear_flag = 0
+            self.camera_default_flag = 0
+
             self.stop_process_button.setEnabled(True)
             self.submit_button.setDisabled(True)
             self.submit_button.setText("测试中...")
@@ -821,8 +824,6 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
                         self.last_modify_time_screen1 = current_mod_time_1  # 更新为新的修改时间
                         self.add_logo_image(conf_path.logo_test_screen1_path)
 
-            self.document_camera.clear()
-
     def check_image_camera_modification(self):
         """检查图片文件是否有修改"""
         if self.lx_preview_photograph_window.is_front_or_rear_camera.isChecked():
@@ -833,11 +834,13 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
                 if current_mod_time_ph != self.last_modify_time_photo:
                     self.last_modify_time_photo = current_mod_time_ph  # 更新为新的修改时间
                     self.add_logo_image_camera(conf_path.camera_sta_test_default_photograph_path)
+                    self.camera_front_and_rear_flag += 1
 
                 current_mod_time_pre = self.get_file_modification_time(conf_path.camera_sta_test_default_preview_path)
                 if current_mod_time_pre != self.last_modify_time_preview:
                     self.last_modify_time_preview = current_mod_time_pre  # 更新为新的修改时间
                     self.add_logo_image_camera(conf_path.camera_sta_test_default_preview_path)
+                    self.camera_front_and_rear_flag += 1
         else:
             if os.path.exists(conf_path.camera_sta_test_rear_photograph_path) and os.path.exists(
                     conf_path.camera_sta_test_rear_preview_path) and os.path.exists(conf_path.camera_sta_test_front_preview_path) and os.path.exists(conf_path.camera_sta_test_front_photograph_path):

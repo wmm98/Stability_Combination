@@ -218,54 +218,6 @@ class Photograph:
             # click center clear other button
             pos = self.get_screen_center_position()
             self.click_btn(str(pos[0]), str(pos[1]))
-            # time.sleep(3)
-            # # screenshot preview
-            # self.screen_shot(camera_sta_exp_default_preview_path)
-            # time.sleep(2)
-            # if len(self.get_latest_img()) == 0:
-            #     print("Eeeeeeeeeeeee")
-            #     self.screen_shot(camera_sta_exp_default_preview_path)
-            #     time.sleep(1)
-            # if not os.path.exists(camera_sta_exp_default_preview_path):
-            #     self.screen_shot(camera_sta_exp_default_preview_path)
-            #     time.sleep(1)
-            #
-            # if len(self.get_latest_img()) == 0:
-            #     print("22222222222222222222222")
-            #     raise
-            #
-            # # clear img
-            # self.remove_img()
-            # time.sleep(3)
-            # if len(self.get_latest_img()) != 0:
-            #     self.remove_img()
-            #     time.sleep(1)
-            #
-            # if len(self.get_latest_img()) != 0:
-            #     self.remove_img()
-            #     time.sleep(1)
-            #
-            # # # take photo
-            # self.take_photo()
-            # time.sleep(3)
-            # if len(self.get_latest_img()) == 0:
-            #     self.take_photo()
-            #     time.sleep(3)
-            #
-            # if len(self.get_latest_img()) == 0:
-            #     self.take_photo()
-            #     time.sleep(3)
-            #
-            # if len(self.get_latest_img()) == 0:
-            #     print("3333333333333333333333")
-            #     raise
-            #
-            # self.pull_img(camera_sta_exp_default_photograph_path)
-            # time.sleep(2)
-            # if not os.path.exists(camera_sta_exp_default_photograph_path):
-            #     self.pull_img(camera_sta_exp_default_photograph_path)
-
-            # screenshot preview
 
             self.screen_shot(camera_sta_exp_default_preview_path)
             time.sleep(1)
@@ -367,6 +319,7 @@ class Photograph:
 
     def pull_img(self, des_path):
         cmd = "adb -s %s pull /sdcard/DCIM/Camera/%s %s" % (self.device_name, self.get_latest_img(), des_path)
+        print(cmd)
         shell.invoke(cmd)
 
     def get_camera_package_name(self):

@@ -1791,6 +1791,22 @@ class TestLXStability:
             if len(self.device.get_latest_img()) != 0:
                 self.device.remove_img()
             times += 1
+
+            if int(is_double):
+                if os.path.exists(Config.camera_sta_test_front_preview_path):
+                    os.remove(Config.camera_sta_test_front_preview_path)
+                if os.path.exists(Config.camera_sta_test_front_photograph_path):
+                    os.remove(Config.camera_sta_test_front_photograph_path)
+                if os.path.exists(Config.camera_sta_test_rear_photograph_path):
+                    os.remove(Config.camera_sta_test_rear_photograph_path)
+                if os.path.exists(Config.camera_sta_test_rear_preview_path):
+                    os.remove(Config.camera_sta_test_rear_preview_path)
+            else:
+                if os.path.exists(Config.camera_sta_test_default_preview_path):
+                    os.remove(Config.camera_sta_test_default_preview_path)
+                if os.path.exists(Config.camera_sta_test_default_photograph_path):
+                    os.remove(Config.camera_sta_test_default_photograph_path)
+
             log.info("******相机压测完成%d次*****" % times)
 
         if open_fail_flag > 0:
