@@ -118,9 +118,14 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
     def __init__(self):
         super(UIDisplay, self).__init__()
         self.last_position = 0
-        self.last_modify_time = 0
+        self.last_modify_time_screen0 = 0
+        self.last_modify_time_screen1 = 0
+
         self.last_modify_time_preview = 0
         self.last_modify_time_photo = 0
+
+        self.last_modify_time_preview_front = 0
+        self.last_modify_time_photo_front = 0
 
         self.bg_config = configfile.ConfigP(self.background_config_file_path)
         self.ui_config = configfile.ConfigP(self.ui_config_file_path)
@@ -186,7 +191,8 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
         self.mt_mobile_btn_check_window.submit_button.clicked.connect(self.display_mobile_btn_check_test_times)
         # self.mt_eth_btn_check_window.submit_button.clicked.connect(self.display_eth_btn_check_test_times)
         self.usb_recognition_window.submit_button.clicked.connect(self.display_usb_recognize_test_times)
-        self.storage_read_write_speed_window.submit_button.clicked.connect(self.display_storage_write_read_speed_test_times)
+        self.storage_read_write_speed_window.submit_button.clicked.connect(
+            self.display_storage_write_read_speed_test_times)
         self.factory_reset_window.submit_button.clicked.connect(self.display_factory_reset_test_times)
         self.bt_connect_test_window.submit_button.clicked.connect(self.display_bt_connect_test_times)
         self.sleep_awake_window.submit_button.clicked.connect(self.display_sleep_wake_test_times)
@@ -385,7 +391,8 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
         time.sleep(1)
         if self.factory_reset_window.submit_flag:
             if self.item_M_T_STA_factory_reset.checkState(0) == 2:
-                times = self.ui_config.get_option_value(self.ui_config.section_factory_reset_stability, self.ui_config.option_factory_reset_test_times)
+                times = self.ui_config.get_option_value(self.ui_config.section_factory_reset_stability,
+                                                        self.ui_config.option_factory_reset_test_times)
                 self.item_M_T_STA_factory_reset.setText(1, times)
                 self.item_M_T_STA_factory_reset.setTextAlignment(1, Qt.AlignRight)  # 设置第二列文本右对齐
 
@@ -393,7 +400,8 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
         time.sleep(1)
         if self.storage_read_write_speed_window.submit_flag:
             if self.item_M_T_STA_storage_speed.checkState(0) == 2:
-                times = self.ui_config.get_option_value(self.ui_config.section_storage_stability, self.ui_config.option_storage_test_times)
+                times = self.ui_config.get_option_value(self.ui_config.section_storage_stability,
+                                                        self.ui_config.option_storage_test_times)
                 self.item_M_T_STA_storage_speed.setText(1, times)
                 self.item_M_T_STA_storage_speed.setTextAlignment(1, Qt.AlignRight)  # 设置第二列文本右对齐
 
@@ -401,7 +409,8 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
         time.sleep(1)
         if self.usb_recognition_window.submit_flag:
             if self.item_M_T_STA_usb_recognize.checkState(0) == 2:
-                times = self.ui_config.get_option_value(self.ui_config.section_usb_recognize, self.ui_config.option_usb_recognition_test_times)
+                times = self.ui_config.get_option_value(self.ui_config.section_usb_recognize,
+                                                        self.ui_config.option_usb_recognition_test_times)
                 self.item_M_T_STA_usb_recognize.setText(1, times)
                 self.item_M_T_STA_usb_recognize.setTextAlignment(1, Qt.AlignRight)  # 设置第二列文本右对齐
 
@@ -417,7 +426,8 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
         time.sleep(1)
         if self.mt_mobile_btn_check_window.submit_flag:
             if self.item_M_T_STA_mobile_btn.checkState(0) == 2:
-                times = self.ui_config.get_option_value(self.ui_config.section_mobile_check, self.ui_config.option_mobile_btn_test_times)
+                times = self.ui_config.get_option_value(self.ui_config.section_mobile_check,
+                                                        self.ui_config.option_mobile_btn_test_times)
                 self.item_M_T_STA_mobile_btn.setText(1, times)
                 self.item_M_T_STA_mobile_btn.setTextAlignment(1, Qt.AlignRight)  # 设置第二列文本右对齐
 
@@ -425,7 +435,8 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
         time.sleep(1)
         if self.mt_wifi_btn_check_window.submit_flag:
             if self.item_M_T_STA_wifi_btn.checkState(0) == 2:
-                times = self.ui_config.get_option_value(self.ui_config.section_wifi_check, self.ui_config.option_wifi_btn_test_times)
+                times = self.ui_config.get_option_value(self.ui_config.section_wifi_check,
+                                                        self.ui_config.option_wifi_btn_test_times)
                 self.item_M_T_STA_wifi_btn.setText(1, times)
                 self.item_M_T_STA_wifi_btn.setTextAlignment(1, Qt.AlignRight)  # 设置第二列文本右对齐
 
@@ -433,7 +444,8 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
         time.sleep(1)
         if self.lx_preview_photograph_window.submit_flag:
             if self.item_L_X_STA_child_camera_compare.checkState(0) == 2:
-                times = self.ui_config.get_option_value(self.ui_config.section_ui_camera_check, self.ui_config.option_camera_test_times)
+                times = self.ui_config.get_option_value(self.ui_config.section_ui_camera_check,
+                                                        self.ui_config.option_camera_test_times)
                 self.item_L_X_STA_child_camera_compare.setText(1, times)
                 self.item_L_X_STA_child_camera_compare.setTextAlignment(1, Qt.AlignRight)  # 设置第二列文本右对齐
 
@@ -441,7 +453,8 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
         time.sleep(1)
         if self.lx_boot_check_window.submit_flag:
             if self.item_L_X_STA_child_boot_check.checkState(0) == 2:
-                boot_check_times = self.ui_config.get_option_value(self.ui_config.section_ui_boot_check, self.ui_config.ui_option_logo_test_times)
+                boot_check_times = self.ui_config.get_option_value(self.ui_config.section_ui_boot_check,
+                                                                   self.ui_config.ui_option_logo_test_times)
                 self.item_L_X_STA_child_boot_check.setText(1, boot_check_times)
                 self.item_L_X_STA_child_boot_check.setTextAlignment(1, Qt.AlignRight)  # 设置第二列文本右对齐
 
@@ -741,24 +754,51 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
             # self.save_config(self.config_file_path)
             # 启动
             self.start_qt_process(self.run_bat_path)
+
+            # 设置定时器检测间隔
+            self.check_interval = 1000  # 定时器间隔，单位毫秒
+
+            # 调试日志定时器
             self.timer = QTimer(self)
             self.timer.timeout.connect(self.update_debug_log)
-            self.file_timer = QTimer(self)
-            self.file_camera_timer = QTimer(self)
+            self.timer.start(self.check_interval)  # 启动定时器
+            # 展示图片的两个定定时器
+
             # 先删除之前测试的照片
             self.text_edit_final.clear()
-            if os.path.exists(conf_path.logo_test_screen0_path):
-                os.remove(conf_path.logo_test_screen0_path)
-            self.file_timer.timeout.connect(self.check_image_modification)
-            self.text_edit_final_camera.clear()
-            if os.path.exists(conf_path.camera_sta_test_default_photograph_path):
-                os.remove(conf_path.camera_sta_test_default_photograph_path)
-            self.file_camera_timer.timeout.connect(self.check_image_camera_modification)
+            if self.lx_boot_check_window.submit_flag or self.logo_window.submit_flag:
+                if not self.lx_boot_check_window.only_boot.isChecked() or not self.logo_window.only_boot.isChecked():
+                    self.file_timer = QTimer(self)
+                    if os.path.exists(conf_path.logo_test_screen0_path):
+                        os.remove(conf_path.logo_test_screen0_path)
+                    if os.path.exists(conf_path.logo_test_screen1_path):
+                        os.remove(conf_path.logo_test_screen1_path)
+                    self.file_timer.timeout.connect(self.check_image_modification)
+                    self.file_timer.start(self.check_interval)
 
-            self.check_interval = 1000  # 定时器间隔，单位毫秒
-            self.timer.start(self.check_interval)  # 启动定时器
-            self.file_timer.start(self.check_interval)
-            self.file_camera_timer.start(self.check_interval)
+            # 测试前先删除照片
+            self.text_edit_final_camera.clear()
+            if self.lx_preview_photograph_window.submit_flag:
+                self.file_camera_timer = QTimer(self)
+                if self.lx_preview_photograph_window.is_front_or_rear_camera.isChecked():
+                    if os.path.exists(conf_path.camera_sta_test_default_photograph_path):
+                        os.remove(conf_path.camera_sta_test_default_photograph_path)
+                    if os.path.exists(conf_path.camera_sta_test_default_preview_path):
+                        os.remove(conf_path.camera_sta_test_default_preview_path)
+                else:
+                    if os.path.exists(conf_path.camera_sta_test_rear_photograph_path):
+                        os.remove(conf_path.camera_sta_test_rear_photograph_path)
+                    if os.path.exists(conf_path.camera_sta_test_rear_preview_path):
+                        os.remove(conf_path.camera_sta_test_rear_preview_path)
+
+                    if os.path.exists(conf_path.camera_sta_test_front_preview_path):
+                        os.remove(conf_path.camera_sta_test_front_preview_path)
+                    if os.path.exists(conf_path.camera_sta_test_front_photograph_path):
+                        os.remove(conf_path.camera_sta_test_front_photograph_path)
+
+                self.file_camera_timer.timeout.connect(self.check_image_camera_modification)
+                self.file_camera_timer.start(self.check_interval)
+
             self.stop_process_button.setEnabled(True)
             self.submit_button.setDisabled(True)
             self.submit_button.setText("测试中...")
@@ -767,20 +807,56 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
 
     def check_image_modification(self):
         """检查图片文件是否有修改"""
-        if os.path.exists(conf_path.logo_test_screen0_path):
-            current_mod_time = self.get_file_modification_time(conf_path.logo_test_screen0_path)
-            if current_mod_time != self.last_modify_time:
-                self.last_modify_time = current_mod_time  # 更新为新的修改时间
-                self.add_logo_image(conf_path.logo_test_screen0_path)
+        if self.logo_window.submit_flag or self.lx_boot_check_window.submit_flag:
+            if os.path.exists(conf_path.logo_test_screen0_path):
+                current_mod_time = self.get_file_modification_time(conf_path.logo_test_screen0_path)
+                if current_mod_time != self.last_modify_time_screen0:
+                    self.last_modify_time_screen0 = current_mod_time  # 更新为新的修改时间
+                    self.add_logo_image(conf_path.logo_test_screen0_path)
+
+            if self.logo_window.double_screen.isChecked() or self.lx_boot_check_window.double_screen.isChecked():
+                if os.path.exists(conf_path.logo_test_screen1_path):
+                    current_mod_time_1 = self.get_file_modification_time(conf_path.logo_test_screen1_path)
+                    if current_mod_time_1 != self.last_modify_time_screen1:
+                        self.last_modify_time_screen1 = current_mod_time_1  # 更新为新的修改时间
+                        self.add_logo_image(conf_path.logo_test_screen1_path)
+
+            self.document_camera.clear()
 
     def check_image_camera_modification(self):
         """检查图片文件是否有修改"""
-        if os.path.exists(conf_path.camera_sta_test_default_photograph_path):
+        if self.lx_preview_photograph_window.is_front_or_rear_camera.isChecked():
+            if os.path.exists(conf_path.camera_sta_test_default_photograph_path) and os.path.exists(
+                    conf_path.camera_sta_test_default_preview_path):
+                #
+                current_mod_time_ph = self.get_file_modification_time(conf_path.camera_sta_test_default_photograph_path)
+                if current_mod_time_ph != self.last_modify_time_photo:
+                    self.last_modify_time_photo = current_mod_time_ph  # 更新为新的修改时间
+                    self.add_logo_image_camera(conf_path.camera_sta_test_default_photograph_path)
 
-            current_mod_time_ph = self.get_file_modification_time(conf_path.camera_sta_test_default_photograph_path)
-            if current_mod_time_ph != self.last_modify_time_photo:
-                self.last_modify_time_photo = current_mod_time_ph  # 更新为新的修改时间
-                self.add_logo_image_camera(conf_path.camera_sta_test_default_photograph_path)
+                current_mod_time_pre = self.get_file_modification_time(conf_path.camera_sta_test_default_preview_path)
+                if current_mod_time_pre != self.last_modify_time_preview:
+                    self.last_modify_time_preview = current_mod_time_pre  # 更新为新的修改时间
+                    self.add_logo_image_camera(conf_path.camera_sta_test_default_preview_path)
+        else:
+            if os.path.exists(conf_path.camera_sta_test_rear_photograph_path) and os.path.exists(
+                    conf_path.camera_sta_test_rear_preview_path) and os.path.exists(conf_path.camera_sta_test_front_preview_path) and os.path.exists(conf_path.camera_sta_test_front_photograph_path):
+
+                current_mod_time_ph = self.get_file_modification_time(conf_path.camera_sta_test_rear_photograph_path)
+                if current_mod_time_ph != self.last_modify_time_photo:
+                    self.last_modify_time_photo = current_mod_time_ph  # 更新为新的修改时间
+                    self.add_logo_image_camera(conf_path.camera_sta_test_rear_photograph_path)
+
+                current_mod_time_ph_front = self.get_file_modification_time(
+                    conf_path.camera_sta_test_front_photograph_path)
+                if current_mod_time_ph_front != self.last_modify_time_photo_front:
+                    self.last_modify_time_photo_front = current_mod_time_ph_front  # 更新为新的修改时间
+                    self.add_logo_image_camera(conf_path.camera_sta_test_front_photograph_path)
+
+                current_mod_time_pre = self.get_file_modification_time(conf_path.camera_sta_test_rear_preview_path)
+                if current_mod_time_pre != self.last_modify_time_preview:
+                    self.last_modify_time_preview = current_mod_time_pre  # 更新为新的修改时间
+                    self.add_logo_image_camera(conf_path.camera_sta_test_rear_preview_path)
 
     def get_file_modification_time(self, file_path):
         """获取文件的最后修改时间"""
@@ -799,7 +875,6 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
         self.submit_button.setEnabled(True)
         self.submit_button.setText("开始测试")
         self.timer.stop()
-        self.file_timer.stop()
 
     def start_qt_process(self, file):
         # 启动 外部 脚本
@@ -889,7 +964,7 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
         # self.cursor = QTextCursor(self.document)
         # 将图片路径转为 QUrl
         # 创建 QTextImageFormat 对象
-        self.text_edit_final.clear()
+        # self.text_edit_final.clear()
         image_format = QTextImageFormat()
 
         # if self.double_screen.isChecked():
@@ -904,7 +979,7 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
         # self.cursor = QTextCursor(self.document)
         # 将图片路径转为 QUrl
         # 创建 QTextImageFormat 对象
-        self.text_edit_final_camera.clear()
+        # self.text_edit_final_camera.clear()
         image_format = QTextImageFormat()
 
         # if self.double_screen.isChecked():

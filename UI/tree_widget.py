@@ -112,11 +112,10 @@ class Ui_MainWindow(config_path.UIConfigPath):
         self.text_edit_final_camera.setReadOnly(True)
         width_camera = self.text_edit_final_camera.viewport().width()
         height_camera = self.text_edit_final_camera.viewport().height()
-        self.image_width_camera = width / 2
-        self.image_height_camera = height / 2
+        self.image_width_camera = width_camera / 3
+        self.image_height_camera = height_camera / 3
         self.document_camera = self.text_edit_final_camera.document()
         self.verticalLayout_final.addWidget(self.text_edit_final_camera)
-
 
         self.verticalLayout_left.addStretch(1)
 
