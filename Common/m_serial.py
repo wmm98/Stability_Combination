@@ -27,9 +27,8 @@ class SerialD:
             else:
                 ser.open()
                 log.info("串口：%s 打开！！！" % port)
-                print()
         except Exception as e:
-            log.error(e)
+            log.error(str(e))
 
     def logoutSer(self):
         if ser.isOpen():

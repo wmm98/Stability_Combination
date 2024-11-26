@@ -1449,365 +1449,368 @@ class TestLXStability:
         compare_fail_flag = 0
         photograph_fail_flag = 0
         continue_flag = 0
-
         times = 0
+
         while times <= int(total_times):
-            is_double = self.ui_conf_file.get(Config.section_ui_camera_check, Config.option_front_and_rear)
-            # 测试前删除已存在的照片
-            if int(is_double):
-                if os.path.exists(Config.camera_sta_test_front_preview_path):
-                    os.remove(Config.camera_sta_test_front_preview_path)
-                if os.path.exists(Config.camera_sta_test_front_photograph_path):
-                    os.remove(Config.camera_sta_test_front_photograph_path)
-                if os.path.exists(Config.camera_sta_test_rear_photograph_path):
-                    os.remove(Config.camera_sta_test_rear_photograph_path)
-                if os.path.exists(Config.camera_sta_test_rear_preview_path):
-                    os.remove(Config.camera_sta_test_rear_preview_path)
-            else:
-                if os.path.exists(Config.camera_sta_test_default_preview_path):
-                    os.remove(Config.camera_sta_test_default_preview_path)
-                if os.path.exists(Config.camera_sta_test_default_photograph_path):
-                    os.remove(Config.camera_sta_test_default_photograph_path)
-
-            is_double = self.ui_conf_file.get(Config.section_ui_camera_check, Config.option_front_and_rear)
-            if int(is_double):
-
-                # get x, y position for switch btn
-                x = self.ui_conf_file.get(Config.section_ui_camera_check, Config.option_switch_x_value)
-                y = self.ui_conf_file.get(Config.section_ui_camera_check, Config.option_switch_y_value)
-                # clear img in device
-                self.device.remove_img()
-                time.sleep(1)
-                if len(self.device.get_latest_img()) != 0:
-                    self.device.remove_img()
-
-                # front and rear camera
-                # 1 open camera
-                time.sleep(1)
-                self.device.open_camera()
-                time.sleep(2)
-                if self.device.get_camera_id() == 3:
-                    self.device.open_camera()
-                time.sleep(2)
-                if self.device.get_camera_id() == 3:
-                    log.error("打开相机失败，请检查！！！")
-                    time.sleep(3)
-                    raise Exception
-                log.info("打开相机")
-                # switch front camera
-                if not self.device.is_first_camera():
-                    self.device.click_btn(x, y)
-                # get camera app package name
-                self.device.get_camera_package_name()
-                # click center clear other button
-                pos = self.device.get_screen_center_position()
-                self.device.click_btn(str(pos[0]), str(pos[1]))
-                time.sleep(3)
-                log.info("当前为后镜头")
-                # screenshot preview
-                self.device.screen_shot(Config.camera_sta_test_rear_preview_path)
-                time.sleep(1)
-                if not os.path.exists(Config.camera_sta_test_rear_preview_path):
-                    self.device.screen_shot(Config.camera_sta_test_rear_preview_path)
-                log.info("后镜头预览界面截图完成")
-                # clear img
-                self.device.remove_img()
-                time.sleep(3)
-                if len(self.device.get_latest_img()) != 0:
-                    self.device.remove_img()
-                # # take photo
-                self.device.take_photo()
-                time.sleep(3)
-
-                if len(self.device.get_latest_img()) == 0:
-                    self.device.take_photo()
-                    time.sleep(3)
-
-                if len(self.device.get_latest_img()) == 0:
-                    log.info("拍照失败，请检查！！！")
-                    time.sleep(3)
-                    self.device.kill_process(logcat_process_id)
-                    self.device.adb_pull_file(log_path, os.path.dirname(Config.camera_sta_test_log_path))
-                    raise
-
-                log.info("后镜头拍照完成")
-                self.device.pull_img(Config.camera_sta_test_rear_photograph_path)
-                time.sleep(1)
-                if not os.path.exists(Config.camera_sta_test_rear_photograph_path):
-                    self.device.pull_img(Config.camera_sta_test_rear_photograph_path)
-
-                # clear img
-                self.device.remove_img()
-                time.sleep(1)
-                if len(self.device.get_latest_img()) != 0:
-                    self.device.remove_img()
-                #
-                # switch front camera
-                self.device.click_btn(x, y)
-                time.sleep(2)
-                if self.device.is_first_camera():
-                    self.device.click_btn(x, y)
-                log.info("切换镜头")
-                # wait 2 sec
-                time.sleep(3)
-                # screenshot preview
-                self.device.screen_shot(Config.camera_sta_test_front_preview_path)
-                log.info("当前预览界面截图完成")
-                time.sleep(1)
-                if not os.path.exists(Config.camera_sta_test_front_preview_path):
-                    self.device.screen_shot(Config.camera_sta_test_front_preview_path)
-                # clear img
-                self.device.remove_img()
-                time.sleep(1)
-                if len(self.device.get_latest_img()) != 0:
-                    self.device.remove_img()
-                # take photo
-                time.sleep(3)
-                self.device.take_photo()
-                time.sleep(3)
-                if len(self.device.get_latest_img()) == 0:
-                    self.device.take_photo()
-                    time.sleep(3)
-
-                if len(self.device.get_latest_img()) == 0:
-                    log.info("拍照失败，请检查！！！")
-                    time.sleep(3)
-                    self.device.kill_process(logcat_process_id)
-                    self.device.adb_pull_file(log_path, os.path.dirname(Config.camera_sta_test_log_path))
-                    raise
-
-                log.info("前镜头拍照完成")
-                self.device.pull_img(Config.camera_sta_test_front_photograph_path)
-                time.sleep(1)
-                if not os.path.exists(Config.camera_sta_test_front_photograph_path):
-                    self.device.pull_img(Config.camera_sta_test_front_photograph_path)
-
-                # 对比前镜头
-                front_preview_score = cnns.generateScore(Config.camera_sta_test_front_preview_path,
-                                                         Config.camera_sta_exp_front_preview_path)
-                log.info("前镜头预览画面预期和测试截图相似度分数为：%s" % str(front_preview_score))
-                if front_preview_score < 90:
-                    log.error("前镜头预览画面预期和测试截图差异过大，请检查！！！")
-                    if is_probability:
-                        # 复制测试中异常的照片到Error文件夹地址
-                        preview_file_name1 = os.path.basename(Config.camera_sta_test_front_preview_path)
-                        preview_file_new_path1 = Config.camera_sta_err_front_preview_path
-                        shutil.copy(Config.camera_sta_test_front_preview_path, preview_file_new_path1)
-                        os.rename(os.path.join(preview_file_new_path1, preview_file_name1),
-                                  os.path.join(preview_file_new_path1, "%d_%s" % (times, preview_file_name1)))
-                        compare_fail_flag += 1
-                    else:
-                        time.sleep(3)
-                        self.device.kill_process(logcat_process_id)
-                        self.device.adb_pull_file(log_path, os.path.dirname(Config.camera_sta_test_log_path))
-                        raise
-
-                front_photograph_score = cnns.generateScore(Config.camera_sta_test_front_photograph_path,
-                                                            Config.camera_sta_exp_front_photograph_path)
-                log.info("前镜头拍照预期和测试拍照相似度分数为：%s" % str(front_photograph_score))
-                if front_photograph_score < 90:
-                    log.error("前镜头拍照预期和测试拍照差异过大，请检查！！！")
-                    if is_probability:
-                        photograph_file_name1 = os.path.basename(Config.camera_sta_test_front_photograph_path)
-                        photograph_file_new_path1 = Config.camera_sta_err_front_photograph_path
-                        shutil.copy(Config.camera_sta_test_front_photograph_path, photograph_file_new_path1)
-                        os.rename(os.path.join(photograph_file_new_path1, photograph_file_name1),
-                                  os.path.join(photograph_file_new_path1, "%d_%s" % (times, photograph_file_name1)))
-                        compare_fail_flag += 1
-                    else:
-                        time.sleep(3)
-                        self.device.kill_process(logcat_process_id)
-                        self.device.adb_pull_file(log_path, os.path.dirname(Config.camera_sta_test_log_path))
-                        raise
-                # 对比后镜头
-                rear_preview_score = cnns.generateScore(Config.camera_sta_test_rear_preview_path,
-                                                        Config.camera_sta_exp_rear_preview_path)
-                log.info("后镜头预览画面预期和测试截图相似度分数为：%s" % str(rear_preview_score))
-                if rear_preview_score < 90:
-                    log.error("后镜头预览画面预期和测试截图差异过大，请检查！！！")
-                    if is_probability:
-                        preview_file_name2 = os.path.basename(Config.camera_sta_test_rear_preview_path)
-                        preview_file_new_path2 = Config.camera_sta_err_rear_preview_path
-                        shutil.copy(Config.camera_sta_test_rear_preview_path, preview_file_new_path2)
-                        os.rename(os.path.join(preview_file_new_path2, preview_file_name2),
-                                  os.path.join(preview_file_new_path2, "%d_%s" % (times, preview_file_name2)))
-                        compare_fail_flag += 1
-                    else:
-                        time.sleep(3)
-                        self.device.kill_process(logcat_process_id)
-                        self.device.adb_pull_file(log_path, os.path.dirname(Config.camera_sta_test_log_path))
-                        raise
-                rear_photograph_score = cnns.generateScore(Config.camera_sta_test_rear_photograph_path,
-                                                           Config.camera_sta_exp_rear_photograph_path)
-                log.info("后镜头拍照预期和测试拍照相似度分数为：%s" % str(rear_photograph_score))
-                if rear_photograph_score < 90:
-                    if is_probability:
-                        photograph_file_name2 = os.path.basename(Config.camera_sta_test_rear_photograph_path)
-                        photograph_file_new_path2 = Config.camera_sta_err_rear_photograph_path
-                        shutil.copy(Config.camera_sta_test_rear_photograph_path, photograph_file_new_path2)
-                        os.rename(os.path.join(photograph_file_new_path2, photograph_file_name2),
-                                  os.path.join(photograph_file_new_path2, "%d_%s" % (times, photograph_file_name2)))
-                        compare_fail_flag += 1
-                    else:
-                        log.error("后镜头拍照预期和测试拍照差异过大，请检查！！！")
-                        time.sleep(3)
-                        self.device.kill_process(logcat_process_id)
-                        self.device.adb_pull_file(log_path, os.path.dirname(Config.camera_sta_test_log_path))
-                        raise
-            else:
+            try:
+                is_double = self.ui_conf_file.get(Config.section_ui_camera_check, Config.option_front_and_rear)
                 # 测试前删除已存在的照片
-                if os.path.exists(Config.camera_sta_test_default_preview_path):
-                    os.remove(Config.camera_sta_test_default_preview_path)
-                if os.path.exists(Config.camera_sta_test_default_photograph_path):
-                    os.remove(Config.camera_sta_test_default_photograph_path)
-                self.device.remove_img()
-                time.sleep(1)
-                if len(self.device.get_latest_img()) != 0:
-                    self.device.remove_img()
+                if int(is_double):
+                    if os.path.exists(Config.camera_sta_test_front_preview_path):
+                        os.remove(Config.camera_sta_test_front_preview_path)
+                    if os.path.exists(Config.camera_sta_test_front_photograph_path):
+                        os.remove(Config.camera_sta_test_front_photograph_path)
+                    if os.path.exists(Config.camera_sta_test_rear_photograph_path):
+                        os.remove(Config.camera_sta_test_rear_photograph_path)
+                    if os.path.exists(Config.camera_sta_test_rear_preview_path):
+                        os.remove(Config.camera_sta_test_rear_preview_path)
+                else:
+                    if os.path.exists(Config.camera_sta_test_default_preview_path):
+                        os.remove(Config.camera_sta_test_default_preview_path)
+                    if os.path.exists(Config.camera_sta_test_default_photograph_path):
+                        os.remove(Config.camera_sta_test_default_photograph_path)
 
-                # 后台启动捕捉log
-                log_path = os.path.join("/sdcard/%s" % os.path.basename(Config.camera_sta_test_log_path))  # log名称
-                self.device.rm_file(log_path)  # 清除已存在的
-                self.device.logcat_thread(log_path)
-                log.info("捕捉设备log")
-                # 获取后台logcat进程id
-                logcat_process_id = self.device.get_current_logcat_process_id()
+                is_double = self.ui_conf_file.get(Config.section_ui_camera_check, Config.option_front_and_rear)
+                if int(is_double):
 
-                # 1 open camera
-                time.sleep(1)
-                self.device.open_camera()
-                time.sleep(2)
-                log.info("打开相机")
-                if self.device.get_camera_id() == 3:
-                    self.device.open_camera()
-                time.sleep(2)
-                if self.device.get_camera_id() == 3:
-                    log.error("打开相机失败，请检查！！！")
-                    if is_probability:
-                        open_fail_flag += 1
-                        self.device.force_stop_app()
-                        self.device.clear_app()
-                        continue
-                    else:
-                        time.sleep(3)
-                        raise Exception
-
-                # get camera app package name
-                self.device.get_camera_package_name()
-                # click center clear other button
-                pos = self.device.get_screen_center_position()
-                self.device.click_btn(str(pos[0]), str(pos[1]))
-                time.sleep(3)
-                # screenshot preview
-                self.device.screen_shot(Config.camera_sta_test_default_preview_path)
-                time.sleep(1)
-                if not os.path.exists(Config.camera_sta_test_default_preview_path):
-                    self.device.screen_shot(Config.camera_sta_test_default_preview_path)
-                log.info("当前预览界面截图完成")
-                # clear img
-                self.device.remove_img()
-                time.sleep(3)
-                if len(self.device.get_latest_img()) != 0:
+                    # get x, y position for switch btn
+                    x = self.ui_conf_file.get(Config.section_ui_camera_check, Config.option_switch_x_value)
+                    y = self.ui_conf_file.get(Config.section_ui_camera_check, Config.option_switch_y_value)
+                    # clear img in device
                     self.device.remove_img()
                     time.sleep(1)
-                # # take photo
-                self.device.take_photo()
-                time.sleep(3)
-                if len(self.device.get_latest_img()) == 0:
+                    if len(self.device.get_latest_img()) != 0:
+                        self.device.remove_img()
+
+                    # front and rear camera
+                    # 1 open camera
+                    time.sleep(1)
+                    self.device.open_camera()
+                    time.sleep(2)
+                    if self.device.get_camera_id() == 3:
+                        self.device.open_camera()
+                    time.sleep(2)
+                    if self.device.get_camera_id() == 3:
+                        log.error("打开相机失败，请检查！！！")
+                        time.sleep(3)
+                        raise Exception
+                    log.info("打开相机")
+                    # switch front camera
+                    if not self.device.is_first_camera():
+                        self.device.click_btn(x, y)
+                    # get camera app package name
+                    self.device.get_camera_package_name()
+                    # click center clear other button
+                    pos = self.device.get_screen_center_position()
+                    self.device.click_btn(str(pos[0]), str(pos[1]))
+                    time.sleep(3)
+                    log.info("当前为后镜头")
+                    # screenshot preview
+                    self.device.screen_shot(Config.camera_sta_test_rear_preview_path)
+                    time.sleep(1)
+                    if not os.path.exists(Config.camera_sta_test_rear_preview_path):
+                        self.device.screen_shot(Config.camera_sta_test_rear_preview_path)
+                    log.info("后镜头预览界面截图完成")
+                    # clear img
+                    self.device.remove_img()
+                    time.sleep(3)
+                    if len(self.device.get_latest_img()) != 0:
+                        self.device.remove_img()
+                    # # take photo
                     self.device.take_photo()
                     time.sleep(3)
 
-                if len(self.device.get_latest_img()) == 0:
-                    log.info("拍照失败，请检查！！！")
-                    if is_probability:
-                        photograph_fail_flag += 1
-                        self.device.force_stop_app()
-                        self.device.clear_app()
-                        continue
-                    else:
+                    if len(self.device.get_latest_img()) == 0:
+                        self.device.take_photo()
+                        time.sleep(3)
+
+                    if len(self.device.get_latest_img()) == 0:
+                        log.info("拍照失败，请检查！！！")
                         time.sleep(3)
                         self.device.kill_process(logcat_process_id)
                         self.device.adb_pull_file(log_path, os.path.dirname(Config.camera_sta_test_log_path))
                         raise
 
-                log.info("拍照完成")
-                self.device.pull_img(Config.camera_sta_test_default_photograph_path)
-                time.sleep(1)
-                if not os.path.exists(Config.camera_sta_test_default_photograph_path):
+                    log.info("后镜头拍照完成")
+                    self.device.pull_img(Config.camera_sta_test_rear_photograph_path)
+                    time.sleep(1)
+                    if not os.path.exists(Config.camera_sta_test_rear_photograph_path):
+                        self.device.pull_img(Config.camera_sta_test_rear_photograph_path)
+
+                    # clear img
+                    self.device.remove_img()
+                    time.sleep(1)
+                    if len(self.device.get_latest_img()) != 0:
+                        self.device.remove_img()
+                    #
+                    # switch front camera
+                    self.device.click_btn(x, y)
+                    time.sleep(2)
+                    if self.device.is_first_camera():
+                        self.device.click_btn(x, y)
+                    log.info("切换镜头")
+                    # wait 2 sec
+                    time.sleep(3)
+                    # screenshot preview
+                    self.device.screen_shot(Config.camera_sta_test_front_preview_path)
+                    log.info("当前预览界面截图完成")
+                    time.sleep(1)
+                    if not os.path.exists(Config.camera_sta_test_front_preview_path):
+                        self.device.screen_shot(Config.camera_sta_test_front_preview_path)
+                    # clear img
+                    self.device.remove_img()
+                    time.sleep(1)
+                    if len(self.device.get_latest_img()) != 0:
+                        self.device.remove_img()
+                    # take photo
+                    time.sleep(3)
+                    self.device.take_photo()
+                    time.sleep(3)
+                    if len(self.device.get_latest_img()) == 0:
+                        self.device.take_photo()
+                        time.sleep(3)
+
+                    if len(self.device.get_latest_img()) == 0:
+                        log.info("拍照失败，请检查！！！")
+                        time.sleep(3)
+                        self.device.kill_process(logcat_process_id)
+                        self.device.adb_pull_file(log_path, os.path.dirname(Config.camera_sta_test_log_path))
+                        raise
+
+                    log.info("前镜头拍照完成")
+                    self.device.pull_img(Config.camera_sta_test_front_photograph_path)
+                    time.sleep(1)
+                    if not os.path.exists(Config.camera_sta_test_front_photograph_path):
+                        self.device.pull_img(Config.camera_sta_test_front_photograph_path)
+
+                    # 对比前镜头
+                    front_preview_score = cnns.generateScore(Config.camera_sta_test_front_preview_path,
+                                                             Config.camera_sta_exp_front_preview_path)
+                    log.info("前镜头预览画面预期和测试截图相似度分数为：%s" % str(front_preview_score))
+                    if front_preview_score < 90:
+                        log.error("前镜头预览画面预期和测试截图差异过大，请检查！！！")
+                        if is_probability:
+                            # 复制测试中异常的照片到Error文件夹地址
+                            preview_file_name1 = os.path.basename(Config.camera_sta_test_front_preview_path)
+                            preview_file_new_path1 = Config.camera_sta_err_front_preview_path
+                            shutil.copy(Config.camera_sta_test_front_preview_path, preview_file_new_path1)
+                            os.rename(os.path.join(preview_file_new_path1, preview_file_name1),
+                                      os.path.join(preview_file_new_path1, "%d_%s" % (times, preview_file_name1)))
+                            compare_fail_flag += 1
+                        else:
+                            time.sleep(3)
+                            self.device.kill_process(logcat_process_id)
+                            self.device.adb_pull_file(log_path, os.path.dirname(Config.camera_sta_test_log_path))
+                            raise
+
+                    front_photograph_score = cnns.generateScore(Config.camera_sta_test_front_photograph_path,
+                                                                Config.camera_sta_exp_front_photograph_path)
+                    log.info("前镜头拍照预期和测试拍照相似度分数为：%s" % str(front_photograph_score))
+                    if front_photograph_score < 90:
+                        log.error("前镜头拍照预期和测试拍照差异过大，请检查！！！")
+                        if is_probability:
+                            photograph_file_name1 = os.path.basename(Config.camera_sta_test_front_photograph_path)
+                            photograph_file_new_path1 = Config.camera_sta_err_front_photograph_path
+                            shutil.copy(Config.camera_sta_test_front_photograph_path, photograph_file_new_path1)
+                            os.rename(os.path.join(photograph_file_new_path1, photograph_file_name1),
+                                      os.path.join(photograph_file_new_path1, "%d_%s" % (times, photograph_file_name1)))
+                            compare_fail_flag += 1
+                        else:
+                            time.sleep(3)
+                            self.device.kill_process(logcat_process_id)
+                            self.device.adb_pull_file(log_path, os.path.dirname(Config.camera_sta_test_log_path))
+                            raise
+                    # 对比后镜头
+                    rear_preview_score = cnns.generateScore(Config.camera_sta_test_rear_preview_path,
+                                                            Config.camera_sta_exp_rear_preview_path)
+                    log.info("后镜头预览画面预期和测试截图相似度分数为：%s" % str(rear_preview_score))
+                    if rear_preview_score < 90:
+                        log.error("后镜头预览画面预期和测试截图差异过大，请检查！！！")
+                        if is_probability:
+                            preview_file_name2 = os.path.basename(Config.camera_sta_test_rear_preview_path)
+                            preview_file_new_path2 = Config.camera_sta_err_rear_preview_path
+                            shutil.copy(Config.camera_sta_test_rear_preview_path, preview_file_new_path2)
+                            os.rename(os.path.join(preview_file_new_path2, preview_file_name2),
+                                      os.path.join(preview_file_new_path2, "%d_%s" % (times, preview_file_name2)))
+                            compare_fail_flag += 1
+                        else:
+                            time.sleep(3)
+                            self.device.kill_process(logcat_process_id)
+                            self.device.adb_pull_file(log_path, os.path.dirname(Config.camera_sta_test_log_path))
+                            raise
+                    rear_photograph_score = cnns.generateScore(Config.camera_sta_test_rear_photograph_path,
+                                                               Config.camera_sta_exp_rear_photograph_path)
+                    log.info("后镜头拍照预期和测试拍照相似度分数为：%s" % str(rear_photograph_score))
+                    if rear_photograph_score < 90:
+                        if is_probability:
+                            photograph_file_name2 = os.path.basename(Config.camera_sta_test_rear_photograph_path)
+                            photograph_file_new_path2 = Config.camera_sta_err_rear_photograph_path
+                            shutil.copy(Config.camera_sta_test_rear_photograph_path, photograph_file_new_path2)
+                            os.rename(os.path.join(photograph_file_new_path2, photograph_file_name2),
+                                      os.path.join(photograph_file_new_path2, "%d_%s" % (times, photograph_file_name2)))
+                            compare_fail_flag += 1
+                        else:
+                            log.error("后镜头拍照预期和测试拍照差异过大，请检查！！！")
+                            time.sleep(3)
+                            self.device.kill_process(logcat_process_id)
+                            self.device.adb_pull_file(log_path, os.path.dirname(Config.camera_sta_test_log_path))
+                            raise
+                else:
+                    # 测试前删除已存在的照片
+                    if os.path.exists(Config.camera_sta_test_default_preview_path):
+                        os.remove(Config.camera_sta_test_default_preview_path)
+                    if os.path.exists(Config.camera_sta_test_default_photograph_path):
+                        os.remove(Config.camera_sta_test_default_photograph_path)
+                    self.device.remove_img()
+                    time.sleep(1)
+                    if len(self.device.get_latest_img()) != 0:
+                        self.device.remove_img()
+
+                    # 后台启动捕捉log
+                    log_path = os.path.join("/sdcard/%s" % os.path.basename(Config.camera_sta_test_log_path))  # log名称
+                    self.device.rm_file(log_path)  # 清除已存在的
+                    self.device.logcat_thread(log_path)
+                    log.info("捕捉设备log")
+                    # 获取后台logcat进程id
+                    logcat_process_id = self.device.get_current_logcat_process_id()
+
+                    # 1 open camera
+                    time.sleep(1)
+                    self.device.open_camera()
+                    time.sleep(2)
+                    log.info("打开相机")
+                    if self.device.get_camera_id() == 3:
+                        self.device.open_camera()
+                    time.sleep(2)
+                    if self.device.get_camera_id() == 3:
+                        log.error("打开相机失败，请检查！！！")
+                        if is_probability:
+                            open_fail_flag += 1
+                            self.device.force_stop_app()
+                            self.device.clear_app()
+                            continue
+                        else:
+                            time.sleep(3)
+                            raise Exception
+
+                    # get camera app package name
+                    self.device.get_camera_package_name()
+                    # click center clear other button
+                    pos = self.device.get_screen_center_position()
+                    self.device.click_btn(str(pos[0]), str(pos[1]))
+                    time.sleep(3)
+                    # screenshot preview
+                    self.device.screen_shot(Config.camera_sta_test_default_preview_path)
+                    time.sleep(1)
+                    if not os.path.exists(Config.camera_sta_test_default_preview_path):
+                        self.device.screen_shot(Config.camera_sta_test_default_preview_path)
+                    log.info("当前预览界面截图完成")
+                    # clear img
+                    self.device.remove_img()
+                    time.sleep(3)
+                    if len(self.device.get_latest_img()) != 0:
+                        self.device.remove_img()
+                        time.sleep(1)
+                    # # take photo
+                    self.device.take_photo()
+                    time.sleep(3)
+                    if len(self.device.get_latest_img()) == 0:
+                        self.device.take_photo()
+                        time.sleep(3)
+
+                    if len(self.device.get_latest_img()) == 0:
+                        log.info("拍照失败，请检查！！！")
+                        if is_probability:
+                            photograph_fail_flag += 1
+                            self.device.force_stop_app()
+                            self.device.clear_app()
+                            continue
+                        else:
+                            time.sleep(3)
+                            self.device.kill_process(logcat_process_id)
+                            self.device.adb_pull_file(log_path, os.path.dirname(Config.camera_sta_test_log_path))
+                            raise
+
+                    log.info("拍照完成")
                     self.device.pull_img(Config.camera_sta_test_default_photograph_path)
-                # 对比照片
-                default_preview_score = cnns.generateScore(Config.camera_sta_test_default_preview_path,
-                                                           Config.camera_sta_exp_default_preview_path)
-                log.info("镜头预览画面预期和测试截图相似度分数为：%s" % str(default_preview_score))
-                if default_preview_score < 90:
-                    log.error("镜头预览画面预期和测试截图差异过大，请检查！！！")
-                    if is_probability:
-                        compare_fail_flag += 1
-                        self.device.force_stop_app()
-                        self.device.clear_app()
-                        # 复制测试中异常的照片到Error文件夹地址
-                        preview_file_name = os.path.basename(Config.camera_sta_test_default_preview_path)
-                        preview_file_new_path = Config.camera_sta_err_default_preview_path
-                        shutil.copy(Config.camera_sta_test_default_preview_path, preview_file_new_path)
-                        os.rename(os.path.join(preview_file_new_path, preview_file_name),
-                                  os.path.join(preview_file_new_path, "%d_%s" % (times, preview_file_name)))
-                        # continue
-                    else:
-                        time.sleep(3)
-                        self.device.kill_process(logcat_process_id)
-                        self.device.adb_pull_file(log_path, os.path.dirname(Config.camera_sta_test_log_path))
-                        raise
-                default_photograph_score = cnns.generateScore(Config.camera_sta_test_default_photograph_path,
-                                                              Config.camera_sta_exp_default_photograph_path)
-                log.info("镜头拍照预期和测试拍照相似度分数为：%s" % str(default_photograph_score))
-                if default_photograph_score < 90:
-                    log.error("镜头拍照预期和测试拍照差异过大，请检查！！！")
-                    if is_probability:
-                        compare_fail_flag += 1
-                        self.device.force_stop_app()
-                        self.device.clear_app()
-                        photograph_file_name = os.path.basename(Config.camera_sta_test_default_photograph_path)
-                        photograph_file_new_path = Config.camera_sta_err_default_photograph_path
-                        shutil.copy(Config.camera_sta_test_default_photograph_path, photograph_file_new_path)
-                        os.rename(os.path.join(photograph_file_new_path, photograph_file_name),
-                                  os.path.join(photograph_file_new_path, "%d_%s" % (times, photograph_file_name)))
-                        # continue
-                    else:
-                        time.sleep(3)
-                        self.device.kill_process(logcat_process_id)
-                        self.device.adb_pull_file(log_path, os.path.dirname(Config.camera_sta_test_log_path))
-                        raise
+                    time.sleep(1)
+                    if not os.path.exists(Config.camera_sta_test_default_photograph_path):
+                        self.device.pull_img(Config.camera_sta_test_default_photograph_path)
+                    # 对比照片
+                    default_preview_score = cnns.generateScore(Config.camera_sta_test_default_preview_path,
+                                                               Config.camera_sta_exp_default_preview_path)
+                    log.info("镜头预览画面预期和测试截图相似度分数为：%s" % str(default_preview_score))
+                    if default_preview_score < 90:
+                        log.error("镜头预览画面预期和测试截图差异过大，请检查！！！")
+                        if is_probability:
+                            compare_fail_flag += 1
+                            self.device.force_stop_app()
+                            self.device.clear_app()
+                            # 复制测试中异常的照片到Error文件夹地址
+                            preview_file_name = os.path.basename(Config.camera_sta_test_default_preview_path)
+                            preview_file_new_path = Config.camera_sta_err_default_preview_path
+                            shutil.copy(Config.camera_sta_test_default_preview_path, preview_file_new_path)
+                            os.rename(os.path.join(preview_file_new_path, preview_file_name),
+                                      os.path.join(preview_file_new_path, "%d_%s" % (times, preview_file_name)))
+                            # continue
+                        else:
+                            time.sleep(3)
+                            self.device.kill_process(logcat_process_id)
+                            self.device.adb_pull_file(log_path, os.path.dirname(Config.camera_sta_test_log_path))
+                            raise
+                    default_photograph_score = cnns.generateScore(Config.camera_sta_test_default_photograph_path,
+                                                                  Config.camera_sta_exp_default_photograph_path)
+                    log.info("镜头拍照预期和测试拍照相似度分数为：%s" % str(default_photograph_score))
+                    if default_photograph_score < 90:
+                        log.error("镜头拍照预期和测试拍照差异过大，请检查！！！")
+                        if is_probability:
+                            compare_fail_flag += 1
+                            self.device.force_stop_app()
+                            self.device.clear_app()
+                            photograph_file_name = os.path.basename(Config.camera_sta_test_default_photograph_path)
+                            photograph_file_new_path = Config.camera_sta_err_default_photograph_path
+                            shutil.copy(Config.camera_sta_test_default_photograph_path, photograph_file_new_path)
+                            os.rename(os.path.join(photograph_file_new_path, photograph_file_name),
+                                      os.path.join(photograph_file_new_path, "%d_%s" % (times, photograph_file_name)))
+                            # continue
+                        else:
+                            time.sleep(3)
+                            self.device.kill_process(logcat_process_id)
+                            self.device.adb_pull_file(log_path, os.path.dirname(Config.camera_sta_test_log_path))
+                            raise
 
-            # close and clear data to camera
-            self.device.force_stop_app()
-            self.device.clear_app()
-            if self.device.get_camera_id() != 3:
+                # close and clear data to camera
                 self.device.force_stop_app()
                 self.device.clear_app()
-            log.info("关闭相机")
-            # clear img
-            self.device.remove_img()
-            time.sleep(1)
-            if len(self.device.get_latest_img()) != 0:
+                if self.device.get_camera_id() != 3:
+                    self.device.force_stop_app()
+                    self.device.clear_app()
+                log.info("关闭相机")
+                # clear img
                 self.device.remove_img()
-            times += 1
+                time.sleep(1)
+                if len(self.device.get_latest_img()) != 0:
+                    self.device.remove_img()
+                times += 1
 
-            if int(is_double):
-                if os.path.exists(Config.camera_sta_test_front_preview_path):
-                    os.remove(Config.camera_sta_test_front_preview_path)
-                if os.path.exists(Config.camera_sta_test_front_photograph_path):
-                    os.remove(Config.camera_sta_test_front_photograph_path)
-                if os.path.exists(Config.camera_sta_test_rear_photograph_path):
-                    os.remove(Config.camera_sta_test_rear_photograph_path)
-                if os.path.exists(Config.camera_sta_test_rear_preview_path):
-                    os.remove(Config.camera_sta_test_rear_preview_path)
-            else:
-                if os.path.exists(Config.camera_sta_test_default_preview_path):
-                    os.remove(Config.camera_sta_test_default_preview_path)
-                if os.path.exists(Config.camera_sta_test_default_photograph_path):
-                    os.remove(Config.camera_sta_test_default_photograph_path)
+                # if int(is_double):
+                #     if os.path.exists(Config.camera_sta_test_front_preview_path):
+                #         os.remove(Config.camera_sta_test_front_preview_path)
+                #     if os.path.exists(Config.camera_sta_test_front_photograph_path):
+                #         os.remove(Config.camera_sta_test_front_photograph_path)
+                #     if os.path.exists(Config.camera_sta_test_rear_photograph_path):
+                #         os.remove(Config.camera_sta_test_rear_photograph_path)
+                #     if os.path.exists(Config.camera_sta_test_rear_preview_path):
+                #         os.remove(Config.camera_sta_test_rear_preview_path)
+                # else:
+                #     if os.path.exists(Config.camera_sta_test_default_preview_path):
+                #         os.remove(Config.camera_sta_test_default_preview_path)
+                #     if os.path.exists(Config.camera_sta_test_default_photograph_path):
+                #         os.remove(Config.camera_sta_test_default_photograph_path)
 
-            log.info("******相机压测完成%d次*****" % times)
+                log.info("******相机压测完成%d次*****" % times)
+            except Exception as e:
+                log.error(str(e))
 
         if open_fail_flag > 0:
             log.error("打开相机失败的次数为： %d次" % open_fail_flag)
