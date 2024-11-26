@@ -833,14 +833,15 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
                 current_mod_time_ph = self.get_file_modification_time(conf_path.camera_sta_test_default_photograph_path)
                 if current_mod_time_ph != self.last_modify_time_photo:
                     self.last_modify_time_photo = current_mod_time_ph  # 更新为新的修改时间
-                    self.add_logo_image_camera(conf_path.camera_sta_test_default_photograph_path)
-                    self.camera_front_and_rear_flag += 1
+                    # self.add_logo_image_camera(conf_path.camera_sta_test_default_photograph_path)
+                    self.camera_default_flag += 1
 
                 current_mod_time_pre = self.get_file_modification_time(conf_path.camera_sta_test_default_preview_path)
                 if current_mod_time_pre != self.last_modify_time_preview:
                     self.last_modify_time_preview = current_mod_time_pre  # 更新为新的修改时间
-                    self.add_logo_image_camera(conf_path.camera_sta_test_default_preview_path)
-                    self.camera_front_and_rear_flag += 1
+                    # self.add_logo_image_camera(conf_path.camera_sta_test_default_preview_path)
+                    self.camera_default_flag += 1
+
         else:
             if os.path.exists(conf_path.camera_sta_test_rear_photograph_path) and os.path.exists(
                     conf_path.camera_sta_test_rear_preview_path) and os.path.exists(conf_path.camera_sta_test_front_preview_path) and os.path.exists(conf_path.camera_sta_test_front_photograph_path):
@@ -848,18 +849,30 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
                 current_mod_time_ph = self.get_file_modification_time(conf_path.camera_sta_test_rear_photograph_path)
                 if current_mod_time_ph != self.last_modify_time_photo:
                     self.last_modify_time_photo = current_mod_time_ph  # 更新为新的修改时间
-                    self.add_logo_image_camera(conf_path.camera_sta_test_rear_photograph_path)
-
-                current_mod_time_ph_front = self.get_file_modification_time(
-                    conf_path.camera_sta_test_front_photograph_path)
-                if current_mod_time_ph_front != self.last_modify_time_photo_front:
-                    self.last_modify_time_photo_front = current_mod_time_ph_front  # 更新为新的修改时间
-                    self.add_logo_image_camera(conf_path.camera_sta_test_front_photograph_path)
+                    # self.add_logo_image_camera(conf_path.camera_sta_test_rear_photograph_path)
 
                 current_mod_time_pre = self.get_file_modification_time(conf_path.camera_sta_test_rear_preview_path)
                 if current_mod_time_pre != self.last_modify_time_preview:
-                    self.last_modify_time_preview = current_mod_time_pre  # 更新为新的修改时间
-                    self.add_logo_image_camera(conf_path.camera_sta_test_rear_preview_path)
+                    self.last_modify_time_preview = current_mod_time_ph  # 更新为新的修改时间
+
+                current_mod_time_ph_front = self.get_file_modification_time(conf_path.camera_sta_test_front_photograph_path)
+                if current_mod_time_ph_front != self.last_modify_time_photo_front:
+                    self.last_modify_time_photo_front = current_mod_time_ph_front  # 更新为新的修改时间
+                    # self.add_logo_image_camera(conf_path.camera_sta_test_front_photograph_path)
+
+                current_mod_time_pre_front = self.get_file_modification_time(conf_path.camera_sta_test_front_preview_path)
+                if current_mod_time_pre_front != self.last_modify_time_preview_front:
+                    self.last_modify_time_preview_front = current_mod_time_pre_front  # 更新为新的修改时间
+                    # self.add_logo_image_camera(conf_path.camera_sta_test_rear_preview_path)
+
+        if self.lx_preview_photograph_window.is_front_or_rear_camera.isChecked():
+            if self.camera_default_flag == 2:
+                self.camera_default_flag = 0
+                self.add_logo_image_camera()
+        else:
+            if self.camera_front_and_rear_flag == 4:
+                self.camera_front_and_rear_flag = 0
+                self.add_logo_image_camera()
 
     def get_file_modification_time(self, file_path):
         """获取文件的最后修改时间"""
@@ -978,20 +991,62 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
         image_format.setHeight(self.image_height)
         self.cursor.insertImage(image_format)
 
-    def add_logo_image_camera(self, file_path):
+    def add_logo_image_camera(self):
         # self.cursor = QTextCursor(self.document)
         # 将图片路径转为 QUrl
         # 创建 QTextImageFormat 对象
-        # self.text_edit_final_camera.clear()
-        image_format = QTextImageFormat()
 
-        # if self.double_screen.isChecked():
-        image2_url = QUrl.fromLocalFile(file_path)
-        self.document_camera.addResource(QTextDocument.ImageResource, image2_url, image2_url)
-        image_format.setName(image2_url.toString())
-        image_format.setWidth(self.image_width_camera)
-        image_format.setHeight(self.image_height_camera)
-        self.cursor_camera.insertImage(image_format)
+        self.text_edit_final_camera.clear()
+        if self.lx_preview_photograph_window.is_front_or_rear_camera.isChecked():
+            image_default_preview_format = QTextImageFormat()
+            image_default_preview_url = QUrl.fromLocalFile(self.camera_sta_test_default_preview_path)
+            self.document_camera.addResource(QTextDocument.ImageResource, image_default_preview_url, image_default_preview_url)
+            image_default_preview_format.setName(image_default_preview_url.toString())
+            image_default_preview_format.setWidth(self.image_width_camera)
+            image_default_preview_format.setHeight(self.image_height_camera)
+            self.cursor_camera.insertImage(image_default_preview_format)
+
+            image_default_photograph_format = QTextImageFormat()
+            image_default_photograph_url = QUrl.fromLocalFile(self.camera_sta_test_default_photograph_path)
+            self.document_camera.addResource(QTextDocument.ImageResource, image_default_photograph_url, image_default_photograph_url)
+            image_default_photograph_format.setName(image_default_photograph_url.toString())
+            image_default_photograph_format.setWidth(self.image_width_camera)
+            image_default_photograph_format.setHeight(self.image_height_camera)
+            self.cursor_camera.insertImage(image_default_photograph_format)
+
+        if self.lx_preview_photograph_window.is_front_and_rear_camera.isChecked():
+            image_rear_preview_format = QTextImageFormat()
+            image_rear_preview_url = QUrl.fromLocalFile(self.camera_sta_test_rear_preview_path)
+            self.document_camera.addResource(QTextDocument.ImageResource, image_rear_preview_url, image_rear_preview_url)
+            image_rear_preview_format.setName(image_rear_preview_url.toString())
+            image_rear_preview_format.setWidth(self.image_width_camera)
+            image_rear_preview_format.setHeight(self.image_height_camera)
+            self.cursor_camera.insertImage(image_rear_preview_format)
+
+            image_rear_photograph_format = QTextImageFormat()
+            image_rear_photograph_url = QUrl.fromLocalFile(self.camera_sta_test_rear_photograph_path)
+            self.document_camera.addResource(QTextDocument.ImageResource, image_rear_photograph_url,
+                                             image_rear_photograph_url)
+            image_rear_photograph_format.setName(image_rear_photograph_url.toString())
+            image_rear_photograph_format.setWidth(self.image_width_camera)
+            image_rear_photograph_format.setHeight(self.image_height_camera)
+            self.cursor_camera.insertImage(image_rear_photograph_format)
+
+            image_front_preview_format = QTextImageFormat()
+            image_front_preview_url = QUrl.fromLocalFile(self.camera_sta_test_front_preview_path)
+            self.document_camera.addResource(QTextDocument.ImageResource, image_front_preview_url, image_front_preview_url)
+            image_front_preview_format.setName(image_front_preview_url.toString())
+            image_front_preview_format.setWidth(self.image_width_camera)
+            image_front_preview_format.setHeight(self.image_height_camera)
+            self.cursor_camera.insertImage(image_front_preview_format)
+
+            image_front_photograph_format = QTextImageFormat()
+            image_front_photograph_url = QUrl.fromLocalFile(self.camera_sta_test_front_photograph_path)
+            self.document_camera.addResource(QTextDocument.ImageResource, image_front_photograph_url, image_front_photograph_url)
+            image_front_photograph_format.setName(image_front_photograph_url.toString())
+            image_front_photograph_format.setWidth(self.image_width_camera)
+            image_front_photograph_format.setHeight(self.image_height_camera)
+            self.cursor_camera.insertImage(image_front_photograph_format)
 
     def download_adb_file(self):
         if not self.stop_process_button.isEnabled():
