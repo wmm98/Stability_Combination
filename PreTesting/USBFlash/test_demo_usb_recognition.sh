@@ -39,10 +39,16 @@ write_data_txt="usb_write_in.txt"
 # 清空 usb_result 文件
 echo "" > "$usb_result"
 
+echo "调试开始" > "$usb_path/$write_data_txt"
+md5_origin=$(md5sum $usb_path/$write_data_txt | awk '{print $1}')
+cat "$usb_path/$write_data_txt" >> "$usb_result"
+
+
 # 开始循环
 while true; do
     flag=$((flag + 1))
 	echo "*********$flag*************"
+	
     # 检测U盘插入
     while true; do
 		echo "*********$flag*************"
@@ -51,15 +57,34 @@ while true; do
         if [[ "$usb_content" == *"$usb_name"* ]]; then
             cur_time=$(date +'%Y-%m-%d %H:%M:%S.%3N')
             echo "$cur_time: U盘插入$flag次" >> "$usb_result"
-            
+			
+			# 判断MD5值是否正确
+			md5_new=$(md5sum $usb_path/$write_data_txt | awk '{print $1}')
+			echo "当前的MD5值为："
+			echo "$md5_new" >> "$usb_result"
+			echo "原来的MD5值Wie："
+			echo "$md5_origin" >> "$usb_result"
+			
+			# 检查md5值
+			if [ "$md5_origin" == "$md5_new" ]; then
+					echo "MD5正确." >> "$usb_result"
+				else
+					echo "MD5错误." >> "$usb_result"
+			fi
+			
             # 写入数据
-            echo "$flag" > "$usb_path/$write_data_txt"  # 写入数据
-
+            echo "$flag@@@" >> "$usb_path/$write_data_txt"  # 写入数据
+			
+			
             # 查询写入是否成功
             usb_text=$(cat "$usb_path/$write_data_txt" 2>/dev/null)
-            if [[ "$usb_text" == *"$flag"* ]]; then
+            if [[ "$usb_text" == *"$flag@@@"* ]]; then
                 cur_success_write_time=$(date +'%Y-%m-%d %H:%M:%S.%3N')
                 echo "$cur_success_write_time: 写入成功$flag次" >> "$usb_result"
+				cat "$usb_path/$write_data_txt" >> "$usb_result"
+				# 重新赋值MD5值
+				md5_origin=$(md5sum $usb_path/$write_data_txt | awk '{print $1}')
+				
             else
                 cur_fail_write_time=$(date +'%Y-%m-%d %H:%M:%S.%3N')
                 echo "$cur_fail_write_time: 写入失败$flag次" >> "$usb_result"
@@ -69,8 +94,11 @@ while true; do
 		
         sleep 1  # 等待 0.1 秒
     done
-
-    # 检测U盘断开
+	
+	
+	
+	
+	# 检测U盘断开
     while true; do
         #if [[ -z "$(ls /mnt/media_rw 2>/dev/null)" ]]; then
 		usb_content=$(ls $usb_dir 2>/dev/null)  # 对ls命令的结果进行捕获
@@ -81,6 +109,9 @@ while true; do
         fi
         sleep 1  # 等待 0.1 秒
     done
+	
+	
+	sleep 1
 	
 	echo "***********压测$flag次******" >> "$usb_result"
 done
