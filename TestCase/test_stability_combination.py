@@ -378,7 +378,7 @@ class TestStabilityCombination:
                 log.error("串口已经被占用， 请检查！！！")
                 log.error(str(e))
                 raise
-            time.sleep(60)
+            time.sleep(30)
             while flag < test_times:
                 flag += 1
                 # 上下电
@@ -388,7 +388,7 @@ class TestStabilityCombination:
                 t_ser.close_relay(com_line)
                 log.info("模拟U盘插入")
                 log.info("********U盘拔插%d次******" % flag)
-                time.sleep(90)
+                time.sleep(60)
         else:
             log.info(".sh脚本没跑起来，请检查！！！")
 

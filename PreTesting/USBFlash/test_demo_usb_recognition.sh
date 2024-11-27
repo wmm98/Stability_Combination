@@ -60,9 +60,6 @@ while true; do
 			
 			# 判断MD5值是否正确
 			md5_new=$(md5sum $usb_path/$write_data_txt | awk '{print $1}')
-			echo "当前的MD5值为："
-			echo "$md5_new" >> "$usb_result"
-			echo "原来的MD5值Wie："
 			echo "$md5_origin" >> "$usb_result"
 			
 			# 检查md5值
@@ -76,15 +73,15 @@ while true; do
             echo "$flag@@@" >> "$usb_path/$write_data_txt"  # 写入数据
 			
 			
+			
             # 查询写入是否成功
             usb_text=$(cat "$usb_path/$write_data_txt" 2>/dev/null)
             if [[ "$usb_text" == *"$flag@@@"* ]]; then
                 cur_success_write_time=$(date +'%Y-%m-%d %H:%M:%S.%3N')
                 echo "$cur_success_write_time: 写入成功$flag次" >> "$usb_result"
-				cat "$usb_path/$write_data_txt" >> "$usb_result"
 				# 重新赋值MD5值
 				md5_origin=$(md5sum $usb_path/$write_data_txt | awk '{print $1}')
-				
+				# cat "$usb_path/$write_data_txt" >> "$usb_result"
             else
                 cur_fail_write_time=$(date +'%Y-%m-%d %H:%M:%S.%3N')
                 echo "$cur_fail_write_time: 写入失败$flag次" >> "$usb_result"
