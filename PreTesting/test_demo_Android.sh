@@ -65,13 +65,15 @@ echo "$emmc_duration"
 # 获取出来运行内存值
 new_free_value=0
 # 检查结果是否小于 10
-if [ "$mem_free_value" -lt 1800 ]; then
-    new_free_value=`expr $mem_free_value - 50`
-elif [ "$mem_free_value" -eq 1800 ]; then
-   new_free_value=1750
-else
-	new_free_value="$mem_free_value"
-fi
+#if [ "$mem_free_value" -lt 1850 ]; then
+#    new_free_value=`expr $mem_free_value - 100`
+#elif [ "$mem_free_value" -eq 1850 ]; then
+#   new_free_value=1750
+#else
+#	new_free_value="$mem_free_value"
+#fi
+
+new_free_value=`expr $mem_free_value - 100`
 
 # memtester 测试
 # value1=`expr value * 3600´
@@ -87,8 +89,8 @@ if [ "$is_stress_app_test" = "yes" ]; then
 		echo $(date +"%Y-%m-%d %H:%M:%S") >> /data/stress_test_log/stresstestlog/strssapptest.log 
 		/data/stressapptest -s "$stressapptest_duration_sec" -M "$new_free_value" >> /data/stress_test_log/stresstestlog/strssapptest.log 
 	else
-		remainder=`expr $mem_free_value % 1800`
-		quotient=`expr $mem_free_value / 1800`
+		remainder=`expr $new_free_value % 1750`
+		quotient=`expr $new_free_value / 1750`
 		#循环 多次次发送指令
 		count=1
 		while [ $count -le $quotient ]
@@ -122,8 +124,8 @@ if [ "$is_stress_app_switch" = "yes" ]; then
 			   sleep 5
 			done
 	else
-		remainder=`expr $mem_free_value % 1800`
-		quotient=`expr $mem_free_value / 1800`
+		remainder=`expr $new_free_value % 1750`
+		quotient=`expr $new_free_value / 1750`
 		echo "$quotient 条进程"
 		#循环 多次次发送指令
 		t_times=1

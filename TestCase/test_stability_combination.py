@@ -388,7 +388,7 @@ class TestStabilityCombination:
                 t_ser.close_relay(com_line)
                 log.info("模拟U盘插入")
                 log.info("********U盘拔插%d次******" % flag)
-                time.sleep(60)
+                time.sleep(180)
         else:
             log.info(".sh脚本没跑起来，请检查！！！")
 
