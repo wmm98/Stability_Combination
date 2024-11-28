@@ -59,7 +59,7 @@ class Storage_MainWindow(config_path.UIConfigPath):
         self.verticalLayout_left.addWidget(self.root_steps_edit)
 
         self.verticalLayout_left.addWidget(QtWidgets.QLabel())
-        self.usb_label = QtWidgets.QLabel("请输入U盘/TF卡的路径，例如 mnt/media/E168、/storage/9b18-9E")
+        self.usb_label = QtWidgets.QLabel("请输入U盘/TF卡的路径，例如 mnt/media/E168，多个U口/TF卡压测请以英文分号分隔开，例如:mnt/media/E168;mnt/media/E34H")
         self.verticalLayout_left.addWidget(self.usb_label)
         layout_usb_flash_info = QHBoxLayout()
         self.check_usb_flash_button = QtWidgets.QPushButton("查询U盘/TF卡挂载的路径")
@@ -67,6 +67,15 @@ class Storage_MainWindow(config_path.UIConfigPath):
         layout_usb_flash_info.addWidget(self.check_usb_flash_button)
         layout_usb_flash_info.addWidget(self.usb_flash_path)
         self.verticalLayout_left.addLayout(layout_usb_flash_info)
+
+        self.usb_partition_label = QtWidgets.QLabel("请输入U盘/TF卡的分区节点，例如 /dev/block/vold/public:8,17，多个U口/TF卡压测请以分号分隔开，例如:/dev/block/vold/public:8,17;/dev/block/vold/public:8,1")
+        self.verticalLayout_left.addWidget(self.usb_partition_label)
+        layout_usb_partition_node_info = QHBoxLayout()
+        self.partition_node_button = QtWidgets.QLabel("                        ")
+        self.partition_node_edit = QtWidgets.QLineEdit()
+        layout_usb_partition_node_info.addWidget(self.partition_node_button)
+        layout_usb_partition_node_info.addWidget(self.partition_node_edit)
+        self.verticalLayout_left.addLayout(layout_usb_partition_node_info)
 
         self.verticalLayout_left.addWidget(QtWidgets.QLabel())
 
@@ -204,6 +213,10 @@ class StorageTestDisplay(QtWidgets.QMainWindow, Storage_MainWindow):
             self.get_message_box("请填入U盘/TF卡挂载的路径！！！")
             return
 
+        if len(self.partition_node_edit.text()) == 0:
+            self.get_message_box("请填入U盘/TF卡对应的设备分区节点！！！")
+            return
+
         if len(self.test_times.currentText()) == 0:
             self.get_message_box("请填入用力压测次数！！！")
             return
@@ -218,6 +231,7 @@ class StorageTestDisplay(QtWidgets.QMainWindow, Storage_MainWindow):
         config.add_config_section(section)
 
         config.add_config_option(section, config.ui_option_storage_path, self.usb_flash_path.text().strip())
+        config.add_config_option(section, config.ui_option_partition_path, self.partition_node_edit.text().strip())
 
         # 保存用例压测次数设置
         config.add_config_option(section, config.option_storage_test_times, self.test_times.currentText())

@@ -92,6 +92,7 @@ class ConfigP(UIConfigPath):
     # U盘/TF卡读取速率
     section_storage_stability = "Storage_Stability"
     ui_option_storage_path = "storage_flash_path"
+    ui_option_partition_path = "storage_flash_partition"
     option_storage_test_times = "storage_stability_test_times"
 
     # 恢复出厂设置压测用例配置
