@@ -235,7 +235,6 @@ class StorageTestDisplay(QtWidgets.QMainWindow, Storage_MainWindow):
 
         # 保存用例压测次数设置
         config.add_config_option(section, config.option_storage_test_times, self.test_times.currentText())
-        # 保存测试点配置信息
 
     def select_devices_name(self):
         devices = self.bg_config.get_option_value(self.bg_config.section_background_to_ui,
