@@ -93,6 +93,7 @@ class ConfigP(UIConfigPath):
     section_storage_stability = "Storage_Stability"
     ui_option_storage_path = "storage_flash_path"
     ui_option_partition_path = "storage_flash_partition"
+    ui_option_usb_ports_num = "usb_num"
     option_storage_test_times = "storage_stability_test_times"
 
     # 恢复出厂设置压测用例配置

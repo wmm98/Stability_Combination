@@ -16,72 +16,89 @@ get_cfg_value()
 }
 
 
-# 设置源文件和目标路径
-#source_file="/sdcard/usb_read_logcat.txt"  # 替换为您的源文件路径
-log_file="/sdcard/storage_read_write_speed_result_log.txt"  # 设置日志文件路径
-
-#!/bin/bash
-
 # 挂载点路径，假设 U 盘挂载在 /mnt/usb_drive
 #usb_mount_point=/mnt/media_rw/39FA-17E8
-usb_mount_point=`get_cfg_value storage_flash_path`  # 替换为您的 U 盘挂载点
+usb_mount_points=`get_cfg_value storage_flash_path`  # 替换为您的 U 盘挂载点
+usb_partitions=`get_cfg_value storage_flash_partition`
+usb_num=`get_cfg_value usb_num`
 times=`get_cfg_value storage_stability_test_times`
 
 # 日志文件路径
-LOG_FILE="/sdcard/storage_read_write_speed_result_log.txt"
+log_base_path="/sdcard/usb_speed"
 
-# 创建一个临时测试文件名
-TEST_FILE="/sdcard/speed_debug_file.txt"
-
-# 在挂载点上创建一个文件夹
-usb_new_directory="$usb_mount_point"
-
-if [ ! -e "$usb_new_directory" ]; then
-	mkdir $usb_new_directory
+if [ ! -e "$log_base_path" ]; then
+	mkdir $log_base_path
 fi
 
 echo "debug" > "/data/debug.txt"
 
-# 清空日志文件
-> $LOG_FILE
 
-		
-md5_origin=$(md5sum $TEST_FILE | awk '{print $1}')
+# 获取当前日期和时间， 每次拉取可以知道文件运行时间
+current_date=$(date +"%Y-%m-%d %H:%M:%S")
 
+# 将日期和时间写入日志文件
+echo "$current_date" >> "$log_file"
 
-echo "初始md5值为" >> $LOG_FILE
-echo $md5_origin >> $LOG_FILE
+# 清空log文件
+i=1
+while [ $i -le $usb_num ]; do
+	log_point=$(echo "$usb_mount_points" | awk -v idx="$i" -F ";" '{print $idx}')
+	log_base_name=$(echo "$log_point" | awk -F "/" '{print $NF}')
+	> $log_base_path/read_write_read_$log_base_name.log
+	echo "$current_date" >> $log_base_path/read_write_read_$log_base_name.log
+	echo ""  >> $log_base_path/read_write_read_$log_base_name.log
+	echo ""  >> $log_base_path/read_write_read_$log_base_name.log
+	i=$((i + 1))
+	sleep 1
+done
 
-#拷贝后的路径
-copy_file_path="$usb_new_directory/testdata"
-
-
+# 获取最初的testdata MD5值
+dd if=/dev/zero of=/sdcard/testdata bs=1024k count=1000
+md5_origin=$(md5sum /sdcard/testdata | awk '{print $1}')
 
 
 count=1
 while [ $count -le $times ]
 	do
-
-		echo $count >> $LOG_FILE
-
-		echo "读速度："
-		dd if=/dev/block/vold/public:8,1 of=/dev/null bs=1024k count=1000
-		echo "写速度："
-		dd if=/dev/zero of=/mnt/media_rw/39FA-17E8/testdata bs=1024k count=1000
+		i=1
+		# 循环写下读的速度
+		while [ $i -le $usb_num ]; do
 		
-		md5_new=$(md5sum $copy_file_path | awk '{print $1}')
-		
-		echo "当前的md5值：" >> $LOG_FILE
-		echo $md5_new >> $LOG_FILE
+		  part=$(echo "$usb_partitions" | awk -v idx="$i" -F ";" '{print $idx}')
+		  point=$(echo "$usb_mount_points" | awk -v idx="$i" -F ";" '{print $idx}')
+		  log_base_name=$(echo "$point" | awk -F "/" '{print $NF}')
+		  log_name=$log_base_path/read_write_read_$log_base_name.log
+		  echo $log_name
+		  echo "*******************第$count次*******************" >> $log_name
+		  
+		  echo "读速度：" >> $log_name
+		  { time dd if=$part of=/dev/null bs=1024k count=1000; } 2>> "$log_name"
+		  sleep 1
+		  echo "写速度：" >> $log_name
+		  { time dd if=/dev/zero of=$point/testdata bs=1024k count=1000; } 2>> "$log_name"
+		  
+		  # 判断MD5值
+		  md5_new=$(md5sum $point/testdata | awk '{print $1}')
+		  echo "当前MD5值为： $md5_new" >> $log_name
 
-		if [ "$md5_origin" == "$md5_new" ]; then
-			echo "MD5正确." >> $LOG_FILE
-		else
-			echo "MD5错误." >> $LOG_FILE
-		fi
-		
-		# 删除测试文件
-		rm $copy_file_path
-		sleep 3
-	    ((count++))
+		  if [ "$md5_origin" == "$md5_new" ]; then
+			echo "MD5正确." >> $log_name
+		  else
+			echo "MD5错误." >> $log_name
+		  fi
+		  
+		  echo "*****************************************" >> $log_name
+		  
+		  rm $point/testdata
+		  i=$((i + 1))
+		  sleep 1
+		  
+		done
+	    ((count++))		
+		sleep 3	
 	done
+	
+# 删除辅助数据
+rm /sdcard/testdata
+rm $INI_FILE
+rm /data/debug.txt

@@ -221,6 +221,10 @@ class StorageTestDisplay(QtWidgets.QMainWindow, Storage_MainWindow):
             self.get_message_box("请填入用力压测次数！！！")
             return
 
+        if len(self.usb_flash_path.text().split(";")) != len(self.partition_node_edit.text().split(";")):
+            self.get_message_box("挂载路径和分区节点数量对不上，请检查！！！")
+            return
+
         self.save_config()
         self.submit_flag = True
         self.get_message_box("配置保存成功")
@@ -230,8 +234,12 @@ class StorageTestDisplay(QtWidgets.QMainWindow, Storage_MainWindow):
         section = config.section_storage_stability
         config.add_config_section(section)
 
+        # 保存多个U盘的挂载的路径和对应设备分区
         config.add_config_option(section, config.ui_option_storage_path, self.usb_flash_path.text().strip())
         config.add_config_option(section, config.ui_option_partition_path, self.partition_node_edit.text().strip())
+        # 保存U口的个数
+        num = str(len(self.usb_flash_path.text().split(";")))
+        config.add_config_option(section, config.ui_option_usb_ports_num, num)
 
         # 保存用例压测次数设置
         config.add_config_option(section, config.option_storage_test_times, self.test_times.currentText())

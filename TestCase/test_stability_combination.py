@@ -400,8 +400,9 @@ class TestStabilityCombination:
         log.info("****************U盘/TF卡读取大数据压测用例开始***********************")
 
         # 后台启动捕捉log
-        log_path = os.path.join("/sdcard/storage_read_write_speech_logcat.txt")  # log名称
+        log_path = os.path.join("/sdcard/usb_speed/storage_read_write_speech_logcat.txt")  # log名称
         self.device.rm_file(log_path)  # 清除已存在的
+        self.device.mkdir_directory("/sdcard/usb_speed")
         self.device.touch_file(log_path)
         self.device.logcat_thread(log_path)
 
