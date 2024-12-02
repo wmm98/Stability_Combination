@@ -7,12 +7,50 @@ import cv2
 from sentence_transformers import util
 from PIL import Image
 
+import torch
+import torch.nn.functional as F
+from PIL import Image
+from torchvision import transforms
+
 
 class CNNsAnalysis:
+    def preprocess_image(self, image_path, size=224):
+        preprocess = transforms.Compose([
+            transforms.Resize((size, size)),
+            transforms.ToTensor(),
+            transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
+        ])
+
+        image = Image.open(image_path).convert("RGB")
+        return preprocess(image).unsqueeze(0)
+
+    def generateScore(self, image_path1, image_path2):
+
+        image1 = self.preprocess_image(image_path1)
+        image2 = self.preprocess_image(image_path2)
+
+        image1_flat = image1.view(image1.shape[0], -1)  # (1, C*H*W)
+        image2_flat = image2.view(image2.shape[0], -1)  # (1, C*H*W)
+
+        image1_norm = F.normalize(image1_flat, p=2, dim=1)
+        image2_norm = F.normalize(image2_flat, p=2, dim=1)
+
+        similarity = torch.mm(image1_norm, image2_norm.t())
+        print(similarity)
+        # print(type(similarity))
+        return float(similarity)
+
+
+class CNNsAnalysis_old:
     def __init__(self):
         self.device = "cuda" if torch.cuda.is_available() else "cpu"
-        self.model, _, self.preprocess = open_clip.create_model_and_transforms('ViT-B-16-plus-240',
-                                                                               pretrained="laion400m_e32")
+        origin_model = 'ViT-B-16-plus-240'
+        origin_pretrained_name = "laion400m_e32"
+        # Available pretrained tags (['openai', 'laion400m_e31', 'laion400m_e32', 'laion2b_s32b_b82k', 'datacomp_xl_s13b_b90k', 'commonpool_xl_clip_s13b_b90k', 'commonpool_xl_laion_s13b_b90k', 'commonpool_xl_s13b_b90k', 'metaclip_400m', 'metaclip_fullcc', 'dfn2b'].
+        model = 'ViT-L-14'
+        pretrained_name = 'datacomp_xl_s13b_b90k'
+        self.model, _, self.preprocess = open_clip.create_model_and_transforms(origin_model,
+                                                                               pretrained=origin_pretrained_name)
         self.model.to(self.device)
 
     def imageEncoder(self, img):
@@ -35,7 +73,7 @@ class Analysis:
     def __init__(self):
         pass
 
-    def resize_image(sefl, image, size):
+    def resize_image(self, image, size):
         """调整图像大小以匹配目标尺寸"""
         return cv2.resize(image, size, interpolation=cv2.INTER_AREA)
 
@@ -114,4 +152,6 @@ class Analysis:
 
 if __name__ == '__main__':
     cnn = CNNsAnalysis()
-    print(cnn.generateScore("test.png", "test_new.png"))
+    print(cnn.generateScore("test.png", "test1.png"))
+
+    # print(float("-0.99"))

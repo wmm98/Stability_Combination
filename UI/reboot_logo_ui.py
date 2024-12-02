@@ -12,7 +12,6 @@ import shutil
 from PyQt5.QtGui import QPixmap, QTextImageFormat, QTextDocument, QTextCursor
 import serial.tools.list_ports
 from PIL import Image
-import rembg
 from PyQt5.QtCore import QUrl, QFileInfo
 import configparser
 import time
@@ -484,11 +483,6 @@ class LogoDisplay(QtWidgets.QMainWindow, Reboot_Logo_MainWindow):
     def key_photo(self):
         original_path = self.logo_path_edit.text().strip()
         self.save_key_photo(original_path, self.logo_key_path)
-
-    def save_key_photo(self, orig_path, new_path):
-        img = Image.open(orig_path)
-        img_bg_remove = rembg.remove(img)
-        img_bg_remove.save(new_path)
 
     def show_failed_image(self):
         pixmap = QPixmap(self.failed_image_key_path)

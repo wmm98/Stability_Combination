@@ -4,7 +4,7 @@ import time
 import pytest
 from Common.log import MyLog
 from Main.device import Device
-from Common import image_analysis, camera_operate, keying, m_serial, adb_timer
+from Common import image_analysis, camera_operate, m_serial, adb_timer
 from Common.device_check import DeviceCheck
 import configparser
 from Common.config import Config
@@ -19,7 +19,6 @@ public_interface = publicInterface()
 analysis = image_analysis.Analysis()
 cnns = image_analysis.CNNsAnalysis()
 camera = camera_operate.Camera()
-key_ing = keying.KeyPhoto()
 t_ser = m_serial.SerialD()
 bg_conf_file = configparser.ConfigParser()
 public_interface.read_ini_file(bg_conf_file, Config.bg_config_ini_path)

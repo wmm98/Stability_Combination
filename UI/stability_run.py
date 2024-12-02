@@ -23,7 +23,6 @@ import shutil
 from PyQt5.QtGui import QPixmap
 import serial.tools.list_ports
 from PIL import Image
-import rembg
 from PyQt5.QtCore import QUrl, QFileInfo
 from PyQt5.QtGui import QTextDocument, QTextCursor, QTextImageFormat
 import configparser

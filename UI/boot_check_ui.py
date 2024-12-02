@@ -12,7 +12,6 @@ import shutil
 from PyQt5.QtGui import QPixmap,  QTextCursor, QTextImageFormat, QTextDocument
 import serial.tools.list_ports
 from PIL import Image
-import rembg
 from PyQt5.QtCore import QUrl, QFileInfo
 import configparser
 import time
@@ -720,15 +719,6 @@ class BootCheckDisplay(QtWidgets.QMainWindow, Boot_Check_MainWindow):
         if not pixmap.isNull():
             scaled_pixmap = pixmap.scaled(439, 230)
             self.exp_image_label.setPixmap(scaled_pixmap)
-
-    def key_photo(self):
-        original_path = self.logo_path_edit.text().strip()
-        self.save_key_photo(original_path, self.logo_key_path)
-
-    def save_key_photo(self, orig_path, new_path):
-        img = Image.open(orig_path)
-        img_bg_remove = rembg.remove(img)
-        img_bg_remove.save(new_path)
 
     def show_failed_image(self):
         pixmap = QPixmap(self.failed_image_key_path)

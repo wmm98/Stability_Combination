@@ -5,7 +5,7 @@ import pytest
 from Common.log import MyLog
 from Main.device import Device
 from Main.public import publicInterface
-from Common import image_analysis, camera_operate, keying, m_serial, adb_timer
+from Common import image_analysis, camera_operate, m_serial, adb_timer
 from Common.device_check import DeviceCheck
 import configparser
 from Common.config import Config
@@ -15,7 +15,6 @@ log = MyLog()
 analysis = image_analysis.Analysis()
 cnns = image_analysis.CNNsAnalysis()
 camera = camera_operate.Camera()
-key_ing = keying.KeyPhoto()
 t_ser = m_serial.SerialD()
 public_interface = publicInterface()
 
@@ -184,7 +183,7 @@ class TestBootLogo:
                     # 抠图
                     score2 = cnns.generateScore(Config.logo_expect_screen1_path, Config.logo_test_screen1_path)
                     log.info("当前相似度分数为：%s" % str(score2))
-                    if score2 < 90:
+                    if score2 < 0.9:
                         log.error("当前认为复现了卡logo情景，请检查！！！")
                         if device_check.device_is_online():
                             log.info("设备在线")
@@ -207,7 +206,7 @@ class TestBootLogo:
 
                 score = cnns.generateScore(Config.logo_expect_screen0_path, Config.logo_test_screen0_path)
                 log.info("当前相似度分数为：%s" % str(score))
-                if score < 90:
+                if score < 0.9:
                     log.error("当前认为复现了卡logo情景，请检查！！！")
                     if device_check.device_is_online():
                         log.info("设备在线")
