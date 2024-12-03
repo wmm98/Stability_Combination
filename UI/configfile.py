@@ -12,6 +12,8 @@ class ConfigP(UIConfigPath):
     bg_option_COM_ports = "COM_ports"
     # 是否进行失败概率性统计测试
     is_probability_test = "is_probability_test"
+    # 每一轮间隔时长
+    test_interval = "rounds_interval"
 
     # EMMC, DDR
     section_DDR_EMMC = "DDR_EMMC"
@@ -105,6 +107,7 @@ class ConfigP(UIConfigPath):
     option_bt_connect_test_times = "bt_connect_test_times"
     option_bt_connect_test_com = "bt_connect_com"
     option_bt_com_config = "com_config"
+    slave_bt_reconnect_interval = "slave_bt_reconnect_interval"
 
     # 休眠唤醒
     section_sleep_wake = "Sleep-Awake"

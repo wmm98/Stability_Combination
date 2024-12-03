@@ -404,7 +404,7 @@ class TestStabilityCombination:
         self.device.rm_file(log_path)  # 清除已存在的
         self.device.mkdir_directory("/sdcard/usb_speed")
         self.device.touch_file(log_path)
-        self.device.logcat_thread(log_path)
+        # self.device.logcat_thread(log_path)
 
         # 删除相关log文件夹
         self.device.send_adb_shell_command("rm -rf /data/debug.txt")

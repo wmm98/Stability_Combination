@@ -99,8 +99,15 @@ class Sleep_Awake_MainWindow(config_path.UIConfigPath):
         self.sleep_lable = QLabel("休眠时长(分钟)：")
         self.sleep_duration = QComboBox()
         self.sleep_duration.setEditable(True)
+        # 每一轮之间间隔的时长
+        self.interval_lable = QLabel("每一轮的间隔时间(秒)：")
+        self.interval = QComboBox()
+        self.interval.setEditable(True)
+
         layout_sleep.addWidget(self.sleep_lable)
         layout_sleep.addWidget(self.sleep_duration)
+        layout_sleep.addWidget(self.interval_lable)
+        layout_sleep.addWidget(self.interval)
         layout_sleep.addStretch(1)
         self.verticalLayout_left.addLayout(layout_sleep)
 
@@ -163,6 +170,7 @@ class SleepAwakeDisplay(QtWidgets.QMainWindow, Sleep_Awake_MainWindow):
         self.list_COM()
         self.get_COM_config()
         self.list_sleep_duration()
+        self.list_interval_duration()
 
     def get_message_box(self, text):
         QMessageBox.warning(self, "错误提示", text)
@@ -190,8 +198,12 @@ class SleepAwakeDisplay(QtWidgets.QMainWindow, Sleep_Awake_MainWindow):
             self.get_message_box("休眠时长为空，请写入！！")
             return
 
+        if len(self.interval.currentText()) == 0:
+            self.get_message_box("每一轮的间隔时间为空，请检查！！！")
+            return
+
         if len(self.test_times.currentText()) == 0:
-            self.get_message_box("请填入用例次数配置！！！")
+            self.get_message_box("请填入用例压测次数配置！！！")
             return
 
         # 检查完保存配置
@@ -205,6 +217,10 @@ class SleepAwakeDisplay(QtWidgets.QMainWindow, Sleep_Awake_MainWindow):
     def list_sleep_duration(self):
         times = [str(j * 5) for j in range(1, 200)]
         self.sleep_duration.addItems(times)
+
+    def list_interval_duration(self):
+        times = [str(j * 60) for j in range(1, 200)]
+        self.interval.addItems(times)
 
     def list_test_times_settings(self):
         times = [str(j * 50) for j in range(1, 500)]
@@ -260,6 +276,7 @@ class SleepAwakeDisplay(QtWidgets.QMainWindow, Sleep_Awake_MainWindow):
         config.add_config_option(section, config.option_sleep_com_port, self.test_COM.currentText())
 
         config.add_config_option(section, config.option_sleep_duration, self.sleep_duration.currentText())
+        config.add_config_option(section, config.test_interval, self.interval.currentText())
 
 
 class ScrollablePlainTextEdit(QTextEdit):

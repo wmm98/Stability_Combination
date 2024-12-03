@@ -30,11 +30,17 @@ class Bt_Connect_MainWindow(config_path.UIConfigPath):
 
         self.com_line = QLabel("继电器:")
         self.com_config = QComboBox()
+
+        self.slave_bt_reconnect_label = QLabel("蓝牙设备(从)断开到连接间隔(秒):")
+        self.slave_bt_reconnect_interval = QComboBox()
+
         device_info.addWidget(self.config_label)
         device_info.addWidget(self.COM_tips)
         device_info.addWidget(self.test_COM)
         device_info.addWidget(self.com_line)
         device_info.addWidget(self.com_config)
+        device_info.addWidget(self.slave_bt_reconnect_label)
+        device_info.addWidget(self.slave_bt_reconnect_interval)
         device_info.addStretch(1)
         self.verticalLayout_left.addLayout(device_info)
 
@@ -45,7 +51,12 @@ class Bt_Connect_MainWindow(config_path.UIConfigPath):
         self.test_times_label = QLabel("用例压测次数设置")
         self.test_times = QComboBox()
         self.test_times.setEditable(True)
+        self.interval_lable = QLabel("每一轮的间隔时间(秒)：")
+        self.interval = QComboBox()
+        self.interval.setEditable(True)
 
+        layout_test_times_info.addWidget(self.interval_lable)
+        layout_test_times_info.addWidget(self.interval)
         layout_test_times_info.addWidget(self.test_times_label)
         layout_test_times_info.addWidget(self.test_times)
 
@@ -97,6 +108,11 @@ class BtConnectDisplay(QtWidgets.QMainWindow, Bt_Connect_MainWindow):
         self.list_case_test_cases()
         self.list_COM()
         self.get_COM_config()
+        self.list_interval_duration()
+
+    def list_interval_duration(self):
+        times = [str(j * 60) for j in range(1, 200)]
+        self.interval.addItems(times)
 
     def get_COM_config(self):
         self.com_config.addItems(["1路", "2路", "3路", "4路"])
@@ -119,6 +135,10 @@ class BtConnectDisplay(QtWidgets.QMainWindow, Bt_Connect_MainWindow):
             self.get_message_box("没检测到可用的COM口，请检查！！！")
             return
 
+        if len(self.interval.currentText()) == 0:
+            self.get_message_box("每一轮的时间间隔为空，请输入！！！")
+            return
+
         if len(self.test_times.currentText()) == 0:
             self.get_message_box("请设置压测次数!!!")
             return
@@ -136,6 +156,7 @@ class BtConnectDisplay(QtWidgets.QMainWindow, Bt_Connect_MainWindow):
         # 保存用例压测次数设置
         config.add_config_option(section, config.option_bt_connect_test_times, self.test_times.currentText())
         config.add_config_option(section, config.option_bt_connect_test_com, self.test_COM.currentText())
+        config.add_config_option(section, config.test_interval, self.interval.currentText())
 
         if self.com_config.currentText() == "1路":
             config.add_config_option(section, config.option_bt_com_config, "relay_1")

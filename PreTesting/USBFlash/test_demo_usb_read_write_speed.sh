@@ -37,7 +37,7 @@ echo "debug" > "/data/debug.txt"
 current_date=$(date +"%Y-%m-%d %H:%M:%S")
 
 # 将日期和时间写入日志文件
-echo "$current_date" >> "$log_file"
+#echo "$current_date" >> "$log_file"
 
 # 清空log文件
 i=1
@@ -53,7 +53,7 @@ while [ $i -le $usb_num ]; do
 done
 
 # 获取最初的testdata MD5值
-dd if=/dev/zero of=/sdcard/testdata bs=1024k count=1000
+dd if=/dev/zero of=/sdcard/testdata bs=1024k count=500
 md5_origin=$(md5sum /sdcard/testdata | awk '{print $1}')
 
 
@@ -72,10 +72,10 @@ while [ $count -le $times ]
 		  echo "*******************第$count次*******************" >> $log_name
 		  
 		  echo "读速度：" >> $log_name
-		  { time dd if=$part of=/dev/null bs=1024k count=1000; } 2>> "$log_name"
+		  { time dd if=$part of=/dev/null bs=1024k count=500; } 2>> "$log_name"
 		  sleep 1
 		  echo "写速度：" >> $log_name
-		  { time dd if=/dev/zero of=$point/testdata bs=1024k count=1000; } 2>> "$log_name"
+		  { time dd if=/dev/zero of=$point/testdata bs=1024k count=500; } 2>> "$log_name"
 		  
 		  # 判断MD5值
 		  md5_new=$(md5sum $point/testdata | awk '{print $1}')
@@ -91,11 +91,12 @@ while [ $count -le $times ]
 		  
 		  rm $point/testdata
 		  i=$((i + 1))
-		  sleep 1
+		  echo 3 > /proc/sys/vm/drop_caches
+		  sleep 5
 		  
 		done
 	    ((count++))		
-		sleep 3	
+		sleep 10	
 	done
 	
 # 删除辅助数据
