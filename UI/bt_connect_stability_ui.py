@@ -33,6 +33,7 @@ class Bt_Connect_MainWindow(config_path.UIConfigPath):
 
         self.slave_bt_reconnect_label = QLabel("蓝牙设备(从)断开到连接间隔(秒):")
         self.slave_bt_reconnect_interval = QComboBox()
+        self.slave_bt_reconnect_interval.setEditable(True)
 
         device_info.addWidget(self.config_label)
         device_info.addWidget(self.COM_tips)
@@ -109,10 +110,15 @@ class BtConnectDisplay(QtWidgets.QMainWindow, Bt_Connect_MainWindow):
         self.list_COM()
         self.get_COM_config()
         self.list_interval_duration()
+        self.list_slave_bt_interval_duration()
 
     def list_interval_duration(self):
         times = [str(j * 60) for j in range(1, 200)]
         self.interval.addItems(times)
+
+    def list_slave_bt_interval_duration(self):
+        times = [str(j * 5) for j in range(1, 200)]
+        self.slave_bt_reconnect_interval.addItems(times)
 
     def get_COM_config(self):
         self.com_config.addItems(["1路", "2路", "3路", "4路"])
@@ -139,6 +145,10 @@ class BtConnectDisplay(QtWidgets.QMainWindow, Bt_Connect_MainWindow):
             self.get_message_box("每一轮的时间间隔为空，请输入！！！")
             return
 
+        if len(self.slave_bt_reconnect_interval.currentText()) == 0:
+            self.get_message_box("蓝牙设备断开连接之间的间隔为空，请检查！！！")
+            return
+
         if len(self.test_times.currentText()) == 0:
             self.get_message_box("请设置压测次数!!!")
             return
@@ -157,6 +167,7 @@ class BtConnectDisplay(QtWidgets.QMainWindow, Bt_Connect_MainWindow):
         config.add_config_option(section, config.option_bt_connect_test_times, self.test_times.currentText())
         config.add_config_option(section, config.option_bt_connect_test_com, self.test_COM.currentText())
         config.add_config_option(section, config.test_interval, self.interval.currentText())
+        config.add_config_option(section, config.slave_bt_reconnect_interval, self.slave_bt_reconnect_interval.currentText())
 
         if self.com_config.currentText() == "1路":
             config.add_config_option(section, config.option_bt_com_config, "relay_1")
