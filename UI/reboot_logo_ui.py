@@ -120,11 +120,18 @@ class Reboot_Logo_MainWindow(config_path.UIConfigPath):
         self.button_boot_lable = QtWidgets.QLabel("按键开机时长(sec):")
         self.button_boot_time = QComboBox()
         self.button_boot_time.setDisabled(True)
+
+        self.relay_reboot_label = QLabel("关机、开机之间的间隔(秒):")
+        self.relay_reboot_duration = QComboBox()
+        self.relay_reboot_duration.setEditable(True)
+
         other_layout_device_info.addWidget(self.other_device_info)
         other_layout_device_info.addWidget(self.only_boot)
         other_layout_device_info.addWidget(self.double_screen)
         other_layout_device_info.addWidget(self.button_boot_lable)
         other_layout_device_info.addWidget(self.button_boot_time)
+        other_layout_device_info.addWidget(self.relay_reboot_label)
+        other_layout_device_info.addWidget(self.relay_reboot_duration)
         other_layout_device_info.addStretch(1)
         self.verticalLayout_left.addLayout(other_layout_device_info)
         self.button_boot_tips = QtWidgets.QLabel("提示：“只测开关机”不进行图片拍照对比，只查看adb是否起来")
@@ -159,8 +166,21 @@ class Reboot_Logo_MainWindow(config_path.UIConfigPath):
         self.test_times_label = QtWidgets.QLabel("用例压测次数设置")
         self.test_times = QComboBox()
         self.test_times.setEditable(True)
+
+        # 是否测概率测试
+        probability_test_label = QLabel("是否进行失败概率性统计")
+        self.is_probability_test = QCheckBox()
+
+        self.interval_lable = QLabel("每一轮的间隔时间(秒)：")
+        self.interval = QComboBox()
+        self.interval.setEditable(True)
+
         layout_test_times_info.addWidget(self.test_times_label)
         layout_test_times_info.addWidget(self.test_times)
+        layout_test_times_info.addWidget(probability_test_label)
+        layout_test_times_info.addWidget(self.is_probability_test)
+        layout_test_times_info.addWidget(self.interval_lable)
+        layout_test_times_info.addWidget(self.interval)
         layout_test_times_info.addStretch(1)
         self.verticalLayout_left.addLayout(layout_test_times_info)
 
@@ -209,6 +229,8 @@ class LogoDisplay(QtWidgets.QMainWindow, Reboot_Logo_MainWindow):
     def intiui(self):
         # 初始化进程
         self.get_exp_logo_process = QProcess()
+        self.list_relay_reboot_interval_duration()
+        self.list_interval_duration()
         self.list_COM()
         self.select_devices_name()
         self.list_logcat_duration()
@@ -224,6 +246,14 @@ class LogoDisplay(QtWidgets.QMainWindow, Reboot_Logo_MainWindow):
 
         # 初始化图片cursor
         self.cursor = QTextCursor(self.document)
+
+    def list_interval_duration(self):
+        times = [str(j * 60) for j in range(1, 200)]
+        self.interval.addItems(times)
+
+    def list_relay_reboot_interval_duration(self):
+        times = [str(j * 5) for j in range(1, 200)]
+        self.relay_reboot_duration.addItems(times)
 
     def get_logo_image_button_change(self):
         if self.double_screen.isChecked():
@@ -302,8 +332,16 @@ class LogoDisplay(QtWidgets.QMainWindow, Reboot_Logo_MainWindow):
             self.get_message_box("接线配置有相同，请检查！！！")
             return
 
+        if len(self.relay_reboot_duration.currentText()) == 0:
+            self.get_message_box("请输入开机关机之间的间隔！！！")
+            return
+
         if len(self.test_times.currentText()) == 0:
             self.get_message_box("请设置压测次数")
+            return
+
+        if len(self.interval.currentText()) == 0:
+            self.get_message_box("请输入每一轮之间的间隔时间！！！")
             return
 
         # 检查完保存配置
@@ -426,11 +464,21 @@ class LogoDisplay(QtWidgets.QMainWindow, Reboot_Logo_MainWindow):
         else:
             self.ui_config.add_config_option(section, "double_screen_config", "0")
 
+            # 开关机时间
+            self.ui_config.add_config_option(section, self.ui_config.relay_reboot_interval, self.relay_reboot_duration.currentText())
+
         if self.button_boot_time.isEnabled():
             self.ui_config.add_config_option(section, "button_boot_time", self.button_boot_time.currentText())
 
         # 保存用例压测次数设置
         self.ui_config.add_config_option(section, "logo_test_times", self.test_times.currentText())
+
+        if self.is_probability_test.isChecked():
+            self.ui_config.add_config_option(section, self.ui_config.is_probability_test, "1")
+        else:
+            self.ui_config.add_config_option(section, self.ui_config.is_probability_test, "0")
+
+        self.ui_config.add_config_option(section, self.ui_config.test_interval, self.interval.currentText())
 
     def copy_file(self, origin, des):
         shutil.copy(origin, des)

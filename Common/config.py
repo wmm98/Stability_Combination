@@ -175,7 +175,7 @@ class Config:
     # 开关机检查
     section_ui_boot_check = "Boot-Check"
     ui_option_boot_usb_path = "boot_usb_flash_path"
-    relay_reboot_interval = "relay_reconnect_interval"
+    relay_reboot_interval = bt_interval
 
     # 相机压测
     section_ui_camera_check = "Camera-Check"
