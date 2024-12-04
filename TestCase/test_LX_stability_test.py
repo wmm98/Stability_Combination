@@ -153,6 +153,9 @@ class TestLXStability:
         is_usb = int(self.ui_conf_file.get(Config.section_ui_boot_check, Config.option_usb_test))
         root_steps = self.ui_conf_file.get(Config.section_ui_boot_check, Config.ui_option_root_steps).split(",")
 
+        bt_interval = int(self.ui_conf_file.get(Config.section_ui_logo, Config.bt_interval))
+        rounds_interval = int(self.ui_conf_file.get(Config.section_ui_logo, Config.bt_interval))
+
         # 先root设备
         for cmd in root_steps:
             shell.invoke(cmd)
@@ -207,32 +210,38 @@ class TestLXStability:
 
         if is_eth:
             log.info("****检查以太网当前状态")
+            self.device.disable_wifi_btn()
+            self.device.disable_mobile_btn()
+            time.sleep(1)
             if not self.device.eth0_is_enable():
                 self.device.enable_eth0_btn()
                 time.sleep(3)
                 log.info("以太网上电")
-                if self.device.is_eth0_internet(5):
-                    log.info("以太网可上网")
-                else:
-                    log.error("以太网不可上网， 请检查！！！")
-                    time.sleep(3)
-                    raise Exception
+            if not self.device.ping_network(timeout=120):
+                log.error("以太网无法上网， 请见检查！！！")
+                time.sleep(3)
+                raise Exception
+            log.info("以太网可上网")
 
         if is_wifi:
             log.info("****检查wifi当前状态")
+            self.device.disable_mobile_btn()
+            self.device.disable_eth0_btn()
+            time.sleep(1)
             if not self.device.wifi_is_enable():
                 self.device.enable_wifi_btn()
                 time.sleep(3)
             log.info("wifi上电")
 
-            if not self.device.is_wifi_internet(5):
-                log.error("无法上网，请连接wifi！！！")
+            if not self.device.ping_network(timeout=120):
+                log.error("wifi无法上网， 请见检查！！！")
                 time.sleep(3)
                 raise Exception
-            else:
-                log.info("wifi可上网")
+            log.info("以太网可上网")
 
         if is_mobile:
+            self.device.disable_wifi_btn()
+            self.device.disable_eth0_btn()
             log.info("****检查移动数据流量当前状态")
             if is_wifi:
                 if self.device.wifi_is_enable():
@@ -305,7 +314,7 @@ class TestLXStability:
                         "_")[1])
                 t_ser.open_relay(num)
                 log.info("适配器开路")
-                time.sleep(1)
+                time.sleep(bt_interval)
                 if device_check.device_is_online():
                     raise Exception("设备关机失败，请接线是否正确！！！")
                 t_ser.close_relay(num)
@@ -313,7 +322,7 @@ class TestLXStability:
             elif self.ui_conf_file.get(Config.section_ui_boot_check, Config.ui_option_logo_cases) == "2":
                 # 关机
                 device_check.device_shutdown()
-                time.sleep(10)
+                time.sleep(bt_interval - 2)
                 device_check.restart_adb()
                 if device_check.device_is_online():
                     raise Exception("指令设备关机失败，请检查！！！")
@@ -339,7 +348,8 @@ class TestLXStability:
                 # 断开适配器/电池
                 t_ser.open_relay(num_adapter_power)
                 log.info("电池/适配器开路")
-                time.sleep(1)
+                time.sleep(bt_interval - 2)
+                device_check.restart_adb()
                 if device_check.device_is_online():
                     raise Exception("设备关机失败，请检查接线是否正确！！！")
                 # 闭合适配器 / 电池
@@ -439,7 +449,7 @@ class TestLXStability:
                     # 抠图
                     score2 = cnns.generateScore(Config.logo_expect_screen1_path, Config.logo_test_screen1_path)
                     log.info("当前相似度分数为：%s" % str(score2))
-                    if score2 < 90:
+                    if score2 < 0.9:
                         log.error("当前认为复现了卡logo情景，请检查！！！")
                         if device_check.device_is_online():
                             log.info("设备在线")
@@ -462,7 +472,7 @@ class TestLXStability:
 
                 score = cnns.generateScore(Config.logo_expect_screen0_path, Config.logo_test_screen0_path)
                 log.info("当前相似度分数为：%s" % str(score))
-                if score < 90:
+                if score < 0.9:
                     log.error("当前认为复现了卡logo情景，请检查！！！")
                     if device_check.device_is_online():
                         log.info("设备在线")
@@ -1104,7 +1114,7 @@ class TestLXStability:
                 front_preview_score = cnns.generateScore(Config.camera_sta_test_front_preview_path,
                                                          Config.camera_sta_exp_front_preview_path)
                 log.info("前镜头预览画面预期和测试截图相似度分数为：%s" % str(front_preview_score))
-                if front_preview_score < 90:
+                if front_preview_score < 0.9:
                     log.error("前镜头预览画面预期和测试截图差异过大，请检查！！！")
                     if is_probability_test:
                         # 复制测试中异常的照片到Error文件夹地址
@@ -1121,7 +1131,7 @@ class TestLXStability:
                 front_photograph_score = cnns.generateScore(Config.camera_sta_test_front_photograph_path,
                                                             Config.camera_sta_exp_front_photograph_path)
                 log.info("前镜头拍照预期和测试拍照相似度分数为：%s" % str(front_photograph_score))
-                if front_photograph_score < 90:
+                if front_photograph_score < 0.9:
                     log.error("前镜头拍照预期和测试拍照差异过大，请检查！！！")
                     if is_probability_test:
                         photograph_file_name1 = os.path.basename(Config.camera_sta_test_front_photograph_path)
@@ -1137,7 +1147,7 @@ class TestLXStability:
                 rear_preview_score = cnns.generateScore(Config.camera_sta_test_rear_preview_path,
                                                         Config.camera_sta_exp_rear_preview_path)
                 log.info("后镜头预览画面预期和测试截图相似度分数为：%s" % str(rear_preview_score))
-                if rear_preview_score < 90:
+                if rear_preview_score < 0.9:
                     log.error("后镜头预览画面预期和测试截图差异过大，请检查！！！")
                     if is_probability_test:
                         preview_file_name2 = os.path.basename(Config.camera_sta_test_rear_preview_path)
@@ -1152,7 +1162,7 @@ class TestLXStability:
                 rear_photograph_score = cnns.generateScore(Config.camera_sta_test_rear_photograph_path,
                                                            Config.camera_sta_exp_rear_photograph_path)
                 log.info("后镜头拍照预期和测试拍照相似度分数为：%s" % str(rear_photograph_score))
-                if rear_photograph_score < 90:
+                if rear_photograph_score < 0.9:
                     if is_probability_test:
                         photograph_file_name2 = os.path.basename(Config.camera_sta_test_rear_photograph_path)
                         photograph_file_new_path2 = Config.camera_sta_err_rear_photograph_path
@@ -1249,7 +1259,7 @@ class TestLXStability:
                 default_preview_score = cnns.generateScore(Config.camera_sta_test_default_preview_path,
                                                            Config.camera_sta_exp_default_preview_path)
                 log.info("镜头预览画面预期和测试截图相似度分数为：%s" % str(default_preview_score))
-                if default_preview_score < 90:
+                if default_preview_score < 0.9:
                     log.error("镜头预览画面预期和测试截图差异过大，请检查！！！")
                     if is_probability_test:
                         compare_fail_flag += 1
@@ -1270,7 +1280,7 @@ class TestLXStability:
                 default_photograph_score = cnns.generateScore(Config.camera_sta_test_default_photograph_path,
                                                               Config.camera_sta_exp_default_photograph_path)
                 log.info("镜头拍照预期和测试拍照相似度分数为：%s" % str(default_photograph_score))
-                if default_photograph_score < 90:
+                if default_photograph_score < 0.9:
                     log.error("镜头拍照预期和测试拍照差异过大，请检查！！！")
                     if is_probability_test:
                         compare_fail_flag += 1
@@ -1301,10 +1311,10 @@ class TestLXStability:
             if len(self.device.get_latest_img()) != 0:
                 self.device.remove_img()
 
-            t_ser.logoutSer()
             log.info("*******************压测完成%d次********************" % flag)
-            time.sleep(3)
+            time.sleep(rounds_interval)
 
+        t_ser.logoutSer()
         if is_probability_test:
             # 相机概率问题显示
             if open_fail_flag > 0:
@@ -1586,7 +1596,7 @@ class TestLXStability:
                     front_preview_score = cnns.generateScore(Config.camera_sta_test_front_preview_path,
                                                              Config.camera_sta_exp_front_preview_path)
                     log.info("前镜头预览画面预期和测试截图相似度分数为：%s" % str(front_preview_score))
-                    if front_preview_score < 90:
+                    if front_preview_score < 0.9:
                         log.error("前镜头预览画面预期和测试截图差异过大，请检查！！！")
                         if is_probability:
                             # 复制测试中异常的照片到Error文件夹地址
@@ -1605,7 +1615,7 @@ class TestLXStability:
                     front_photograph_score = cnns.generateScore(Config.camera_sta_test_front_photograph_path,
                                                                 Config.camera_sta_exp_front_photograph_path)
                     log.info("前镜头拍照预期和测试拍照相似度分数为：%s" % str(front_photograph_score))
-                    if front_photograph_score < 90:
+                    if front_photograph_score < 0.9:
                         log.error("前镜头拍照预期和测试拍照差异过大，请检查！！！")
                         if is_probability:
                             photograph_file_name1 = os.path.basename(Config.camera_sta_test_front_photograph_path)
@@ -1623,7 +1633,7 @@ class TestLXStability:
                     rear_preview_score = cnns.generateScore(Config.camera_sta_test_rear_preview_path,
                                                             Config.camera_sta_exp_rear_preview_path)
                     log.info("后镜头预览画面预期和测试截图相似度分数为：%s" % str(rear_preview_score))
-                    if rear_preview_score < 90:
+                    if rear_preview_score < 0.9:
                         log.error("后镜头预览画面预期和测试截图差异过大，请检查！！！")
                         if is_probability:
                             preview_file_name2 = os.path.basename(Config.camera_sta_test_rear_preview_path)
@@ -1640,7 +1650,7 @@ class TestLXStability:
                     rear_photograph_score = cnns.generateScore(Config.camera_sta_test_rear_photograph_path,
                                                                Config.camera_sta_exp_rear_photograph_path)
                     log.info("后镜头拍照预期和测试拍照相似度分数为：%s" % str(rear_photograph_score))
-                    if rear_photograph_score < 90:
+                    if rear_photograph_score < 0.9:
                         if is_probability:
                             photograph_file_name2 = os.path.basename(Config.camera_sta_test_rear_photograph_path)
                             photograph_file_new_path2 = Config.camera_sta_err_rear_photograph_path
@@ -1739,7 +1749,7 @@ class TestLXStability:
                     default_preview_score = cnns.generateScore(Config.camera_sta_test_default_preview_path,
                                                                Config.camera_sta_exp_default_preview_path)
                     log.info("镜头预览画面预期和测试截图相似度分数为：%s" % str(default_preview_score))
-                    if default_preview_score < 90:
+                    if default_preview_score < 0.9:
                         log.error("镜头预览画面预期和测试截图差异过大，请检查！！！")
                         if is_probability:
                             compare_fail_flag += 1
@@ -1760,7 +1770,7 @@ class TestLXStability:
                     default_photograph_score = cnns.generateScore(Config.camera_sta_test_default_photograph_path,
                                                                   Config.camera_sta_exp_default_photograph_path)
                     log.info("镜头拍照预期和测试拍照相似度分数为：%s" % str(default_photograph_score))
-                    if default_photograph_score < 90:
+                    if default_photograph_score < 0.9:
                         log.error("镜头拍照预期和测试拍照差异过大，请检查！！！")
                         if is_probability:
                             compare_fail_flag += 1
