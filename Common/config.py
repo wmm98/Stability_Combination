@@ -124,6 +124,8 @@ class Config:
     section_background_to_ui = "Background-UI"
     # 公共
     test_interval = "rounds_interval"
+    bt_interval = "bt_interval"
+
     # EMMC, DDR
     section_DDR_EMMC = "DDR_EMMC"
     ui_option_root_steps = "root_steps"
@@ -218,7 +220,7 @@ class Config:
     option_bt_connect_test_times = "bt_connect_test_times"
     option_bt_connect_test_com = "bt_connect_com"
     option_bt_com_config = "com_config"
-    slave_bt_reconnect_interval = "slave_bt_reconnect_interval"
+    slave_bt_reconnect_interval = bt_interval
 
     # 休眠唤醒
     section_sleep_wake = "Sleep-Awake"

@@ -40,6 +40,25 @@ class Mobile_Btn_Check_MainWindow(config_path.UIConfigPath):
         # 间隔
         self.verticalLayout_left.addWidget(QLabel())
 
+        # 压测间隔相关
+        layout_test_interval = QHBoxLayout()
+        self.interval_lable = QLabel("每一轮的间隔时长(秒)：")
+        self.interval = QComboBox()
+        self.interval.setEditable(True)
+
+        self.open_close_btn_label = QLabel("4G模块关、开间隔时长(秒)：")
+        self.open_close_btn_interval = QComboBox()
+        self.open_close_btn_interval.setEditable(True)
+
+        layout_test_interval.addWidget(self.open_close_btn_label)
+        layout_test_interval.addWidget(self.open_close_btn_interval)
+        layout_test_interval.addWidget(self.interval_lable)
+        layout_test_interval.addWidget(self.interval)
+        self.verticalLayout_left.addLayout(layout_test_interval)
+
+        # 间隔
+        self.verticalLayout_left.addWidget(QLabel())
+
         # 提交按钮
         self.submit_button = QtWidgets.QPushButton("保存配置")
         self.verticalLayout_left.addWidget(self.submit_button)
@@ -70,6 +89,16 @@ class MobileBtnCheckDisplay(QtWidgets.QMainWindow, Mobile_Btn_Check_MainWindow):
         self.setupUi(self)
         self.intiui()
         self.submit_flag = False
+        self.list_interval_duration()
+        self.list_bt_close_open_duration()
+
+    def list_interval_duration(self):
+        times = [str(j * 2) for j in range(1, 200)]
+        self.interval.addItems(times)
+
+    def list_bt_close_open_duration(self):
+        times = [str(j * 2) for j in range(1, 200)]
+        self.open_close_btn_interval.addItems(times)
 
     def intiui(self):
         self.submit_button.clicked.connect(self.handle_submit)
@@ -82,6 +111,8 @@ class MobileBtnCheckDisplay(QtWidgets.QMainWindow, Mobile_Btn_Check_MainWindow):
         if len(self.test_times.currentText()) == 0:
             self.get_message_box("请设置压测次数!!!")
             return
+
+
 
         # 检查完保存配置
         self.save_config()
@@ -99,6 +130,9 @@ class MobileBtnCheckDisplay(QtWidgets.QMainWindow, Mobile_Btn_Check_MainWindow):
             config.add_config_option(section, config.is_probability_test, "1")
         else:
             config.add_config_option(section, config.is_probability_test, "0")
+
+        config.add_config_option(section, config.bt_interval, self.open_close_btn_interval.currentText())
+        config.add_config_option(section, config.test_interval, self.interval.currentText())
 
     def list_case_test_cases(self):
         self.test_times.addItems([str(i * 50) for i in range(1, 101)])

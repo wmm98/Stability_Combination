@@ -14,6 +14,8 @@ class ConfigP(UIConfigPath):
     is_probability_test = "is_probability_test"
     # 每一轮间隔时长
     test_interval = "rounds_interval"
+    # 通用模块的关到开的时长
+    bt_interval = "bt_interval"
 
     # EMMC, DDR
     section_DDR_EMMC = "DDR_EMMC"
@@ -108,7 +110,7 @@ class ConfigP(UIConfigPath):
     option_bt_connect_test_times = "bt_connect_test_times"
     option_bt_connect_test_com = "bt_connect_com"
     option_bt_com_config = "com_config"
-    slave_bt_reconnect_interval = "slave_bt_reconnect_interval"
+    slave_bt_reconnect_interval = bt_interval
 
     # 休眠唤醒
     section_sleep_wake = "Sleep-Awake"
