@@ -75,7 +75,10 @@ class TestBootLogo:
     @allure.title("开关机卡logo测试")
     def test_boot_logo(self):
         log.info("开关机卡logo测试开始")
-        device_check = DeviceCheck(self.ui_conf_file.get(Config.section_ui_logo, Config.ui_option_device_name))
+        device_check = DeviceCheck(self.ui_conf_file.get(Config.section_ui_to_background, Config.ui_option_device_name))
+
+        bt_interval = int(self.ui_conf_file.get(Config.section_ui_logo, Config.bt_interval))
+        rounds_interval = int(self.ui_conf_file.get(Config.section_ui_logo, Config.bt_interval))
 
         # 确认二部机器adb btn 开
         device_check.adb_btn_open()
@@ -95,7 +98,7 @@ class TestBootLogo:
                         "_")[1])
                 t_ser.open_relay(num)
                 log.info("适配器开路")
-                time.sleep(1)
+                time.sleep(bt_interval)
                 if device_check.device_is_online():
                     raise Exception("设备关机失败，请接线是否正确！！！")
                 t_ser.close_relay(num)
@@ -103,7 +106,7 @@ class TestBootLogo:
             elif self.ui_conf_file.get(Config.section_ui_logo, Config.ui_option_logo_cases) == "2":
                 # 关机
                 device_check.device_shutdown()
-                time.sleep(10)
+                time.sleep(bt_interval)
                 device_check.restart_adb()
                 if device_check.device_is_online():
                     raise Exception("指令设备关机失败，请检查！！！")
@@ -129,7 +132,7 @@ class TestBootLogo:
                 # 断开适配器/电池
                 t_ser.open_relay(num_adapter_power)
                 log.info("电池/适配器开路")
-                time.sleep(1)
+                time.sleep(bt_interval)
                 if device_check.device_is_online():
                     raise Exception("设备关机失败，请检查接线是否正确！！！")
                 # 闭合适配器 / 电池
@@ -164,7 +167,7 @@ class TestBootLogo:
                     break
             if self.ui_conf_file[Config.section_ui_logo][Config.option_only_boot_config] == "0":
                 # 拍照
-                time.sleep(30)
+                time.sleep(10)
                 if not self.device.is_screen_on():
                     self.device.press_power_button()
                 time.sleep(1)
@@ -222,5 +225,7 @@ class TestBootLogo:
                     time.sleep(3)
                     break
                 log.info("*******************压测完成%d次********************" % flag)
+
+            time.sleep(rounds_interval)
         t_ser.logoutSer()
         log.info("停止压测.")

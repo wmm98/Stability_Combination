@@ -820,14 +820,14 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
                 current_mod_time = self.get_file_modification_time(conf_path.logo_test_screen0_path)
                 if current_mod_time != self.last_modify_time_screen0:
                     self.last_modify_time_screen0 = current_mod_time  # 更新为新的修改时间
-                    self.add_logo_image(conf_path.logo_test_screen0_path)
+                    self.add_logo_image()
 
             if self.logo_window.double_screen.isChecked() or self.lx_boot_check_window.double_screen.isChecked():
                 if os.path.exists(conf_path.logo_test_screen1_path):
                     current_mod_time_1 = self.get_file_modification_time(conf_path.logo_test_screen1_path)
                     if current_mod_time_1 != self.last_modify_time_screen1:
                         self.last_modify_time_screen1 = current_mod_time_1  # 更新为新的修改时间
-                        self.add_logo_image(conf_path.logo_test_screen1_path)
+                        self.add_logo_image()
 
     def check_image_camera_modification(self):
         """检查图片文件是否有修改"""
@@ -991,7 +991,6 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
         # 将图片路径转为 QUrl
         # 创建 QTextImageFormat 对象
         self.text_edit_final.clear()
-
         image_format_screen0 = QTextImageFormat()
         image_screen0_url = QUrl.fromLocalFile(self.logo_test_screen0_path)
         self.document.addResource(QTextDocument.ImageResource, image_screen0_url, image_screen0_url)
@@ -1000,7 +999,7 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
         image_format_screen0.setHeight(self.image_height)
         self.cursor.insertImage(image_format_screen0)
 
-        if self.double_screen.isChecked():
+        if self.logo_window.double_screen.isChecked() or self.lx_boot_check_window.double_screen.isChecked():
             image_format_screen1 = QTextImageFormat()
             image_screen1_url = QUrl.fromLocalFile(self.logo_test_screen1_path)
             self.document.addResource(QTextDocument.ImageResource, image_screen1_url, image_screen1_url)

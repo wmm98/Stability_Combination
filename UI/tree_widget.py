@@ -92,7 +92,6 @@ class Ui_MainWindow(config_path.UIConfigPath):
         self.text_edit.setReadOnly(True)
         self.verticalLayout_right.addWidget(self.text_edit)
 
-
         # 最右边的
         final_widget = QWidget()
         self.verticalLayout_final = QtWidgets.QVBoxLayout(final_widget)

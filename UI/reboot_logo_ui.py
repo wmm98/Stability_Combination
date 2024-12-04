@@ -356,12 +356,8 @@ class LogoDisplay(QtWidgets.QMainWindow, Reboot_Logo_MainWindow):
     def only_boot_checkbox_change(self):
         if self.only_boot.isChecked():
             self.double_screen.setDisabled(True)
-            self.logo_upload_button.setDisabled(True)
-            self.show_keying_button.setDisabled(True)
         else:
             self.double_screen.setEnabled(True)
-            self.logo_upload_button.setEnabled(True)
-            self.show_keying_button.setEnabled(True)
 
     def adapter_checkbox_change(self):
         if self.adapter_config.isEnabled():
