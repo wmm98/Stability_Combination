@@ -153,8 +153,8 @@ class TestLXStability:
         is_usb = int(self.ui_conf_file.get(Config.section_ui_boot_check, Config.option_usb_test))
         root_steps = self.ui_conf_file.get(Config.section_ui_boot_check, Config.ui_option_root_steps).split(",")
 
-        bt_interval = int(self.ui_conf_file.get(Config.section_ui_logo, Config.bt_interval))
-        rounds_interval = int(self.ui_conf_file.get(Config.section_ui_logo, Config.bt_interval))
+        bt_interval = int(self.ui_conf_file.get(Config.section_ui_boot_check, Config.bt_interval))
+        rounds_interval = int(self.ui_conf_file.get(Config.section_ui_boot_check, Config.bt_interval))
 
         # 先root设备
         for cmd in root_steps:
