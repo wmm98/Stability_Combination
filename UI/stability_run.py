@@ -1097,6 +1097,3 @@ if __name__ == '__main__':
     myshow = UIDisplay()
     myshow.show()
     app.exec_()
-    # logo_show = LogoDisplay()
-    # logo_show.show()
-    # app.exec_()

@@ -112,8 +112,6 @@ class MobileBtnCheckDisplay(QtWidgets.QMainWindow, Mobile_Btn_Check_MainWindow):
             self.get_message_box("请设置压测次数!!!")
             return
 
-
-
         # 检查完保存配置
         self.save_config()
         self.submit_flag = True

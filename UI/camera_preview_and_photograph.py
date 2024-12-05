@@ -95,8 +95,15 @@ class PreviewPhotoGraph_MainWindow(config_path.UIConfigPath):
         # 是否测概率测试
         probability_test_label = QLabel("是否进行失败概率性统计")
         self.is_probability_test = QCheckBox()
+
+        self.interval_lable = QLabel("每一轮的间隔时长(秒)：")
+        self.interval = QComboBox()
+        self.interval.setEditable(True)
+
         layout_test_times_info.addWidget(probability_test_label)
         layout_test_times_info.addWidget(self.is_probability_test)
+        layout_test_times_info.addWidget(self.interval_lable)
+        layout_test_times_info.addWidget(self.interval)
 
         layout_test_times_info.addStretch(1)
         self.verticalLayout_left.addLayout(layout_test_times_info)
@@ -169,9 +176,14 @@ class CameraStabilityDisplay(QtWidgets.QMainWindow, PreviewPhotoGraph_MainWindow
         self.is_front_or_rear_camera.clicked.connect(self.click_camera_change)
         self.photograph_button.clicked.connect(self.preview_photograph_button_change)
         self.get_exp_imag_process.finished.connect(self.camera_finished_handle)
+        self.list_interval_duration()
 
         # 初始化图片cursor
         self.cursor = QTextCursor(self.document)
+
+    def list_interval_duration(self):
+        times = [str(j * 2) for j in range(1, 200)]
+        self.interval.addItems(times)
 
     def handle_submit(self):
         if len(self.device_name.currentText()) == 0:
@@ -195,6 +207,12 @@ class CameraStabilityDisplay(QtWidgets.QMainWindow, PreviewPhotoGraph_MainWindow
         except:
             self.get_message_box("测试次数请填入整数！！！")
             return
+
+        try:
+            interval = int(self.interval.currentText().strip())
+        except:
+            self.get_message_box("每轮间隔时长请填入整数！！！")
+            return
         # if self.is_front_and_rear_camera.isChecked():
         #     self.ui_config.add_config_option(self.ui_config.section_ui_camera_check,
         #                                      self.ui_config.option_front_and_rear, "1")
@@ -206,6 +224,9 @@ class CameraStabilityDisplay(QtWidgets.QMainWindow, PreviewPhotoGraph_MainWindow
         #     self.ui_config.add_config_option(self.ui_config.section_ui_camera_check, self.ui_config.option_switch_y_value, self.Y_info.text())
         self.ui_config.add_config_option(self.ui_config.section_ui_camera_check,
                                          self.ui_config.option_camera_test_times, str(case_test_times))
+
+        self.ui_config.add_config_option(self.ui_config.section_ui_camera_check,
+                                         self.ui_config.test_interval, str(interval))
 
         if self.is_probability_test.isChecked():
             self.ui_config.add_config_option(self.ui_config.section_ui_camera_check, self.ui_config.is_probability_test, "1")
