@@ -98,6 +98,9 @@ class TestStabilityCombination:
         # 获取后台logcat进程id
         logcat_process_id = self.device.get_current_logcat_process_id()
 
+        rounds_interval = int(self.ui_conf_file.get(Config.section_wifi_check, Config.test_interval))
+        bt_interval = int(self.ui_conf_file.get(Config.section_wifi_check, Config.test_interval))
+
         # 给以太网， 4G下电，清理环境
         if self.device.eth0_is_enable():
             self.device.disable_eth0_btn()
@@ -159,6 +162,8 @@ class TestStabilityCombination:
                     self.device.adb_pull_file(log_path, os.path.dirname(Config.wifi_btn_sta_test_log_path))
                     raise
 
+            time.sleep(bt_interval)
+
             self.device.enable_wifi_btn()
             time.sleep(2)
             if not self.device.wifi_is_enable():
@@ -188,7 +193,7 @@ class TestStabilityCombination:
                     raise
             log.info("当前可上网")
             log.info("***********wifi开关压测完成%d次" % times)
-            time.sleep(3)
+            time.sleep(rounds_interval)
 
         if is_probability_test:
             if disable_fail_flag > 0:
@@ -228,6 +233,8 @@ class TestStabilityCombination:
         log.info("捕捉设备log")
         # 获取后台logcat进程id
         logcat_process_id = self.device.get_current_logcat_process_id()
+        rounds_interval = int(self.ui_conf_file.get(Config.section_mobile_check, Config.test_interval))
+        bt_interval = int(self.ui_conf_file.get(Config.section_mobile_check, Config.test_interval))
 
         # 给以太网， 4G下电，清理环境
         if self.device.eth0_is_enable():
@@ -290,7 +297,7 @@ class TestStabilityCombination:
                     self.device.adb_pull_file(log_path, os.path.dirname(Config.mobile_btn_sta_test_log_path))
                     raise
             log.info("设备当前无法上网")
-
+            time.sleep(bt_interval)
             self.device.enable_mobile_btn()
             time.sleep(2)
             if not self.device.mobile_is_enable():
@@ -318,7 +325,7 @@ class TestStabilityCombination:
                     raise
             log.info("设备当前可上网")
             log.info("***********4G开关压测完成%d次" % times)
-            time.sleep(3)
+            time.sleep(rounds_interval)
 
         if is_probability_test:
             if disable_fail_flag > 0:
@@ -438,7 +445,8 @@ class TestStabilityCombination:
         com_port = self.ui_conf_file.get(Config.section_sleep_wake, Config.option_sleep_com_port)
         com_line = int(self.ui_conf_file.get(Config.section_sleep_wake, Config.option_sleep_config).split("_")[1])
 
-        # is_probability_test = int(self.ui_conf_file.get(Config.section_sleep_wake, Config.is_probability_test))
+        is_probability_test = int(self.ui_conf_file.get(Config.section_sleep_wake, Config.is_probability_test))
+        rounds_interval = int(self.ui_conf_file.get(Config.section_sleep_wake, Config.test_interval))
 
         # 开启模块
         # 测试前先检查所有的按钮开关
@@ -784,6 +792,7 @@ class TestStabilityCombination:
                     #     time.sleep(3)
                     #     raise Exception
                 log.info("移动数据模块上电成功")
+            time.sleep(rounds_interval)
             log.info("*************完成%d次压测**************" % flag)
 
         t_ser.logoutSer()

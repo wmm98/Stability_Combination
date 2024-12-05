@@ -154,7 +154,7 @@ class TestLXStability:
         root_steps = self.ui_conf_file.get(Config.section_ui_boot_check, Config.ui_option_root_steps).split(",")
 
         bt_interval = int(self.ui_conf_file.get(Config.section_ui_boot_check, Config.bt_interval))
-        rounds_interval = int(self.ui_conf_file.get(Config.section_ui_boot_check, Config.bt_interval))
+        rounds_interval = int(self.ui_conf_file.get(Config.section_ui_boot_check, Config.test_interval))
 
         # 先root设备
         for cmd in root_steps:
@@ -1454,6 +1454,7 @@ class TestLXStability:
         total_times = self.ui_conf_file.get(Config.section_ui_camera_check, Config.option_camera_test_times)
         # 是否统计失败概率
         is_probability = int(self.ui_conf_file.get(Config.section_ui_camera_check, Config.is_probability_test))
+        rounds_interval = int(self.ui_conf_file.get(Config.section_ui_camera_check, Config.test_interval))
         open_fail_flag = 0
         compare_fail_flag = 0
         photograph_fail_flag = 0
@@ -1816,8 +1817,8 @@ class TestLXStability:
                 #         os.remove(Config.camera_sta_test_default_preview_path)
                 #     if os.path.exists(Config.camera_sta_test_default_photograph_path):
                 #         os.remove(Config.camera_sta_test_default_photograph_path)
-
                 log.info("******相机压测完成%d次*****" % times)
+                time.sleep(rounds_interval)
             except Exception as e:
                 log.error(str(e))
 
