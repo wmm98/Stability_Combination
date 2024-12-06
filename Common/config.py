@@ -10,7 +10,9 @@ class Config:
     logcat_path = os.path.join(project_path, "Log", "Logcat")
 
     # 辅助测试apk路径
-    factory_reset_pak_path = os.path.join(project_path, "APK", "FactoryReset")
+    apk_path = os.path.join(project_path, "APK")
+    factory_reset_pak_path = os.path.join(apk_path, "FactoryReset")
+    sim_apk_path = os.path.join(apk_path, "SIM")
 
     # 是否进行失败概率性统计测试
     is_probability_test = "is_probability_test"

@@ -236,6 +236,16 @@ class TestStabilityCombination:
         rounds_interval = int(self.ui_conf_file.get(Config.section_mobile_check, Config.test_interval))
         bt_interval = int(self.ui_conf_file.get(Config.section_mobile_check, Config.test_interval))
 
+        sim_log_path = "/sdcard/TestTeam/AutomationTestLog.txt"
+        apk_path = os.path.join(Config.sim_apk_path, "SimRSRP.apk")
+        des_apk_path = "/sdcard/SimRSRP.apk"
+        ini_file_path = "/sdcard/TestTeam/TestResult.ini"
+        package_name = self.device.get_apk_package_name(apk_path)
+
+        # 先推送apk到sdcard、安装
+        # self.device.adb_push_file(apk_path, "sdcard")
+        self.device.install_app(apk_path)
+
         # 给以太网， 4G下电，清理环境
         if self.device.eth0_is_enable():
             self.device.disable_eth0_btn()
@@ -314,8 +324,8 @@ class TestStabilityCombination:
                     raise
 
             log.info("移动流量上电")
-            if not self.device.ping_network():
-                log.error("移动流量上电后5分钟内无法上网！！！")
+            if not self.device.ping_network(timeout=180):
+                log.error("移动流量上电后3分钟内无法上网！！！")
                 if is_probability_test:
                     network_enable_fail_flag += 1
                 else:
@@ -323,9 +333,32 @@ class TestStabilityCombination:
                     self.device.kill_process(logcat_process_id)
                     self.device.adb_pull_file(log_path, os.path.dirname(Config.mobile_btn_sta_test_log_path))
                     raise
-            log.info("设备当前可上网")
+            else:
+                log.info("设备当前可上网")
+
+            log.info("当前的SIM卡信号强度为: ")
+
+            self.device.start_app(package_name)
+            time.sleep(1)
+            now_time = time.time()
+            while True:
+                if self.device.remove_info_space("flag = end") in self.device.remove_info_space(self.device.send_adb_shell_command("cat %s" % ini_file_path)):
+                    break
+                if time.time() > now_time + 60:
+                    log.error("%s 运行有问题， 请检查！！！" % os.path.dirname(apk_path))
+                    break
+                time.sleep(1)
+
+            sim_log = self.device.send_adb_shell_command("cat %s" % sim_log_path)
+            log.info("\n" + sim_log)
+            self.device.rm_directory(os.path.dirname(sim_log_path) + "/")
+            self.device.force_stop_app(package_name)
+            self.device.clear_app(package_name)
             log.info("***********4G开关压测完成%d次" % times)
             time.sleep(rounds_interval)
+
+        # 卸载app
+        self.device.uninstall_app(package_name)
 
         if is_probability_test:
             if disable_fail_flag > 0:

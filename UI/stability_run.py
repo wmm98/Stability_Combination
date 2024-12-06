@@ -32,6 +32,7 @@ import config_path
 
 conf_path = config_path.UIConfigPath()
 
+
 class ComboBoxDelegate(QStyledItemDelegate):
     def __init__(self, items, parent=None):
         super().__init__(parent)

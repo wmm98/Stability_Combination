@@ -14,6 +14,9 @@ class Device(publicInterface):
         self.device_name = device
         self.camera_package_name = ""
 
+    def start_app(self, package_name):
+        self.send_adb_shell_command("monkey -p %s -c android.intent.category.LAUNCHER 1" % package_name)
+
     def get_connected_bt_mac(self):
         res = self.send_adb_shell_command("\"dumpsys bluetooth_manager |grep mCurrentDevice\"")
         connected_mac = res.split(":", 1)[1].strip()
@@ -115,6 +118,9 @@ class Device(publicInterface):
     def install_app(self, apk_path):
         self.send_adb_standalone_command("install -r %s" % apk_path)
 
+    def uninstall_app(self, package_name):
+        self.send_adb_shell_command("pm uninstall %s" % package_name)
+
     def external_app_installed_list(self):
         return self.send_adb_shell_command("pm list package -3")
 
@@ -129,6 +135,9 @@ class Device(publicInterface):
 
     def rm_file(self, file_path):
         self.send_adb_shell_command("rm %s" % file_path)
+
+    def rm_directory(self, dir_path):
+        self.send_adb_shell_command("rm -rf %s" % dir_path)
 
     def touch_file(self, file_path):
         self.send_adb_shell_command("touch %s" % file_path)
@@ -312,13 +321,22 @@ class Device(publicInterface):
         package_name = res.split(" ")[-1].split("/")[0]
         self.camera_package_name = package_name
 
-    def force_stop_app(self):
+    def force_stop_camera_app(self):
         # cmd = "am force-stop  org.codeaurora.snapcam"
         cmd = "adb -s %s shell \"am force-stop %s\"" % (self.device_name, self.camera_package_name)
         shell.invoke(cmd)
 
-    def clear_app(self):
+    def clear_camera_app(self):
         cmd = "adb -s %s shell \"pm clear %s\"" % (self.device_name, self.camera_package_name)
+        shell.invoke(cmd)
+
+    def force_stop_app(self, package_name):
+        # cmd = "am force-stop  org.codeaurora.snapcam"
+        cmd = "adb -s %s shell \"am force-stop %s\"" % (self.device_name, package_name)
+        shell.invoke(cmd)
+
+    def clear_app(self, package_name):
+        cmd = "adb -s %s shell \"pm clear %s\"" % (self.device_name, package_name)
         shell.invoke(cmd)
 
     def get_screen_center_position(self):

@@ -1205,8 +1205,8 @@ class TestLXStability:
                     log.error("打开相机失败，请检查！！！")
                     if is_probability_test:
                         open_fail_flag += 1
-                        self.device.force_stop_app()
-                        self.device.clear_app()
+                        self.device.force_stop_camera_app()
+                        self.device.clear_camera_app()
                         continue
                     else:
                         time.sleep(3)
@@ -1241,8 +1241,8 @@ class TestLXStability:
                     log.info("拍照失败，请检查！！！")
                     if is_probability_test:
                         photograph_fail_flag += 1
-                        self.device.force_stop_app()
-                        self.device.clear_app()
+                        self.device.force_stop_camera_app()
+                        self.device.clear_camera_app()
                         continue
                     else:
                         time.sleep(3)
@@ -1263,8 +1263,8 @@ class TestLXStability:
                     log.error("镜头预览画面预期和测试截图差异过大，请检查！！！")
                     if is_probability_test:
                         compare_fail_flag += 1
-                        self.device.force_stop_app()
-                        self.device.clear_app()
+                        self.device.force_stop_camera_app()
+                        self.device.clear_camera_app()
                         # 复制测试中异常的照片到Error文件夹地址
                         preview_file_name = os.path.basename(Config.camera_sta_test_default_preview_path)
                         preview_file_new_path = Config.camera_sta_err_default_preview_path
@@ -1284,8 +1284,8 @@ class TestLXStability:
                     log.error("镜头拍照预期和测试拍照差异过大，请检查！！！")
                     if is_probability_test:
                         compare_fail_flag += 1
-                        self.device.force_stop_app()
-                        self.device.clear_app()
+                        self.device.force_stop_camera_app()
+                        self.device.clear_camera_app()
                         photograph_file_name = os.path.basename(Config.camera_sta_test_default_photograph_path)
                         photograph_file_new_path = Config.camera_sta_err_default_photograph_path
                         shutil.copy(Config.camera_sta_test_default_photograph_path, photograph_file_new_path)
@@ -1299,11 +1299,11 @@ class TestLXStability:
                         raise
 
             # close and clear data to camera
-            self.device.force_stop_app()
-            self.device.clear_app()
+            self.device.force_stop_camera_app()
+            self.device.clear_camera_app()
             if self.device.get_camera_id() != 3:
-                self.device.force_stop_app()
-                self.device.clear_app()
+                self.device.force_stop_camera_app()
+                self.device.clear_camera_app()
             log.info("关闭相机")
             # clear img
             self.device.remove_img()
@@ -1696,8 +1696,8 @@ class TestLXStability:
                         log.error("打开相机失败，请检查！！！")
                         if is_probability:
                             open_fail_flag += 1
-                            self.device.force_stop_app()
-                            self.device.clear_app()
+                            self.device.force_stop_camera_app()
+                            self.device.clear_camera_app()
                             continue
                         else:
                             time.sleep(3)
@@ -1732,8 +1732,8 @@ class TestLXStability:
                         log.info("拍照失败，请检查！！！")
                         if is_probability:
                             photograph_fail_flag += 1
-                            self.device.force_stop_app()
-                            self.device.clear_app()
+                            self.device.force_stop_camera_app()
+                            self.device.clear_camera_app()
                             continue
                         else:
                             time.sleep(3)
@@ -1754,8 +1754,8 @@ class TestLXStability:
                         log.error("镜头预览画面预期和测试截图差异过大，请检查！！！")
                         if is_probability:
                             compare_fail_flag += 1
-                            self.device.force_stop_app()
-                            self.device.clear_app()
+                            self.device.force_stop_camera_app()
+                            self.device.clear_camera_app()
                             # 复制测试中异常的照片到Error文件夹地址
                             preview_file_name = os.path.basename(Config.camera_sta_test_default_preview_path)
                             preview_file_new_path = Config.camera_sta_err_default_preview_path
@@ -1775,8 +1775,8 @@ class TestLXStability:
                         log.error("镜头拍照预期和测试拍照差异过大，请检查！！！")
                         if is_probability:
                             compare_fail_flag += 1
-                            self.device.force_stop_app()
-                            self.device.clear_app()
+                            self.device.force_stop_camera_app()
+                            self.device.clear_camera_app()
                             photograph_file_name = os.path.basename(Config.camera_sta_test_default_photograph_path)
                             photograph_file_new_path = Config.camera_sta_err_default_photograph_path
                             shutil.copy(Config.camera_sta_test_default_photograph_path, photograph_file_new_path)
@@ -1790,11 +1790,11 @@ class TestLXStability:
                             raise
 
                 # close and clear data to camera
-                self.device.force_stop_app()
-                self.device.clear_app()
+                self.device.force_stop_camera_app()
+                self.device.clear_camera_app()
                 if self.device.get_camera_id() != 3:
-                    self.device.force_stop_app()
-                    self.device.clear_app()
+                    self.device.force_stop_camera_app()
+                    self.device.clear_camera_app()
                 log.info("关闭相机")
                 # clear img
                 self.device.remove_img()
