@@ -31,7 +31,7 @@ import configfile
 import config_path
 
 conf_path = config_path.UIConfigPath()
-print()
+
 
 class ComboBoxDelegate(QStyledItemDelegate):
     def __init__(self, items, parent=None):
@@ -847,7 +847,9 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
 
         if self.lx_preview_photograph_window.is_front_and_rear_camera.isChecked() or self.boot_camera_sub_window.is_front_and_rear_camera.isChecked():
             if os.path.exists(conf_path.camera_sta_test_rear_photograph_path) and os.path.exists(
-                    conf_path.camera_sta_test_rear_preview_path) and os.path.exists(conf_path.camera_sta_test_front_preview_path) and os.path.exists(conf_path.camera_sta_test_front_photograph_path):
+                    conf_path.camera_sta_test_rear_preview_path) and os.path.exists(
+                conf_path.camera_sta_test_front_preview_path) and os.path.exists(
+                conf_path.camera_sta_test_front_photograph_path):
 
                 current_mod_time_ph = self.get_file_modification_time(conf_path.camera_sta_test_rear_photograph_path)
                 if current_mod_time_ph != self.last_modify_time_photo:
@@ -860,12 +862,14 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
                     self.camera_front_and_rear_flag += 1
                     self.camera_rear_preview_flag = True
 
-                current_mod_time_ph_front = self.get_file_modification_time(conf_path.camera_sta_test_front_photograph_path)
+                current_mod_time_ph_front = self.get_file_modification_time(
+                    conf_path.camera_sta_test_front_photograph_path)
                 if current_mod_time_ph_front != self.last_modify_time_photo_front:
                     self.last_modify_time_photo_front = current_mod_time_ph_front  # 更新为新的修改时间
                     self.camera_front_photograph_flag = True
 
-                current_mod_time_pre_front = self.get_file_modification_time(conf_path.camera_sta_test_front_preview_path)
+                current_mod_time_pre_front = self.get_file_modification_time(
+                    conf_path.camera_sta_test_front_preview_path)
                 if current_mod_time_pre_front != self.last_modify_time_preview_front:
                     self.last_modify_time_preview_front = current_mod_time_pre_front  # 更新为新的修改时间
                     self.camera_front_and_rear_flag += 1
@@ -1018,7 +1022,8 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
         if self.lx_preview_photograph_window.is_front_or_rear_camera.isChecked() or self.boot_camera_sub_window.is_front_or_rear_camera.isChecked():
             image_default_preview_format = QTextImageFormat()
             image_default_preview_url = QUrl.fromLocalFile(self.camera_sta_test_default_preview_path)
-            self.document_camera.addResource(QTextDocument.ImageResource, image_default_preview_url, image_default_preview_url)
+            self.document_camera.addResource(QTextDocument.ImageResource, image_default_preview_url,
+                                             image_default_preview_url)
             image_default_preview_format.setName(image_default_preview_url.toString())
             image_default_preview_format.setWidth(self.image_width_camera)
             image_default_preview_format.setHeight(self.image_height_camera)
@@ -1026,7 +1031,8 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
 
             image_default_photograph_format = QTextImageFormat()
             image_default_photograph_url = QUrl.fromLocalFile(self.camera_sta_test_default_photograph_path)
-            self.document_camera.addResource(QTextDocument.ImageResource, image_default_photograph_url, image_default_photograph_url)
+            self.document_camera.addResource(QTextDocument.ImageResource, image_default_photograph_url,
+                                             image_default_photograph_url)
             image_default_photograph_format.setName(image_default_photograph_url.toString())
             image_default_photograph_format.setWidth(self.image_width_camera)
             image_default_photograph_format.setHeight(self.image_height_camera)
@@ -1035,7 +1041,8 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
         if self.lx_preview_photograph_window.is_front_and_rear_camera.isChecked() or self.boot_camera_sub_window.is_front_and_rear_camera.isChecked():
             image_rear_preview_format = QTextImageFormat()
             image_rear_preview_url = QUrl.fromLocalFile(self.camera_sta_test_rear_preview_path)
-            self.document_camera.addResource(QTextDocument.ImageResource, image_rear_preview_url, image_rear_preview_url)
+            self.document_camera.addResource(QTextDocument.ImageResource, image_rear_preview_url,
+                                             image_rear_preview_url)
             image_rear_preview_format.setName(image_rear_preview_url.toString())
             image_rear_preview_format.setWidth(self.image_width_camera)
             image_rear_preview_format.setHeight(self.image_height_camera)
@@ -1052,7 +1059,8 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
 
             image_front_preview_format = QTextImageFormat()
             image_front_preview_url = QUrl.fromLocalFile(self.camera_sta_test_front_preview_path)
-            self.document_camera.addResource(QTextDocument.ImageResource, image_front_preview_url, image_front_preview_url)
+            self.document_camera.addResource(QTextDocument.ImageResource, image_front_preview_url,
+                                             image_front_preview_url)
             image_front_preview_format.setName(image_front_preview_url.toString())
             image_front_preview_format.setWidth(self.image_width_camera)
             image_front_preview_format.setHeight(self.image_height_camera)
@@ -1060,7 +1068,8 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
 
             image_front_photograph_format = QTextImageFormat()
             image_front_photograph_url = QUrl.fromLocalFile(self.camera_sta_test_front_photograph_path)
-            self.document_camera.addResource(QTextDocument.ImageResource, image_front_photograph_url, image_front_photograph_url)
+            self.document_camera.addResource(QTextDocument.ImageResource, image_front_photograph_url,
+                                             image_front_photograph_url)
             image_front_photograph_format.setName(image_front_photograph_url.toString())
             image_front_photograph_format.setWidth(self.image_width_camera)
             image_front_photograph_format.setHeight(self.image_height_camera)
