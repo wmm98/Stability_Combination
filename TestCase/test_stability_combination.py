@@ -32,7 +32,7 @@ class TestStabilityCombination:
     def test_stability_combination_all(self):
         log.info("********测试开始*********")
         # 删除相关log文件夹
-        self.device.send_adb_shell_command(" rm -rf /data/stress_test_log")
+        self.device.send_adb_shell_command(" rm -rf /sdcard/stress_test_log")
         # try:
         # 1.推送memtester的相关
         # root设备
@@ -44,8 +44,7 @@ class TestStabilityCombination:
             self.device.adb_push_file(os.path.join(Config.DDR_stressapptest_path, "stressapptest"), "/data")
             self.device.send_adb_shell_command("chmod 777 /data/stressapptest")
             time.sleep(2)
-            self.device.adb_push_file(os.path.join(Config.DDR_stressapptest_path, "libstlport.so"),
-                                      "/system/lib/libstlport.so")
+            self.device.adb_push_file(os.path.join(Config.DDR_stressapptest_path, "libstlport.so"), "/system/lib/libstlport.so")
             self.device.send_adb_shell_command("chmod 644 /system/lib/libstlport.so")
         # 2.推送stressapptest-cut
         if self.ui_conf_file.get(Config.section_DDR_EMMC, Config.ui_option_is_stress_app_switch) == "yes":
@@ -60,7 +59,7 @@ class TestStabilityCombination:
             self.device.adb_push_file(os.path.join(Config.pretesting_path, "test_demo_Android.sh"), "/data")
             self.device.send_adb_shell_command("chmod 777 /data/test_demo_Android.sh")
             self.device.adb_push_file(Config.ui_config_ini_path, "/data")
-            self.device.send_adb_shell_command("\"setsid /data/test_demo_Android.sh > /data/test_demo.log 2>&1 &\"")
+            self.device.send_adb_shell_command("\"setsid /data/test_demo_Android.sh > /sdcard/test_demo.log 2>&1 &\"")
         else:
             self.device.adb_push_file(os.path.join(Config.pretesting_path, "test_demo_Linux.sh"), "/data")
             self.device.send_adb_shell_command("chmod 777 /data/test_demo_Linux.sh")
@@ -70,7 +69,7 @@ class TestStabilityCombination:
                 self.device.adb_push_file(Config.ui_config_ini_path, "/data")
             self.device.send_adb_shell_command("setsid /data/test_demo_Linux.sh &")
         time.sleep(10)
-        if "debug.txt" in self.device.send_adb_shell_command("ls /data/stress_test_log"):
+        if "debug.txt" in self.device.send_adb_shell_command("ls /sdcard/stress_test_log"):
             log.info("可脱机测试")
         else:
             log.info(".sh脚本没跑起来，请检查！！！")

@@ -3,8 +3,8 @@
 dir="/sdcard/stresstestlog"
 
 # 检查并删除目录
-stress_test_log="/data/stress_test_log"
-dir="/data/stress_test_log/stresstestlog"
+stress_test_log="/sdcard/stress_test_log"
+dir="/sdcard/stress_test_log/stresstestlog"
 
 if [ -d "$stress_test_log" ]; then
     echo "目录存在，正在删除目录及其内容：$stress_test_log"
@@ -86,8 +86,8 @@ stressapptest_duration_sec=$stressapptest_duration
 if [ "$is_stress_app_test" = "yes" ]; then
 	echo "stressapptest测试开始"
 	if [ "$new_free_value" -le 1750 ]; then
-		echo $(date +"%Y-%m-%d %H:%M:%S") >> /data/stress_test_log/stresstestlog/strssapptest.log 
-		/data/stressapptest -s "$stressapptest_duration_sec" -M "$new_free_value" >> /data/stress_test_log/stresstestlog/strssapptest.log 
+		echo $(date +"%Y-%m-%d %H:%M:%S") >> /sdcard/stress_test_log/stresstestlog/strssapptest.log 
+		/data/stressapptest -s "$stressapptest_duration_sec" -M "$new_free_value" >> /sdcard/stress_test_log/stresstestlog/strssapptest.log 
 	else
 		remainder=`expr $new_free_value % 1750`
 		quotient=`expr $new_free_value / 1750`
@@ -95,13 +95,13 @@ if [ "$is_stress_app_test" = "yes" ]; then
 		count=1
 		while [ $count -le $quotient ]
 		do
-		  echo $(date +"%Y-%m-%d %H:%M:%S") >> /data/stress_test_log/stresstestlog/strssapptest_$count.log &
-		  /data/stressapptest -s "$stressapptest_duration_sec" -M 1750 >> /data/stress_test_log/stresstestlog/strssapptest_$count.log &
+		  echo $(date +"%Y-%m-%d %H:%M:%S") >> /sdcard/stress_test_log/stresstestlog/strssapptest_$count.log &
+		  /data/stressapptest -s "$stressapptest_duration_sec" -M 1750 >> /sdcard/stress_test_log/stresstestlog/strssapptest_$count.log &
 		  ((count++))
 		  sleep 0.1
 		done
-		echo $(date +"%Y-%m-%d %H:%M:%S") >> /data/stress_test_log/stresstestlog/strssapptest_$count.log 
-		/data/stressapptest -s "$stressapptest_duration_sec" -M $remainder >> /data/stress_test_log/stresstestlog/strssapptest_$count.log 
+		echo $(date +"%Y-%m-%d %H:%M:%S") >> /sdcard/stress_test_log/stresstestlog/strssapptest_$count.log 
+		/data/stressapptest -s "$stressapptest_duration_sec" -M $remainder >> /sdcard/stress_test_log/stresstestlog/strssapptest_$count.log 
     fi
 	echo "stressapptest测试结束"
 fi
@@ -116,10 +116,10 @@ if [ "$is_stress_app_switch" = "yes" ]; then
 	    t_times=1
 		while [ $t_times -le $test_times ]
 			do
-			   echo $(date +"%Y-%m-%d %H:%M:%S") >> /data/stress_test_log/stresstestlog/strssapptest_cut.log
-		       /data/stressapptest -s 10 -M "$new_free_value" >> /data/stress_test_log/stresstestlog/strssapptest_cut.log
+			   echo $(date +"%Y-%m-%d %H:%M:%S") >> /sdcard/stress_test_log/stresstestlog/strssapptest_cut.log
+		       /data/stressapptest -s 10 -M "$new_free_value" >> /sdcard/stress_test_log/stresstestlog/strssapptest_cut.log
 			   echo "循环次数为 $t_times"
-			   echo "*********************$t_times*********************" >> /data/stress_test_log/stresstestlog/strssapptest_cut.log
+			   echo "*********************$t_times*********************" >> /sdcard/stress_test_log/stresstestlog/strssapptest_cut.log
 			   ((t_times++))
 			   sleep 5
 			done
@@ -135,16 +135,16 @@ if [ "$is_stress_app_switch" = "yes" ]; then
 			count=1
 			while [ $count -le $quotient ]
 			do
-			  echo "*****************$t_times*************************" >> /data/stress_test_log/stresstestlog/strssapptest_cut.log &
-			  echo $(date +"%Y-%m-%d %H:%M:%S") >> /data/stress_test_log/stresstestlog/strssapptest_cut.log & 
-			  /data/stressapptest -s 10 -M 1750 >> /data/stress_test_log/stresstestlog/strssapptest_cut.log &
+			  echo "*****************$t_times*************************" >> /sdcard/stress_test_log/stresstestlog/strssapptest_cut.log &
+			  echo $(date +"%Y-%m-%d %H:%M:%S") >> /sdcard/stress_test_log/stresstestlog/strssapptest_cut.log & 
+			  /data/stressapptest -s 10 -M 1750 >> /sdcard/stress_test_log/stresstestlog/strssapptest_cut.log &
 			  ((count++))
 			  sleep 0.1
 			done
 			
-			echo "*****************$t_times*************************" >> /data/stress_test_log/stresstestlog/strssapptest_cut_1.log 
-			echo $(date +"%Y-%m-%d %H:%M:%S") >> /data/stress_test_log/stresstestlog/strssapptest_cut_1.log 
-			/data/stressapptest -s 10 -M $remainder >> /data/stress_test_log/stresstestlog/strssapptest_cut_1.log 
+			echo "*****************$t_times*************************" >> /sdcard/stress_test_log/stresstestlog/strssapptest_cut_1.log 
+			echo $(date +"%Y-%m-%d %H:%M:%S") >> /sdcard/stress_test_log/stresstestlog/strssapptest_cut_1.log 
+			/data/stressapptest -s 10 -M $remainder >> /sdcard/stress_test_log/stresstestlog/strssapptest_cut_1.log 
 			# 等待所有后台任务完成
 			wait
 			((t_times++))
@@ -158,7 +158,7 @@ fi
 # nohup /data/memtester ${mem_size}M $memtester_duration > /sdcard/mem.log
 if [ "$is_memtester" = "yes" ]; then
  echo "memster测试开始"
-   nohup /data/memtester ${half_free_value}M "$memtester_duration" > /data/stress_test_log/memstertest.log
+   nohup /data/memtester ${half_free_value}M "$memtester_duration" > /sdcard/stress_test_log/memstertest.log
  echo "memtester测试结束"
 fi
 
@@ -166,7 +166,7 @@ fi
 if [ "$is_emmc_test" = "yes" ]; then
   echo "emmc测试开始"
   if [ "$system" = "Android" ]; then
-	EMMC_LOG=/data/stress_test_log/emmc.log
+	EMMC_LOG=/sdcard/stress_test_log/emmc.log
 	echo "EMMC check start" > $EMMC_LOG
     # mv $EMMC_LOG /data/emmc_bak
     #mkdir -p /mnt/media_rw/ext4_sdcard/debuglogger
@@ -186,8 +186,8 @@ if [ "$is_emmc_test" = "yes" ]; then
 	done
 
    elif [ "$system" = "Linux" ]; then
-	EMMC_LOG=/data/stress_test_log/emmc.log
-	FLAG_LOG=/data/stress_test_log/flag.log
+	EMMC_LOG=/sdcard/stress_test_log/emmc.log
+	FLAG_LOG=/sdcard/stress_test_log/flag.log
 	echo "" > $FLAG_LOG
 	setenforce 0
 	echo "EMMC check start" >> $EMMC_LOG
@@ -206,7 +206,7 @@ if [ "$is_emmc_test" = "yes" ]; then
 	done
 	
    elif [ "$system" = "Debian" ]; then
-	EMMC_LOG=/data/stress_test_log/emmc.log
+	EMMC_LOG=/sdcard/stress_test_log/emmc.log
 	echo "EMMC check start" > $EMMC_LOG
 	count=1
 	while [ $count -le $emmc_duration ]
@@ -222,7 +222,7 @@ if [ "$is_emmc_test" = "yes" ]; then
 		echo "*************************" >> $EMMC_LOG
 	done
    else 
-	EMMC_LOG=/data/stress_test_log/emmc.log
+	EMMC_LOG=/sdcard/stress_test_log/emmc.log
 	setenforce 0
 	echo "EMMC check start" > $EMMC_LOG
 	count=1
