@@ -377,6 +377,29 @@ class Device(publicInterface):
         cmd = "cat sys/class/net/wlan0/address"
         return self.send_adb_shell_command(cmd)
 
+    def get_wifi_scan_list(self):
+        return self.send_adb_shell_command("cmd wifi list-scan-results | awk '{print $3 "     " $5}'")
+
+    def get_current_online_interface(self):
+        result = self.send_adb_shell_command("dumpsys connectivity |grep -A 1 \"Idle timers\"| awk '!/Idle timers/'|awk '{print $1}'")
+        if len(result) != 0:
+            current_online_interface = result.split(":")[0]
+        else:
+            current_online_interface = None
+        return current_online_interface
+
+    def get_route_table(self):
+        """
+        查看活动连接
+            通过查看路由表查看是否有通过 以太网， wlan0和移动数据的路由
+            没有即表示以太网或者wlan或者移动数据为下电状态,此目的主要是用来查询移动流量数据下电，后续优化
+            netstat -r 指令查询:
+            10.29.14.128    *               255.255.255.224 U         0 0          0 rmnet_data3
+            192.168.60.0    *               255.255.255.0   U         0 0          0 wlan0
+
+        """
+        self.send_adb_shell_command("netstat -r")
+
 
 if __name__ == '__main__':
     dev = Device("d")

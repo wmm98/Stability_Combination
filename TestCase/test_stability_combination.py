@@ -181,6 +181,10 @@ class TestStabilityCombination:
                     raise
 
             log.info("wifi上电")
+            time.sleep(2)
+            log.info("wifi 扫描列表")
+            wifi_scan_results = self.device.get_wifi_scan_list()
+            log.info("\n" + wifi_scan_results)
             if not self.device.ping_network():
                 log.error("wifi上电后5分钟内无法上网！！！")
                 if is_probability_test:

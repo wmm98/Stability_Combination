@@ -320,7 +320,7 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
         self.item_M_T_STA.setCheckState(0, Qt.Unchecked)
         self.item_M_T_STA.setFlags(self.item_M_T_STA.flags() | Qt.ItemIsSelectable)
 
-        self.item_M_T_STA_wifi_btn = QTreeWidgetItem(self.item_M_T_STA)
+        self.item_M_T_STA_wifi_btn = QTreeWidgetItem(self.item_L_X_STA)
         self.item_M_T_STA_wifi_btn.setText(0, "开关wifi检测网络压测")
         self.item_M_T_STA_wifi_btn.setCheckState(0, Qt.Unchecked)
         self.item_M_T_STA_wifi_btn.setText(1, "")
@@ -328,7 +328,7 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
         self.item_M_T_STA_wifi_btn.setFlags(
             self.item_M_T_STA_wifi_btn.flags() | Qt.ItemIsSelectable | Qt.ItemIsUserCheckable | Qt.ItemIsEditable)
 
-        self.item_M_T_STA_mobile_btn = QTreeWidgetItem(self.item_M_T_STA)
+        self.item_M_T_STA_mobile_btn = QTreeWidgetItem(self.item_L_X_STA)
         self.item_M_T_STA_mobile_btn.setText(0, "开关4G检测网络压测")
         self.item_M_T_STA_mobile_btn.setCheckState(0, Qt.Unchecked)
         self.item_M_T_STA_mobile_btn.setText(1, "")
@@ -336,7 +336,7 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
         self.item_M_T_STA_mobile_btn.setFlags(
             self.item_M_T_STA_mobile_btn.flags() | Qt.ItemIsSelectable | Qt.ItemIsUserCheckable | Qt.ItemIsEditable)
 
-        self.item_M_T_STA_sleep_wake = QTreeWidgetItem(self.item_M_T_STA)
+        self.item_M_T_STA_sleep_wake = QTreeWidgetItem(self.item_L_X_STA)
         self.item_M_T_STA_sleep_wake.setText(0, "休眠唤醒检查基本功能")
         self.item_M_T_STA_sleep_wake.setCheckState(0, Qt.Unchecked)
         self.item_M_T_STA_sleep_wake.setText(1, "")
@@ -344,7 +344,7 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
         self.item_M_T_STA_sleep_wake.setFlags(
             self.item_M_T_STA_sleep_wake.flags() | Qt.ItemIsSelectable | Qt.ItemIsUserCheckable | Qt.ItemIsEditable)
 
-        self.item_M_T_STA_usb_recognize = QTreeWidgetItem(self.item_M_T_STA)
+        self.item_M_T_STA_usb_recognize = QTreeWidgetItem(self.item_L_X_STA)
         self.item_M_T_STA_usb_recognize.setText(0, "U盘拔插识别压测")
         self.item_M_T_STA_usb_recognize.setCheckState(0, Qt.Unchecked)
         self.item_M_T_STA_usb_recognize.setText(1, "")
@@ -352,7 +352,7 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
         self.item_M_T_STA_usb_recognize.setFlags(
             self.item_M_T_STA_usb_recognize.flags() | Qt.ItemIsSelectable | Qt.ItemIsUserCheckable | Qt.ItemIsEditable)
 
-        self.item_M_T_STA_storage_speed = QTreeWidgetItem(self.item_M_T_STA)
+        self.item_M_T_STA_storage_speed = QTreeWidgetItem(self.item_L_X_STA)
         self.item_M_T_STA_storage_speed.setText(0, "U盘/TF卡读写速率压测")
         self.item_M_T_STA_storage_speed.setCheckState(0, Qt.Unchecked)
         self.item_M_T_STA_storage_speed.setText(1, "")
