@@ -392,13 +392,17 @@ class Device(publicInterface):
         """
         查看活动连接
             通过查看路由表查看是否有通过 以太网， wlan0和移动数据的路由
-            没有即表示以太网或者wlan或者移动数据为下电状态,此目的主要是用来查询移动流量数据下电，后续优化
+            没有即表示以太网或者wlan或者移动数据为下电状态,此目的主要是用来查询移动流量数据下电，后续优化，disable eth0后，超过两行数据即表示 移动数据还下电，间接方法
             netstat -r 指令查询:
+            Kernel IP routing table
+            Destination     Gateway         Genmask         Flags   MSS Window  irtt Iface
             10.29.14.128    *               255.255.255.224 U         0 0          0 rmnet_data3
             192.168.60.0    *               255.255.255.0   U         0 0          0 wlan0
-
+            注意：netstat -r | awk 'NR > 2' 可以打印第二行之后的数据：
+            10.29.14.128    *               255.255.255.224 U         0 0          0 rmnet_data3
+            192.168.60.0    *               255.255.255.0   U         0 0          0 wlan0
         """
-        self.send_adb_shell_command("netstat -r")
+        return self.send_adb_shell_command("netstat -r | awk 'NR > 2'")
 
 
 if __name__ == '__main__':
