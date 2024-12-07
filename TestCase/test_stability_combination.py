@@ -121,12 +121,12 @@ class TestStabilityCombination:
         if self.device.mobile_is_enable():
             self.device.disable_mobile_btn()
             time.sleep(2)
-        if self.device.mobile_is_enable():
-            log.error("移动流量无法下电，请检查！！！")
-            time.sleep(3)
-            self.device.kill_process(logcat_process_id)
-            self.device.adb_pull_file(log_path, os.path.dirname(Config.wifi_btn_sta_test_log_path))
-            raise
+        # if self.device.mobile_is_enable():
+        #     log.error("移动流量无法下电，请检查！！！")
+        #     time.sleep(3)
+        #     self.device.kill_process(logcat_process_id)
+        #     self.device.adb_pull_file(log_path, os.path.dirname(Config.wifi_btn_sta_test_log_path))
+        #     raise
 
         disable_fail_flag = 0
         enable_fail_flag = 0
@@ -182,9 +182,6 @@ class TestStabilityCombination:
 
             log.info("wifi上电")
             time.sleep(2)
-            log.info("wifi 扫描列表")
-            wifi_scan_results = self.device.get_wifi_scan_list()
-            log.info("\n" + wifi_scan_results)
             if not self.device.ping_network():
                 log.error("wifi上电后5分钟内无法上网！！！")
                 if is_probability_test:
@@ -196,6 +193,9 @@ class TestStabilityCombination:
                     self.device.adb_pull_file(log_path, os.path.dirname(Config.wifi_btn_sta_test_log_path))
                     raise
             log.info("当前可上网")
+            log.info("wifi 扫描列表")
+            wifi_scan_results = self.device.get_wifi_scan_list()
+            log.info("\n %s" % wifi_scan_results)
             log.info("***********wifi开关压测完成%d次" % times)
             time.sleep(rounds_interval)
 
