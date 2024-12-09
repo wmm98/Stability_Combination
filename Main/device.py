@@ -387,6 +387,10 @@ class Device(publicInterface):
         cmd = "\"cmd wifi list-scan-results | awk '{print $3 \"            \" $5}'\""
         return self.send_adb_shell_command(cmd)
 
+    def get_wifi_ssid_list(self):
+        cmd = "\"cmd wifi list-scan-results | awk '{print $5}'\""
+        return self.send_adb_shell_command(cmd)
+
     def get_current_online_interface(self):
         result = self.send_adb_shell_command("dumpsys connectivity |grep -A 1 \"Idle timers\"| awk '!/Idle timers/'|awk '{print $1}'")
         if len(result) != 0:

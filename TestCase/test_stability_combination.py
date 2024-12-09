@@ -199,6 +199,13 @@ class TestStabilityCombination:
                 log.info("wifi 扫描列表")
                 wifi_scan_results = self.device.get_wifi_scan_list()
                 log.info("\n %s" % wifi_scan_results)
+                scan_ssid_list = self.device.get_wifi_ssid_list().replace("\r", "").split("\n")
+                actual_wifi_list = []
+                for ssid in scan_ssid_list:
+                    if ssid not in actual_wifi_list[1:]:
+                        if "WPA" not in ssid and "ESS" not in ssid:
+                            actual_wifi_list.append(ssid)
+                log.info("扫描到的wifi数量为:%d" % len(actual_wifi_list))
                 log.info("***********wifi开关压测完成%d次" % times)
                 time.sleep(rounds_interval)
 
