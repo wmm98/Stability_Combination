@@ -239,10 +239,12 @@ class Device(publicInterface):
         exp = self.remove_info_space("ping: unknown host %s" % "www.baidu.com")
         now_time = self.get_current_time()
         while True:
-            res = self.remove_info_space(self.send_adb_shell_command(cmd))
-            log.info(res[:100])
-            if len(res) != 0 and exp not in res:
-                return True
+            network_info = self.send_adb_shell_command(cmd)
+            if network_info is not None:
+                res = self.remove_info_space(network_info)
+                log.info(res[:100])
+                if len(res) != 0 and exp not in res:
+                    return True
             if self.get_current_time() > self.return_end_time(now_time, timeout):
                 return False
             time.sleep(3)
@@ -376,6 +378,10 @@ class Device(publicInterface):
     def get_wlan_mac(self):
         cmd = "cat sys/class/net/wlan0/address"
         return self.send_adb_shell_command(cmd)
+
+    def scan_wifi(self):
+        cmd = "\"cmd wifi start-scan\""
+        self.send_adb_shell_command(cmd)
 
     def get_wifi_scan_list(self):
         cmd = "\"cmd wifi list-scan-results | awk '{print $3 \"            \" $5}'\""
