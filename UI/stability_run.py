@@ -16,7 +16,7 @@ from usb_recognition_ui import USBFlashTestDisplay
 from storage_read_write_speeds_ui import StorageTestDisplay
 from factory_reset_ui import FactoryResetDisplay
 from bt_connect_stability_ui import BtConnectDisplay
-from boot_check_camera_sub_ui import BootCameraStabilityDisplay
+# from boot_check_camera_sub_ui import BootCameraStabilityDisplay
 from device_sleep_awake_ui import SleepAwakeDisplay
 import os
 import shutil
@@ -140,7 +140,7 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
         self.storage_read_write_speed_window = StorageTestDisplay()
         self.factory_reset_window = FactoryResetDisplay()
         self.bt_connect_test_window = BtConnectDisplay()
-        self.boot_camera_sub_window = BootCameraStabilityDisplay()
+        # self.lx_boot_check_window.boot_camera_sub_window = BootCameraStabilityDisplay()
         self.sleep_awake_window = SleepAwakeDisplay()
         self.setupUi(self)
         self.AllTestCase = None
@@ -542,8 +542,8 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
                 if not self.lx_boot_check_window.isVisible():
                     self.lx_boot_check_window.show()
                 # 相机窗口
-                if not self.boot_camera_sub_window.isVisible():
-                    self.boot_camera_sub_window.show()
+                # if not self.lx_boot_check_window.boot_camera_sub_window.isVisible():
+                #     self.lx_boot_check_window.boot_camera_sub_window.show()
 
         if item == self.item_L_X_STA_child_camera_compare:
             if item.checkState(0) == 2:
@@ -779,12 +779,12 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
             self.text_edit_final_camera.clear()
             if self.lx_preview_photograph_window.submit_flag or self.lx_boot_check_window.submit_flag or self.lx_boot_check_window.submit_flag:
                 self.file_camera_timer = QTimer(self)
-                if self.lx_preview_photograph_window.is_front_or_rear_camera.isChecked() or self.boot_camera_sub_window.is_front_or_rear_camera.isChecked():
+                if self.lx_preview_photograph_window.is_front_or_rear_camera.isChecked() or self.lx_boot_check_window.boot_camera_sub_window.is_front_or_rear_camera.isChecked():
                     if os.path.exists(conf_path.camera_sta_test_default_photograph_path):
                         os.remove(conf_path.camera_sta_test_default_photograph_path)
                     if os.path.exists(conf_path.camera_sta_test_default_preview_path):
                         os.remove(conf_path.camera_sta_test_default_preview_path)
-                if self.lx_preview_photograph_window.is_front_and_rear_camera.isChecked() or self.boot_camera_sub_window.is_front_and_rear_camera.isChecked():
+                if self.lx_preview_photograph_window.is_front_and_rear_camera.isChecked() or self.lx_boot_check_window.boot_camera_sub_window.is_front_and_rear_camera.isChecked():
                     if os.path.exists(conf_path.camera_sta_test_rear_photograph_path):
                         os.remove(conf_path.camera_sta_test_rear_photograph_path)
                     if os.path.exists(conf_path.camera_sta_test_rear_preview_path):
@@ -831,7 +831,7 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
 
     def check_image_camera_modification(self):
         """检查图片文件是否有修改"""
-        if self.lx_preview_photograph_window.is_front_or_rear_camera.isChecked() or self.boot_camera_sub_window.is_front_or_rear_camera.isChecked():
+        if self.lx_preview_photograph_window.is_front_or_rear_camera.isChecked() or self.lx_boot_check_window.boot_camera_sub_window.is_front_or_rear_camera.isChecked():
             if os.path.exists(conf_path.camera_sta_test_default_photograph_path) and os.path.exists(
                     conf_path.camera_sta_test_default_preview_path):
                 #
@@ -845,7 +845,7 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
                     self.last_modify_time_preview = current_mod_time_pre  # 更新为新的修改时间
                     self.camera_default_preview_flag = True
 
-        if self.lx_preview_photograph_window.is_front_and_rear_camera.isChecked() or self.boot_camera_sub_window.is_front_and_rear_camera.isChecked():
+        if self.lx_preview_photograph_window.is_front_and_rear_camera.isChecked() or self.lx_boot_check_window.boot_camera_sub_window.is_front_and_rear_camera.isChecked():
             if os.path.exists(conf_path.camera_sta_test_rear_photograph_path) and os.path.exists(
                     conf_path.camera_sta_test_rear_preview_path) and os.path.exists(
                 conf_path.camera_sta_test_front_preview_path) and os.path.exists(
@@ -875,13 +875,13 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
                     self.camera_front_and_rear_flag += 1
                     self.camera_front_preview_flag = True
 
-        if self.lx_preview_photograph_window.is_front_or_rear_camera.isChecked() or self.boot_camera_sub_window.is_front_or_rear_camera:
+        if self.lx_preview_photograph_window.is_front_or_rear_camera.isChecked() or self.lx_boot_check_window.boot_camera_sub_window.is_front_or_rear_camera:
             if self.camera_default_preview_flag and self.camera_default_photograph_flag:
                 self.camera_default_preview_flag = False
                 self.camera_default_photograph_flag = False
                 self.add_logo_image_camera()
 
-        if self.lx_preview_photograph_window.is_front_and_rear_camera.isChecked() or self.boot_camera_sub_window.is_front_and_rear_camera.isChecked():
+        if self.lx_preview_photograph_window.is_front_and_rear_camera.isChecked() or self.lx_boot_check_window.boot_camera_sub_window.is_front_and_rear_camera.isChecked():
             if self.camera_rear_preview_flag and self.camera_rear_photograph_flag and self.camera_front_photograph_flag and self.camera_front_preview_flag:
                 self.camera_rear_preview_flag = False
                 self.camera_rear_photograph_flag = False
@@ -1019,7 +1019,7 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
         # 创建 QTextImageFormat 对象
 
         self.text_edit_final_camera.clear()
-        if self.lx_preview_photograph_window.is_front_or_rear_camera.isChecked() or self.boot_camera_sub_window.is_front_or_rear_camera.isChecked():
+        if self.lx_preview_photograph_window.is_front_or_rear_camera.isChecked() or self.lx_boot_check_window.boot_camera_sub_window.is_front_or_rear_camera.isChecked():
             image_default_preview_format = QTextImageFormat()
             image_default_preview_url = QUrl.fromLocalFile(self.camera_sta_test_default_preview_path)
             self.document_camera.addResource(QTextDocument.ImageResource, image_default_preview_url,
@@ -1038,7 +1038,7 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
             image_default_photograph_format.setHeight(self.image_height_camera)
             self.cursor_camera.insertImage(image_default_photograph_format)
 
-        if self.lx_preview_photograph_window.is_front_and_rear_camera.isChecked() or self.boot_camera_sub_window.is_front_and_rear_camera.isChecked():
+        if self.lx_preview_photograph_window.is_front_and_rear_camera.isChecked() or self.lx_boot_check_window.boot_camera_sub_window.is_front_and_rear_camera.isChecked():
             image_rear_preview_format = QTextImageFormat()
             image_rear_preview_url = QUrl.fromLocalFile(self.camera_sta_test_rear_preview_path)
             self.document_camera.addResource(QTextDocument.ImageResource, image_rear_preview_url,

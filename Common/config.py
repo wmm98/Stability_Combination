@@ -169,6 +169,7 @@ class Config:
     option_usb_test = "is_usb_test"
     option_team_one = "is_team_one"
     option_team_two = "is_team_two"
+    option_camera_test = "is_camera_test"
 
     ui_option_cases = "cases"
     ui_option_logo_cases = "logo_cases"

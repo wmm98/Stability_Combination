@@ -17,9 +17,9 @@ import configparser
 import time
 from configfile import ConfigP
 import config_path
+from boot_check_camera_sub_ui import BootCameraStabilityDisplay
 
 conf_path = config_path.UIConfigPath()
-
 
 class Boot_Check_MainWindow(config_path.UIConfigPath):
     options = QtWidgets.QFileDialog.Options()
@@ -209,6 +209,7 @@ class Boot_Check_MainWindow(config_path.UIConfigPath):
         self.is_bt_test = QCheckBox("蓝牙")
         self.is_nfc_test = QCheckBox("NFC")
         self.is_usb_test = QCheckBox("U盘")
+        self.is_camera_test = QCheckBox("相机")
         self.device_config_tips = QLabel("有些设备开启ADB不支持U盘")
         self.device_config_tips.setStyleSheet("color: blue;")
         layout_device_config.addWidget(self.device_config_info)
@@ -218,6 +219,7 @@ class Boot_Check_MainWindow(config_path.UIConfigPath):
         layout_device_config.addWidget(self.is_bt_test)
         layout_device_config.addWidget(self.is_nfc_test)
         layout_device_config.addWidget(self.is_usb_test)
+        layout_device_config.addWidget(self.is_camera_test)
         layout_device_config.addWidget(self.device_config_tips)
         layout_device_config.addStretch(1)
         self.verticalLayout_left.addLayout(layout_device_config)
@@ -346,6 +348,7 @@ class BootCheckDisplay(QtWidgets.QMainWindow, Boot_Check_MainWindow):
         super(BootCheckDisplay, self).__init__()
         self.bg_config = ConfigP(self.background_config_file_path)
         self.ui_config = ConfigP(self.ui_config_file_path)
+        self.boot_camera_sub_window = BootCameraStabilityDisplay()
         self.setupUi(self)
         self.intiui()
         self.submit_flag = False
@@ -369,6 +372,7 @@ class BootCheckDisplay(QtWidgets.QMainWindow, Boot_Check_MainWindow):
         # 进程完成
         self.only_boot.clicked.connect(self.only_boot_checkbox_change)
         self.is_usb_test.clicked.connect(self.enable_usb_ui)
+        self.is_camera_test.clicked.connect(self.display_sub_camera_ui)
         self.check_usb_flash_button.clicked.connect(self.query_usb_flash_path)
         self.usb_process.finished.connect(self.query_usb_boot_finished_handle)
         self.get_logo_image_button.clicked.connect(self.get_logo_image_button_change)
@@ -376,6 +380,11 @@ class BootCheckDisplay(QtWidgets.QMainWindow, Boot_Check_MainWindow):
 
         # 初始化图片cursor
         self.cursor = QTextCursor(self.document)
+
+    def display_sub_camera_ui(self):
+        if self.is_camera_test.isChecked():
+            if not self.boot_camera_sub_window.isVisible():
+                self.boot_camera_sub_window.show()
 
     def list_interval_duration(self):
         times = [str(j * 60) for j in range(1, 200)]
@@ -474,7 +483,8 @@ class BootCheckDisplay(QtWidgets.QMainWindow, Boot_Check_MainWindow):
             self.get_message_box("请选择开关机模式！！！")
             return
 
-        if not self.is_wifi_test.isChecked() and not self.is_eth_test.isChecked() and not self.is_mobile_test.isChecked() and not self.is_bt_test.isChecked() and not self.is_nfc_test.isChecked() and not self.is_usb_test.isChecked():
+        if not self.is_wifi_test.isChecked() and not self.is_eth_test.isChecked() and not self.is_mobile_test.isChecked() and not self.is_bt_test.isChecked() and not self.is_nfc_test.isChecked() and not self.is_usb_test.isChecked()\
+                and not self.is_camera_test.isChecked():
             self.get_message_box("请勾选设备信息！！！")
             return
 
@@ -671,6 +681,11 @@ class BootCheckDisplay(QtWidgets.QMainWindow, Boot_Check_MainWindow):
             config.add_config_option(section, config.option_usb_test, "1")
         else:
             config.add_config_option(section, config.option_usb_test, "0")
+
+        if self.is_camera_test.isChecked():
+            config.add_config_option(section, config.option_camera_test, "1")
+        else:
+            config.add_config_option(section, config.option_camera_test, "0")
 
         # 保存用例压测次数设置
         config.add_config_option(section, config.ui_option_logo_test_times, self.test_times.currentText())
