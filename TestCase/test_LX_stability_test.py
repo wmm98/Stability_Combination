@@ -195,6 +195,7 @@ class TestLXStability:
         # 检查蓝牙设备（从）是否连接上
         if not self.device.bt_is_connected():
             log.error("当前测试设备显示未连接上蓝牙设备（从）")
+        log.info("当前设备已连接上蓝牙设备（从）")
 
         # 需要跟彬哥确认NFC刷卡绑定app的问题
         if is_nfc:
@@ -520,6 +521,7 @@ class TestLXStability:
                         failed_flag += 1
                 log.info("启动后蓝牙当前为上电状态")
                 # 检查蓝牙设备是否连接上
+                time.sleep(10)
                 if self.device.bt_is_connected():
                     log.info("当前显示已连接上蓝牙设备（从）")
                 else:
