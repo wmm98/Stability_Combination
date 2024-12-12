@@ -23,19 +23,19 @@ class SerialD:
         try:
             ser = serial.Serial(port, baudrate)
             if (ser.isOpen()):  # 判断串口是否打开
-                log.info("串口：%s 已经打开！！！" % port)
+                log.info("串口：%s 已经打开!" % port)
             else:
                 ser.open()
-                log.info("串口：%s 打开！！！" % port)
+                log.info("串口：%s 打开!" % port)
         except Exception as e:
             log.error(str(e))
 
     def logoutSer(self):
         if ser.isOpen():
             ser.close()
-            log.info("串口： %s 关闭！！！" % port)
+            log.info("串口： %s 关闭！" % port)
         else:
-            log.info("串口： %s 关闭！！！" % port)
+            log.info("串口： %s 关闭！" % port)
 
     def send_status_cmd(self):
         num = ser.write(bytes.fromhex("A0 01 05 A6"))

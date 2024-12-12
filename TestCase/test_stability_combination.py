@@ -573,10 +573,11 @@ class TestStabilityCombination:
 
                 t_ser.open_relay(com_line)
                 log.info("USB调试线下电")
+                self.device.restart_adb()
                 if self.device.device_is_online():
                     time.sleep(3)
-                if not self.device.device_is_online():
-                    raise Exception("USB调试线下电失败，请检查！！！")
+                    if self.device.device_is_online():
+                        raise Exception("USB调试线下电失败，请检查！！！")
                 log.info("15s后准备进入灭屏进入休眠")
                 # time.sleep()
                 time.sleep(sleep_duration * 60)

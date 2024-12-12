@@ -222,7 +222,8 @@ class Device(publicInterface):
         self.send_adb_shell_command("ifconfig eth0 down")
 
     def eth0_is_enable(self):
-        if "eth0" in self.send_adb_shell_command("\"ifconfig | grep eht0\""):
+        cmd = "\"ifconfig | grep eth0\""
+        if "eth0" in self.send_adb_shell_command(cmd):
             return True
         else:
             return False
