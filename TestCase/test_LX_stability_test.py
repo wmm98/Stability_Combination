@@ -1860,9 +1860,12 @@ class TestLXStability:
         # 测试设备（主）开关蓝牙，查看蓝牙连接情况，从机（蓝牙音响）开关开关蓝牙，主机中蓝牙连接状况
         # 查看蓝牙打开、连接情况
         if not self.device.bt_is_enable():
-            log.error("设备蓝牙没打开，请检查！！！")
+            self.device.enable_bt_btn()
             time.sleep(3)
-            raise Exception
+            if not self.device.bt_is_enable():
+                log.error("设备蓝牙无法打开，请检查！！！")
+                time.sleep(3)
+                raise Exception
 
         if not self.device.bt_is_connected():
             log.error("当前没有连接到蓝牙设备，请检查！！！")
