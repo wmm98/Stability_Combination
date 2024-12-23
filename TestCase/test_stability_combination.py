@@ -7,7 +7,6 @@ from Common.log import MyLog
 from Main.device import Device
 from Common.config import Config
 from Common import m_serial
-
 log = MyLog()
 t_ser = m_serial.SerialD()
 
