@@ -106,7 +106,6 @@ class Device(publicInterface):
     # Send adb standalone command Send adb shell command
     def send_adb_shell_command(self, cmd):
         cmd = "adb -s %s shell %s" % (self.device_name, cmd)
-        # log.info(cmd)
         return shell.invoke(cmd)
 
     def get_file_md5_value(self, file_path):
@@ -222,8 +221,12 @@ class Device(publicInterface):
         self.send_adb_shell_command("ifconfig eth0 down")
 
     def eth0_is_enable(self):
-        cmd = "\"ifconfig | grep eth0\""
-        if "eth0" in self.send_adb_shell_command(cmd):
+        # cmd = "\"ifconfig | grep eth0\""
+        # if "eth0" in self.send_adb_shell_command(cmd):
+        #     return True
+        # else:
+        #     return False
+        if "eth0" in self.get_route_table():
             return True
         else:
             return False
@@ -234,6 +237,7 @@ class Device(publicInterface):
         return bonded_device_info
 
     def ping_network(self, times=5, timeout=300):
+        log.info("检查网络")
         # 每隔0.6秒ping一次，一共ping5次
         # ping - c 5 - i 0.6 qq.com
         cmd = " ping -c %s %s" % (times, "www.baidu.com")
@@ -243,10 +247,12 @@ class Device(publicInterface):
             network_info = self.send_adb_shell_command(cmd)
             if network_info is not None:
                 res = self.remove_info_space(network_info)
-                log.info(res[:100])
                 if len(res) != 0 and exp not in res:
+                    log.info("ping www.baidu.com 成功")
                     return True
+            log.info("正在 ping www.baidu.com ")
             if self.get_current_time() > self.return_end_time(now_time, timeout):
+                log.error("ping www.baidu.com失败 请检测！！！")
                 return False
             time.sleep(3)
 
