@@ -102,7 +102,6 @@ class TestStabilityCombination:
             bt_interval = int(self.ui_conf_file.get(Config.section_wifi_check, Config.test_interval))
 
             # 给以太网， 4G下电，清理环境
-
             if self.device.eth0_is_enable():
                 self.device.disable_eth0_btn()
                 time.sleep(2)
