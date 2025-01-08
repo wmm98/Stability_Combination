@@ -10,8 +10,9 @@ import configparser
 from Common.config import Config
 from Main.public import publicInterface
 import shutil
-from Common.process_shell import Shell
+from Common.process_shell import Shell, ConShell
 
+con_shell = ConShell()
 shell = Shell()
 conf = Config()
 log = MyLog()
@@ -2038,4 +2039,60 @@ class TestLXStability:
     @allure.title("触摸事件稳定性测试")
     def test_touch_stability(self):
         log.info("***********触摸事件稳定性测试开始************")
+        device_name = self.ui_conf_file.get(Config.section_ui_to_background, Config.ui_option_device_name)
+        test_times = int(self.ui_conf_file.get(Config.section_touch, Config.option_touch_test_times))
+        is_probability = int(self.ui_conf_file.get(Config.section_touch, Config.is_probability_test))
+        test_interval = int(self.ui_conf_file.get(Config.section_touch, Config.test_interval))
+
+        times = 0
+        fail_flag = 0
+        while times < test_times:
+            times += 1
+            self.device.reboot()
+            self.device.restart_adb()
+
+            # 检测设备90s内 adb是否在线
+            now_time = time.time()
+            while True:
+                if time.time() > now_time + 90:
+                    log.error("设备无法重启，请检查!!!")
+                    time.sleep(3)
+                    raise
+                if self.device.device_is_online():
+                    log.info("adb 在线")
+                    break
+
+            # 检查设备是否完全启动
+            boot_time = time.time()
+            while True:
+                if time.time() > boot_time + 120:
+                    log.error("设备无法完全启动，请检查!!!")
+                    time.sleep(3)
+                    raise
+                if self.device.device_boot():
+                    log.info("设备完全启动")
+                    break
+
+
+            # 先适配收银机，手持后续适配
+            event_info = con_shell.invoke("adb -s %s shell getevent -lt" % device_name)
+            log.info("获取触摸事件信息：+ \n %s" % event_info)
+            if " EV_ABS" not in event_info and "EV_SYN" not in event_info:
+                if is_probability:
+                    fail_flag += 1
+                    log.error("触摸无响应，请检查!!!")
+                    continue
+                log.error("触摸无响应，请检查!!!")
+                time.sleep(3)
+                break
+            else:
+                log.info("触摸正常响应")
+            log.info("***********第%d次触摸事件测试结束************" % times)
+            time.sleep(test_interval)
+
+        if is_probability:
+            if fail_flag > 0:
+                log.error("触摸无响应的次数为：%d" % fail_flag)
+                log.error("触摸无响应的概率为：%f" % (fail_flag / test_times))
+
         log.info("***********触摸事件稳定性测试结束************")

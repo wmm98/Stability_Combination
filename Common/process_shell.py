@@ -1,5 +1,7 @@
 import subprocess
 from Common.log import MyLog
+import select
+import time
 
 log = MyLog()
 
@@ -20,19 +22,27 @@ class Shell:
 
 class ConShell:
     @staticmethod
-    def invoke(cmd, lines=30):
+    def invoke(cmd, lines=30, timeout=10):
         try:
-            process = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, creationflags=subprocess.CREATE_NO_WINDOW)
+            process = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                                       creationflags=subprocess.CREATE_NO_WINDOW)
             output = []
+            start_time = time.time()
             for _ in range(lines):
-                line = process.stdout.readline()
-                if not line:
+                if time.time() - start_time > timeout:
                     break
-                output.append(line.decode("utf-8"))
+                if process.stdout.readable():
+                    line = process.stdout.readline()
+                    if not line:
+                        break
+                    output.append(line.decode("utf-8"))
+                else:
+                    time.sleep(0.1)  # Sleep briefly to avoid busy-waiting
             process.terminate()
             return ''.join(output)
         except subprocess.TimeoutExpired as e:
             log.error(str(e))
+            return ""
 
 
 if __name__ == '__main__':

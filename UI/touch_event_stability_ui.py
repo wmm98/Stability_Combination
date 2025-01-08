@@ -44,6 +44,8 @@ class Touch_Event_MainWindow(config_path.UIConfigPath):
         self.interval_lable = QLabel("每一轮的间隔时长(秒)：")
         self.interval = QComboBox()
         self.interval.setEditable(True)
+        layout_test_times_info.addWidget(self.interval_lable)
+        layout_test_times_info.addWidget(self.interval)
         self.verticalLayout_left.addLayout(layout_test_interval)
 
 
