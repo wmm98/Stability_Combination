@@ -120,6 +120,10 @@ class ConfigP(UIConfigPath):
     option_sleep_test_times = "sleep_test_times"
     option_sleep_com_port = "sleep_com_port"
 
+    # 触摸事件压测
+    section_touch = "Touch-Evnet"
+    option_touch_test_times = "touch_test_times"
+
     def __init__(self, ini_path):
         self.ini_path = ini_path
         self.config = configparser.ConfigParser()

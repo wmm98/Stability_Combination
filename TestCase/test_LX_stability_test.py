@@ -418,12 +418,14 @@ class TestLXStability:
                         if check_adb_online_with_thread(
                                 self.ui_conf_file.get(Config.section_ui_to_background, Config.ui_option_device_name)):
                             if check_boot_complete_with_thread(
-                                    self.ui_conf_file.get(Config.section_ui_to_background, Config.ui_option_device_name),
+                                    self.ui_conf_file.get(Config.section_ui_to_background,
+                                                          Config.ui_option_device_name),
                                     timeout=120):
                                 log.info("设备完全启动")
                             else:
                                 log.info("设备无法完全启动, 请检查!!!")
-                                if self.ui_conf_file[Config.section_ui_boot_check][Config.option_only_boot_config] == "1":
+                                if self.ui_conf_file[Config.section_ui_boot_check][
+                                    Config.option_only_boot_config] == "1":
                                     log.error("当前认为复现了卡logo情景，请检查！！！")
                                     time.sleep(3)
                                     break
@@ -464,8 +466,9 @@ class TestLXStability:
                                 device_check.logcat(int(
                                     self.ui_conf_file.get(Config.section_ui_boot_check,
                                                           Config.option_logcat_duration)) * 60)
-                                log.info("成功捕捉了%s 分钟 adb log" % self.ui_conf_file.get(Config.section_ui_boot_check,
-                                                                                      Config.option_logcat_duration))
+                                log.info(
+                                    "成功捕捉了%s 分钟 adb log" % self.ui_conf_file.get(Config.section_ui_boot_check,
+                                                                                        Config.option_logcat_duration))
                                 log.info("任务结束")
                             else:
                                 log.info("设备不在线")
@@ -488,7 +491,7 @@ class TestLXStability:
                                 int(self.ui_conf_file.get(Config.section_ui_boot_check,
                                                           Config.option_logcat_duration)) * 60)
                             log.info("成功捕捉了%s 分钟 adb log" % self.ui_conf_file.get(Config.section_ui_boot_check,
-                                                                                  Config.option_logcat_duration))
+                                                                                         Config.option_logcat_duration))
                             log.info("任务结束")
                         else:
                             log.info("设备不在线")
@@ -1149,7 +1152,8 @@ class TestLXStability:
                                 photograph_file_new_path1 = Config.camera_sta_err_front_photograph_path
                                 shutil.copy(Config.camera_sta_test_front_photograph_path, photograph_file_new_path1)
                                 os.rename(os.path.join(photograph_file_new_path1, photograph_file_name1),
-                                          os.path.join(photograph_file_new_path1, "%d_%s" % (flag, photograph_file_name1)))
+                                          os.path.join(photograph_file_new_path1,
+                                                       "%d_%s" % (flag, photograph_file_name1)))
                                 compare_fail_flag += 1
                             else:
                                 time.sleep(3)
@@ -1179,7 +1183,8 @@ class TestLXStability:
                                 photograph_file_new_path2 = Config.camera_sta_err_rear_photograph_path
                                 shutil.copy(Config.camera_sta_test_rear_photograph_path, photograph_file_new_path2)
                                 os.rename(os.path.join(photograph_file_new_path2, photograph_file_name2),
-                                          os.path.join(photograph_file_new_path2, "%d_%s" % (flag, photograph_file_name2)))
+                                          os.path.join(photograph_file_new_path2,
+                                                       "%d_%s" % (flag, photograph_file_name2)))
                                 compare_fail_flag += 1
                             else:
                                 log.error("后镜头拍照预期和测试拍照差异过大，请检查！！！")
@@ -1197,7 +1202,8 @@ class TestLXStability:
                             self.device.remove_img()
 
                         # 后台启动捕捉log
-                        log_path = os.path.join("/sdcard/%s" % os.path.basename(Config.camera_sta_test_log_path))  # log名称
+                        log_path = os.path.join(
+                            "/sdcard/%s" % os.path.basename(Config.camera_sta_test_log_path))  # log名称
                         # self.device.rm_file(log_path)  # 清除已存在的
                         # self.device.logcat_thread(log_path)
                         # log.info("捕捉设备log")
@@ -1301,7 +1307,8 @@ class TestLXStability:
                                 photograph_file_new_path = Config.camera_sta_err_default_photograph_path
                                 shutil.copy(Config.camera_sta_test_default_photograph_path, photograph_file_new_path)
                                 os.rename(os.path.join(photograph_file_new_path, photograph_file_name),
-                                          os.path.join(photograph_file_new_path, "%d_%s" % (flag, photograph_file_name)))
+                                          os.path.join(photograph_file_new_path,
+                                                       "%d_%s" % (flag, photograph_file_name)))
                                 # continue
                             else:
                                 time.sleep(3)
@@ -2026,3 +2033,9 @@ class TestLXStability:
                 log.error("蓝牙设备断连，显示异常的概率为%s" % slave_probability)
 
         log.info("***********连接蓝牙音响测试结束************")
+
+    @allure.feature("touch_event_stability")
+    @allure.title("触摸事件稳定性测试")
+    def test_touch_stability(self):
+        log.info("***********触摸事件稳定性测试开始************")
+        log.info("***********触摸事件稳定性测试结束************")

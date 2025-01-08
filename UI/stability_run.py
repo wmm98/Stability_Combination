@@ -18,6 +18,7 @@ from factory_reset_ui import FactoryResetDisplay
 from bt_connect_stability_ui import BtConnectDisplay
 # from boot_check_camera_sub_ui import BootCameraStabilityDisplay
 from device_sleep_awake_ui import SleepAwakeDisplay
+from touch_event_stability_ui import TouchEventDisplay
 import os
 import shutil
 from PyQt5.QtGui import QPixmap
@@ -142,6 +143,7 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
         self.bt_connect_test_window = BtConnectDisplay()
         # self.lx_boot_check_window.boot_camera_sub_window = BootCameraStabilityDisplay()
         self.sleep_awake_window = SleepAwakeDisplay()
+        self.touch_event_window = TouchEventDisplay()
         self.setupUi(self)
         self.AllTestCase = None
         self.intiui()
@@ -195,6 +197,7 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
         self.factory_reset_window.submit_button.clicked.connect(self.display_factory_reset_test_times)
         self.bt_connect_test_window.submit_button.clicked.connect(self.display_bt_connect_test_times)
         self.sleep_awake_window.submit_button.clicked.connect(self.display_sleep_wake_test_times)
+        self.touch_event_window.submit_button.clicked.connect(self.display_touch_event_test_times)
         # 初始化图片cursor
         # self.cursor = QTextCursor(self.document)
 
@@ -245,6 +248,16 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
         self.item_L_X_STA_child_bt_conenct.setText(2, "次")
         self.item_L_X_STA_child_bt_conenct.setFlags(
             self.item_L_X_STA_child_bt_conenct.flags() | Qt.ItemIsSelectable | Qt.ItemIsUserCheckable | Qt.ItemIsEditable)
+
+        # 触摸事件压测
+        self.item_L_X_STA_child_touch_event = QTreeWidgetItem(self.item_L_X_STA)
+        self.item_L_X_STA_child_touch_event.setText(0, "触摸事件测试")
+        self.item_L_X_STA_child_touch_event.setCheckState(0, Qt.Unchecked)
+        self.item_L_X_STA_child_touch_event.setText(1, "")
+        self.item_L_X_STA_child_touch_event.setText(2, "次")
+        self.item_L_X_STA_child_touch_event.setFlags(
+            self.item_L_X_STA_child_touch_event.flags() | Qt.ItemIsSelectable | Qt.ItemIsUserCheckable | Qt.ItemIsEditable)
+
 
         # DDR、EMMC压测
         self.item_D_E_STA = QTreeWidgetItem(self.item_sta_root)
@@ -367,6 +380,15 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
         self.item_M_T_STA_factory_reset.setText(2, "次")
         self.item_M_T_STA_factory_reset.setFlags(
             self.item_M_T_STA_factory_reset.flags() | Qt.ItemIsSelectable | Qt.ItemIsUserCheckable | Qt.ItemIsEditable)
+
+    def display_touch_event_test_times(self):
+        time.sleep(1)
+        if self.touch_event_window.submit_flag:
+            if self.item_L_X_STA_child_touch_event.checkState(0) == 2:
+                times = self.ui_config.get_option_value(self.ui_config.section_touch,
+                                                        self.ui_config.option_touch_test_times)
+                self.item_L_X_STA_child_touch_event.setText(1, times)
+                self.item_L_X_STA_child_touch_event.setTextAlignment(1, Qt.AlignRight)
 
     def display_sleep_wake_test_times(self):
         time.sleep(1)
@@ -585,6 +607,11 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
                 if not self.bt_connect_test_window.isVisible():
                     self.bt_connect_test_window.show()
 
+        if item == self.item_L_X_STA_child_touch_event:
+            if item.checkState(0) == 2:
+                if not self.touch_event_window.isVisible():
+                    self.touch_event_window.show()
+
     def handlechanged(self, item, column):
         # 获取选中节点的子节点个数
         count = item.childCount()
@@ -741,6 +768,8 @@ class UIDisplay(QtWidgets.QMainWindow, Ui_MainWindow):
                     self.transfer_cases.append("boot_logo")
                 if "休眠唤醒检查基本功能" in case:
                     self.transfer_cases.append("Sleep-Awake-stability")
+                if "触摸事件测试" in case:
+                    self.transfer_cases.append("touch_event_stability")
 
             self.ui_config.add_config_option(self.ui_config.section_ui_to_background,
                                              self.ui_config.ui_option_device_name,

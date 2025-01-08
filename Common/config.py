@@ -122,6 +122,10 @@ class Config:
     process_storage_flash_path = os.path.join(project_path, "UI", "process_storage_path.py")
     storage_query_log_path = os.path.join(project_path, "UI", "storage_query_log.txt")
 
+    # 触摸事件压测
+    # bat_touch_path = os.path.join(project_path, "UI", "bat_touch.bat")
+    touch_logcat_path = os.path.join(project_path, "UI", "touch_logcat.txt")
+
     section_ui_to_background = "UI-Background"
     section_background_to_ui = "Background-UI"
     # 公共
@@ -231,4 +235,8 @@ class Config:
     option_sleep_config = "usb_config"
     option_sleep_test_times = "sleep_test_times"
     option_sleep_com_port = "sleep_com_port"
+
+    # 触摸事件压测
+    section_touch = "Touch-Evnet"
+    option_touch_test_times = "touch_test_times"
 

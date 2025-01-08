@@ -88,3 +88,7 @@ class UIConfigPath:
 
     # 恢复出厂设置
     process_factory_reset_path = os.path.join(project_path, "UI", "factory_reset_ui.py")
+
+    # 触摸事件压测
+    # bat_touch_path = os.path.join(project_path, "UI", "bat_touch.bat")
+    touch_logcat_path = os.path.join(project_path, "UI", "touch_logcat.txt")
