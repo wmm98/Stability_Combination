@@ -2,6 +2,8 @@ import subprocess
 from Common.log import MyLog
 import select
 import time
+import threading
+import queue
 
 log = MyLog()
 
@@ -22,29 +24,51 @@ class Shell:
 
 class ConShell:
     @staticmethod
-    def invoke(cmd, lines=30, timeout=10):
+    def invoke(cmd, timeout=10):
+        def enqueue_output(pipe, output_queue):
+            for line in iter(pipe.readline, b''):
+                output_queue.put(line.decode("utf-8"))
+            pipe.close()
+
         try:
             process = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
                                        creationflags=subprocess.CREATE_NO_WINDOW)
-            output = []
+            output_queue = queue.Queue()
+
+            stdout_thread = threading.Thread(target=enqueue_output, args=(process.stdout, output_queue))
+            stderr_thread = threading.Thread(target=enqueue_output, args=(process.stderr, output_queue))
+            stdout_thread.daemon = True
+            stderr_thread.daemon = True
+            stdout_thread.start()
+            stderr_thread.start()
+
             start_time = time.time()
-            for _ in range(lines):
-                if time.time() - start_time > timeout:
-                    break
-                if process.stdout.readable():
-                    line = process.stdout.readline()
-                    if not line:
+            output = []
+
+            while True:
+                try:
+                    line = output_queue.get(timeout=0.1)
+                    output.append(line)
+                    print(line, end="")
+
+                except queue.Empty:
+                    if time.time() - start_time > timeout:
+                        print("\nTimeout reached, terminating the process...")
+                        # process.terminate() cannot stop the process
+                        process.terminate()
                         break
-                    output.append(line.decode("utf-8"))
-                else:
-                    time.sleep(0.1)  # Sleep briefly to avoid busy-waiting
-            process.terminate()
+
+            # stdout_thread.join()
+            # stderr_thread.join()
             return ''.join(output)
-        except subprocess.TimeoutExpired as e:
-            log.error(str(e))
+
+        except Exception as e:
+            print(f"Error: {e}")
             return ""
 
 
 if __name__ == '__main__':
-    # print(Shell.invoke("adb devices"))
-    print(ConShell.invoke("adb shell getevent -lt"))
+    print("***************************************")
+    partial_output = ConShell.invoke("adb shell getevent -lt", timeout=5)
+    print("\nPartial Output Captured:")
+    print(partial_output)
