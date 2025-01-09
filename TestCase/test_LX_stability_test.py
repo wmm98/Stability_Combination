@@ -2078,24 +2078,26 @@ class TestLXStability:
                 event_info = con_shell.invoke("adb -s %s shell getevent -lt" % device_name, timeout=5)
                 log.info("获取触摸事件信息：+ \n %s" % event_info)
                 if " EV_ABS" not in event_info and "EV_SYN" not in event_info:
+                    fail_flag += 1
                     if is_probability:
-                        fail_flag += 1
                         log.error("触摸无响应，请检查!!!")
                         continue
                     log.error("触摸无响应，请检查!!!")
+                    log.info("触摸事件成功次数为：%d" % (times - fail_flag))
+                    log.info("触摸事件失败次数为：%d" % (fail_flag))
                     time.sleep(3)
                     break
                 else:
                     log.info("触摸正常响应")
                 log.info("***********第%d次触摸事件测试结束************" % times)
                 time.sleep(test_interval)
-
+            log.info("***********触摸事件稳定性测试结束************")
             if is_probability:
                 if fail_flag > 0:
                     log.error("触摸无响应的次数为：%d" % fail_flag)
                     log.error("触摸无响应的概率为：%f" % (fail_flag / test_times))
 
-            log.info("***********触摸事件稳定性测试结束************")
+            log.info("触摸事件成功次数为：%d" % (test_times - fail_flag))
 
         except Exception as e:
             log.error(str(e))
