@@ -123,6 +123,13 @@ class ConfigP(UIConfigPath):
     # 触摸事件压测
     section_touch = "Touch-Evnet"
     option_touch_test_times = "touch_test_times"
+    option_touch_com_port = "touch_com_port"
+    option_touch_com_line = "touch_com_line"
+    option_touch_boot_button_duration = "boot_button_duration"
+    option_touch_dapter_boot = "touch_adpater_boot"
+    option_touch_power_boot = "touch_power_boot"
+    option_touch_soft_boot = "touch_soft_boot"
+    option_touch_is_double_screen = "touch_is_double_screen"
 
     def __init__(self, ini_path):
         self.ini_path = ini_path

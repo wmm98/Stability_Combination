@@ -1,3 +1,5 @@
+from itertools import count
+
 import allure
 import os
 import time
@@ -2044,6 +2046,8 @@ class TestLXStability:
             test_times = int(self.ui_conf_file.get(Config.section_touch, Config.option_touch_test_times))
             is_probability = int(self.ui_conf_file.get(Config.section_touch, Config.is_probability_test))
             test_interval = int(self.ui_conf_file.get(Config.section_touch, Config.test_interval))
+            test_lines = int(self.ui_conf_file.get(Config.section_touch, Config.option_touch_com_line).split("_")[1])
+            boot_button_duration = int(self.ui_conf_file.get(Config.section_touch, Config.option_touch_boot_button_duration))
 
             times = 0
             fail_flag = 0
@@ -2051,14 +2055,17 @@ class TestLXStability:
                 times += 1
                 self.device.reboot()
                 self.device.restart_adb()
-
+                if self.device.device_is_online():
+                    self.device.reboot()
+                    self.device.restart_adb()
+                log.error("重启中，请等待...")
                 # 检测设备90s内 adb是否在线
                 now_time = time.time()
                 while True:
-                    if time.time() > now_time + 90:
+                    if time.time() > now_time + 120:
                         log.error("设备无法重启，请检查!!!")
                         time.sleep(3)
-                        raise
+                        continue
                     if self.device.device_is_online():
                         log.info("adb 在线")
                         break
@@ -2069,7 +2076,7 @@ class TestLXStability:
                     if time.time() > boot_time + 120:
                         log.error("设备无法完全启动，请检查!!!")
                         time.sleep(3)
-                        raise
+                        continue
                     if self.device.device_boot():
                         log.info("设备完全启动")
                         break
@@ -2098,7 +2105,6 @@ class TestLXStability:
                     log.error("触摸无响应的概率为：%f" % (fail_flag / test_times))
 
             log.info("触摸事件成功次数为：%d" % (test_times - fail_flag))
-
         except Exception as e:
             log.error(str(e))
             log.error("触摸事件测试过程中有异常，请检查!!!")
