@@ -243,17 +243,26 @@ class TouchEventDisplay(QtWidgets.QMainWindow, Touch_Event_MainWindow):
             config.add_config_option(section, config.option_touch_is_double_screen, "0")
 
         config.add_config_option(section, config.option_touch_com_port, self.test_COM.currentText())
-        if self.line_config.currentText() == "1路":
-            config.add_config_option(section, config.option_touch_com_line, "relay_1")
-        elif self.line_config.currentText() == "2路":
-            config.add_config_option(section, config.option_touch_com_line, "relay_2")
-        elif self.line_config.currentText() == "3路":
-            config.add_config_option(section, config.option_touch_com_line, "relay_3")
+
+        if self.line_config.isEnabled():
+            if self.line_config.currentText() == "1路":
+                config.add_config_option(section, config.option_touch_com_line, "relay_1")
+            elif self.line_config.currentText() == "2路":
+                config.add_config_option(section, config.option_touch_com_line, "relay_2")
+            elif self.line_config.currentText() == "3路":
+                config.add_config_option(section, config.option_touch_com_line, "relay_3")
+            else:
+                config.add_config_option(section, config.option_touch_com_line, "relay_4")
         else:
-            config.add_config_option(section, config.option_touch_com_line, "relay_4")
-        config.add_config_option(section, config.option_touch_boot_button_duration, self.boot_button_duration.currentText())
+            config.add_config_option(section, config.option_touch_com_line, "relay_0")
+
+        if not self.boot_button_duration.isEnabled():
+            config.add_config_option(section, config.option_touch_boot_button_duration, "5")
+        else:
+            config.add_config_option(section, config.option_touch_boot_button_duration, self.boot_button_duration.currentText())
 
         config.add_config_option(section, config.option_touch_test_times, self.test_times.currentText())
+
         if self.is_probability_test.isChecked():
             config.add_config_option(section, config.is_probability_test, "1")
         else:

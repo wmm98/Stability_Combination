@@ -83,6 +83,7 @@ class TestLXStability:
         self.device_name = self.ui_conf_file.get(Config.section_ui_to_background,
                                                  Config.ui_option_device_name)
         self.device = Device(self.device_name)
+        self.device_check = DeviceCheck(self.device_name)
 
     def teardown_class(self):
         log.info("压测运行完毕")
@@ -2046,19 +2047,56 @@ class TestLXStability:
             test_times = int(self.ui_conf_file.get(Config.section_touch, Config.option_touch_test_times))
             is_probability = int(self.ui_conf_file.get(Config.section_touch, Config.is_probability_test))
             test_interval = int(self.ui_conf_file.get(Config.section_touch, Config.test_interval))
+            is_touch_is_double_screen = int(
+                self.ui_conf_file.get(Config.section_touch, Config.option_touch_is_double_screen))
+
+            is_touch_soft_boot = int(self.ui_conf_file.get(Config.section_touch, Config.option_touch_soft_boot))
+            is_touch_adapter_boot = int(self.ui_conf_file.get(Config.section_touch, Config.option_touch_dapter_boot))
+            is_touch_power_boot = int(self.ui_conf_file.get(Config.section_touch, Config.option_touch_power_boot))
             test_lines = int(self.ui_conf_file.get(Config.section_touch, Config.option_touch_com_line).split("_")[1])
-            boot_button_duration = int(self.ui_conf_file.get(Config.section_touch, Config.option_touch_boot_button_duration))
+            button_duration = int(self.ui_conf_file.get(Config.section_touch, Config.option_touch_boot_button_duration))
+
+            com_port = self.ui_conf_file.get(Config.section_touch, Config.option_touch_com_port)
+
+            expect_event_data = ["/dev/input/event%d:EV_SYN" % i for i in range(1, 10)]
 
             times = 0
             fail_flag = 0
+            if not is_touch_soft_boot:
+                t_ser.loginSer(com_port)
             while times < test_times:
                 times += 1
-                self.device.reboot()
-                self.device.restart_adb()
-                if self.device.device_is_online():
+                if is_touch_soft_boot:
+                    log.info("设备重启")
                     self.device.reboot()
                     self.device.restart_adb()
-                log.error("重启中，请等待...")
+                    if self.device.device_is_online():
+                        self.device.reboot()
+                        self.device.restart_adb()
+                if is_touch_power_boot:
+                    # t_ser.loginSer(com_port)
+                    log.info("指令关机")
+                    self.device_check.device_shutdown()
+                    time.sleep(10)
+                    self.device.restart_adb()
+                    if self.device.device_is_online():
+                        self.device_check.device_shutdown()
+                        time.sleep(10)
+                        self.device.restart_adb()
+                    t_ser.open_relay(test_lines)
+                    log.info("按下电源按键")
+                    time.sleep(button_duration)
+                    t_ser.close_relay(test_lines)
+                    log.info("松开电源按键")
+                if is_touch_adapter_boot:
+                    # t_ser.loginSer(com_port)
+                    t_ser.open_relay(test_lines)
+                    log.info("断开电源适配器")
+                    time.sleep(button_duration)
+                    t_ser.close_relay(test_lines)
+                    log.info("连接电源适配器")
+
+                log.error("设备启动中，请等待...")
                 # 检测设备90s内 adb是否在线
                 now_time = time.time()
                 while True:
@@ -2082,23 +2120,54 @@ class TestLXStability:
                         break
 
                 # 先适配收银机，手持后续适配
-                event_info = con_shell.invoke("adb -s %s shell getevent -lt" % device_name, timeout=5)
+                event_info = con_shell.invoke("adb -s %s shell getevent -lt" % device_name, timeout=12)
                 log.info("获取触摸事件信息：+ \n %s" % event_info)
-                if " EV_ABS" not in event_info and "EV_SYN" not in event_info:
-                    fail_flag += 1
-                    if is_probability:
+                if not is_touch_is_double_screen:
+                    if " EV_ABS" not in event_info and "EV_SYN" not in event_info:
+                        fail_flag += 1
+                        if is_probability:
+                            log.error("触摸无响应，请检查!!!")
+                            continue
                         log.error("触摸无响应，请检查!!!")
-                        continue
-                    log.error("触摸无响应，请检查!!!")
-                    log.info("触摸事件成功次数为：%d" % (times - fail_flag))
-                    log.info("触摸事件失败次数为：%d" % (fail_flag))
-                    time.sleep(3)
-                    break
+                        log.info("触摸事件成功次数为：%d" % (times - fail_flag))
+                        log.info("触摸事件失败次数为：%d" % (fail_flag))
+                        time.sleep(3)
+                        break
+                    else:
+                        log.info("触摸正常响应")
                 else:
-                    log.info("触摸正常响应")
+                    # 如果连个屏幕都有触摸事件
+                    event_result_list = [i in self.device.remove_info_space(event_info) for i in expect_event_data]
+                    if sum(event_result_list) >= 2:
+                        log.info("两个屏幕触摸正常响应")
+                    elif sum(event_result_list) == 1:
+                        log.error("只有一个屏幕触摸正常响应")
+                        fail_flag += 1
+                        if is_probability:
+                            log.error("触摸无响应，请检查!!!")
+                            continue
+                        log.error("触摸无响应，请检查!!!")
+                        log.info("触摸事件成功次数为：%d" % (times - fail_flag))
+                        log.info("触摸事件失败次数为：%d" % (fail_flag))
+                        time.sleep(3)
+                        break
+                    elif sum(event_result_list) == 0:
+                        fail_flag += 1
+                        if is_probability:
+                            log.error("两个触摸无响应，请检查!!!")
+                            continue
+                        log.error("触摸无响应，请检查!!!")
+                        log.info("触摸事件成功次数为：%d" % (times - fail_flag))
+                        log.info("触摸事件失败次数为：%d" % (fail_flag))
+                        time.sleep(3)
+                        break
+
                 log.info("***********第%d次触摸事件测试结束************" % times)
                 time.sleep(test_interval)
             log.info("***********触摸事件稳定性测试结束************")
+            if not is_touch_soft_boot:
+                t_ser.logoutSer()
+
             if is_probability:
                 if fail_flag > 0:
                     log.error("触摸无响应的次数为：%d" % fail_flag)
